@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OOF Control</string>
+    <string name="nav_display">Utils</string>
+    <string name="nav_performance">Perf</string>
+    <string name="nav_charging">Charging</string>
+    <string name="nav_about">About</string>
+</resources>

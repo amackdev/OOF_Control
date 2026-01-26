@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.OOFControl" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/purple</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/blue</item>
+        <item name="colorSecondaryVariant">@color/blue</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="android:windowBackground">@color/background</item>
+        <!-- Modern Switch Styling -->
+        <item name="switchStyle">@style/Widget.OOFControl.Switch</item>
+        <item name="materialSwitchStyle">@style/Widget.OOFControl.MaterialSwitch</item>
+    </style>
+    
+    <!-- Material Switch Style (for com.google.android.material.materialswitch.MaterialSwitch) -->
+    <style name="Widget.OOFControl.MaterialSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="thumbTint">@color/switch_thumb_color</item>
+        <item name="trackTint">@color/switch_track_color</item>
+        <item name="trackDecorationTint">@android:color/transparent</item>
+    </style>
+    
+    <!-- Fallback Switch Style -->
+    <style name="Widget.OOFControl.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:textOn">""</item>
+        <item name="android:textOff">""</item>
+        <item name="showText">false</item>
+        <item name="thumbTint">@color/switch_thumb_color</item>
+        <item name="trackTint">@color/switch_track_color</item>
+    </style>
+</resources>

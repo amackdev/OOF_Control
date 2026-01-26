@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Add this section to your fragment_charging.xml -->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Battery Statistics"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Current Stats -->
+        <TextView
+            android:id="@+id/tvCurrentStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Now: 404 mA (1.7 W) • 35.1° • 2h 56m left"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:background="#2E2E2E"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="monospace" />
+
+        <!-- Active/Idle Rates -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/tvActiveRate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Active: 55.4%/h"
+                android:textSize="13sp"
+                android:textColor="#4CAF50" />
+
+            <TextView
+                android:id="@+id/tvIdleRate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Idle: 0.0%/h"
+                android:textSize="13sp"
+                android:textColor="#9E9E9E"
+                android:gravity="end" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#3E3E3E"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Screen On Stats -->
+        <TextView
+            android:id="@+id/tvScreenOnStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Screen On: 1m 5s • 1.0% (14 mAh)"
+            android:textSize="13sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Screen Off Stats -->
+        <TextView
+            android:id="@+id/tvScreenOffStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Screen Off: 0s • 0.0% (0 mAh)"
+            android:textSize="13sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#3E3E3E"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Deep Sleep Stats -->
+        <TextView
+            android:id="@+id/tvDeepSleepStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Deep sleep: 0s • 0.0%"
+            android:textSize="13sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Awake Stats -->
+        <TextView
+            android:id="@+id/tvAwakeStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Awake: 0s • 0.0%"
+            android:textSize="13sp"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Reset Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnResetStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset Session"
+            android:textSize="12sp"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_gravity="end" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light Mode Colors -->
+    <color name="background">#F5F5F5</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#666666</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    
+    <!-- Accent colors (same as dark) -->
+    <color name="accent">#00E676</color>
+    <color name="blue">#00B0FF</color>
+    <color name="purple">#7C4DFF</color>
+    <color name="pink">#FF4081</color>
+    <color name="orange">#FF6B35</color>
+    <color name="yellow">#FFAB00</color>
+    
+    <!-- Icon backgrounds (lighter for light mode) -->
+    <color name="icon_bg_green">#E8F5E9</color>
+    <color name="icon_bg_blue">#E3F2FD</color>
+    <color name="icon_bg_purple">#EDE7F6</color>
+    <color name="icon_bg_yellow">#FFF8E1</color>
+    
+    <color name="bottom_nav_color">#666666</color>
+    
+    <!-- Switch Colors - Light Mode -->
+    <color name="switch_thumb_on">#00E676</color>
+    <color name="switch_thumb_off">#BDBDBD</color>
+    <color name="switch_track_on">#80E8F5E9</color>
+    <color name="switch_track_off">#42000000</color>
+</resources>
