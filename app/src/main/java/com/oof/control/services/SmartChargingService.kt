@@ -184,49 +184,61 @@ class SmartChargingService : Service() {
             val usbType = RootController.getUsbType()
             val isChargerConnected = usbType != "Unknown"
             
-            // If not charging, clear suspended state
+            // If not charging, ALWAYS disable suspend and clear state
             if (!isChargerConnected) {
+                // Always call resumeCharging to ensure input_suspend is set to 0
+                RootController.resumeCharging()
                 if (isChargingSuspended) {
-                    RootController.resumeCharging()
                     isChargingSuspended = false
                     Log.i(TAG, "Charging latch cleared on disconnect")
                 }
                 return
             }
             
-            val isFastCharging = RootController.isFastCharging()
-            val temp = RootController.getBatteryTemp()
             val batteryLevel = RootController.getBatteryLevel()
-            val sportMode = RootController.getSportMode()
-            val maxPower = RootController.getMaxPower()
             
             // Get effective charge limit - prefer OS value if available, else use app setting
             val effectiveLimit = getEffectiveChargeLimit()
 
-            // Charge limit control
+            // Charge limit control - check resume FIRST before suspend
             if (effectiveLimit != null) {
                 val resumeThreshold = effectiveLimit - CHARGE_LIMIT_HYSTERESIS
                 
-                if (isFastCharging && batteryLevel >= effectiveLimit && !isChargingSuspended && usbType != "USB") {
-                    RootController.stopCharging()
-                    isChargingSuspended = true
-                    Log.i(TAG, "Charging paused at $effectiveLimit%")
-                    return
-                }
-                
-                if (isChargingSuspended && batteryLevel < resumeThreshold) {
+                // Check if we should RESUME charging (battery dropped below threshold)
+                if (isChargingSuspended && batteryLevel <= resumeThreshold) {
                     RootController.resumeCharging()
                     isChargingSuspended = false
-                    Log.i(TAG, "Charging resumed - battery dropped to $batteryLevel%")
+                    Log.i(TAG, "Charging resumed - battery at $batteryLevel% (threshold: $resumeThreshold%)")
+                }
+                
+                // Check if we should SUSPEND charging (battery reached limit)
+                if (!isChargingSuspended && batteryLevel >= effectiveLimit && usbType != "USB") {
+                    RootController.stopCharging()
+                    isChargingSuspended = true
+                    Log.i(TAG, "Charging paused at $batteryLevel% (limit: $effectiveLimit%)")
+                    return
+                }
+            } else {
+                // No charge limit active - ensure charging is resumed if it was suspended
+                if (isChargingSuspended) {
+                    RootController.resumeCharging()
+                    isChargingSuspended = false
+                    Log.i(TAG, "Charging resumed - charge limit disabled")
                 }
             }
             
+            // If charging is suspended, don't control current
             if (isChargingSuspended) {
                 return
             }
 
             // Fast charging - control current
+            val isFastCharging = RootController.isFastCharging()
             if (isFastCharging) {
+                val temp = RootController.getBatteryTemp()
+                val sportMode = RootController.getSportMode()
+                val maxPower = RootController.getMaxPower()
+                
                 val needsUpdate = (batteryLevel != lastBatteryLevel) ||
                     (kotlin.math.abs(temp - lastTemp) > 10) ||
                     (sportMode != lastSportMode)
