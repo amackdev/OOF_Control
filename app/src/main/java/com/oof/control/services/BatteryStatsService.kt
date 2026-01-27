@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.oof.control.MainActivity
 import com.oof.control.R
+import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.FileUtils
 import com.oof.control.utils.RootController
 import kotlinx.coroutines.*
@@ -58,9 +59,6 @@ class BatteryStatsService : Service() {
         const val CHANNEL_ID = "oof_battery_stats"
         const val NOTIFICATION_ID = 1002
         const val UPDATE_INTERVAL = 5_000L // 5 seconds
-        
-        // Battery capacity in mAh (POCO F6)
-        const val BATTERY_CAPACITY = 5000
         
         // Broadcast actions
         const val ACTION_RESET_STATS = "com.oof.control.RESET_BATTERY_STATS"
@@ -240,7 +238,7 @@ class BatteryStatsService : Service() {
         if (!isCharging && level != lastLevelForDrain && lastLevelForDrain != -1) {
             val drainPercent = lastLevelForDrain - level
             if (drainPercent > 0) {
-                val drainMah = (BATTERY_CAPACITY * drainPercent) / 100
+                val drainMah = (DeviceConfig.batteryCapacityMah * drainPercent) / 100
                 if (isScreenOn) {
                     screenOnDrainMah += drainMah
                 } else {
@@ -413,11 +411,11 @@ class BatteryStatsService : Service() {
         val screenOffHours = currentScreenOffTime / 3600000.0
         
         val activeRate = if (screenOnHours > 0.01 && screenOnDrainMah > 0) {
-            (screenOnDrainMah * 100.0 / BATTERY_CAPACITY) / screenOnHours
+            (screenOnDrainMah * 100.0 / DeviceConfig.batteryCapacityMah) / screenOnHours
         } else 0.0
         
         val idleRate = if (screenOffHours > 0.01 && screenOffDrainMah > 0) {
-            (screenOffDrainMah * 100.0 / BATTERY_CAPACITY) / screenOffHours
+            (screenOffDrainMah * 100.0 / DeviceConfig.batteryCapacityMah) / screenOffHours
         } else 0.0
         
         // Calculate deep sleep and awake percentages of screen-off time
@@ -432,8 +430,8 @@ class BatteryStatsService : Service() {
         // Build notification text
         val title = "Now: ${kotlin.math.abs(currentMa)} mA • ${String.format("%.1f", tempC)}° • $timeLeft"
         
-        val screenOnPercent = screenOnDrainMah * 100.0 / BATTERY_CAPACITY
-        val screenOffPercent = screenOffDrainMah * 100.0 / BATTERY_CAPACITY
+        val screenOnPercent = screenOnDrainMah * 100.0 / DeviceConfig.batteryCapacityMah
+        val screenOffPercent = screenOffDrainMah * 100.0 / DeviceConfig.batteryCapacityMah
         
         val statsText = StringBuilder()
         statsText.appendLine("Active: ${String.format("%.1f", activeRate)}%/h • Idle: ${String.format("%.1f", idleRate)}%/h")
@@ -495,20 +493,29 @@ class BatteryStatsService : Service() {
     }
     
     private fun calculateTimeLeft(batteryLevel: Int, currentMa: Int): String {
-        if (currentMa >= 0) return "--"
+        // current_now can be positive or negative depending on device
+        // When discharging: some devices report negative, some report positive
+        // We need the absolute drain rate
+        val drainMa = kotlin.math.abs(currentMa)
         
-        val drainMa = -currentMa
-        if (drainMa < 10) return "--"
+        // Too low to calculate accurately
+        if (drainMa < 50) return "--"
         
-        val remainingMah = (BATTERY_CAPACITY * batteryLevel) / 100.0
+        // Calculate remaining mAh based on battery level
+        val remainingMah = (DeviceConfig.batteryCapacityMah * batteryLevel) / 100.0
+        
+        // Hours left = remaining capacity / drain rate
         val hoursLeft = remainingMah / drainMa
+        
+        // Sanity check - max 100 hours
+        if (hoursLeft > 100 || hoursLeft <= 0) return "--"
         
         val totalMins = (hoursLeft * 60).toInt()
         if (totalMins <= 0) return "--"
         
         val h = totalMins / 60
         val m = totalMins % 60
-        return if (h > 0) "${h}h ${m}m left" else "${m}m left"
+        return if (h > 0) "${h}h ${m}m" else "${m}m"
     }
     
     private fun getCurrentNow(): Int {

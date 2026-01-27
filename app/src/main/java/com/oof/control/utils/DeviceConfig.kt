@@ -54,6 +54,14 @@ object DeviceConfig {
                 deviceBrand.equals("POCO", ignoreCase = true) ||
                 deviceBrand.equals("Redmi", ignoreCase = true)
     
+    // Battery capacity in mAh (device-specific)
+    val batteryCapacityMah: Int
+        get() = when (deviceCodename) {
+            DEVICE_PERIDOT -> 5000  // POCO F6 Pro
+            DEVICE_MARBLE -> 5000   // POCO F5
+            else -> 5000            // Default
+        }
+    
     // ============ SYSTEM PATHS ============
     
     // Battery paths
