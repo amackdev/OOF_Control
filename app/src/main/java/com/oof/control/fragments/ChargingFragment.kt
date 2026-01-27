@@ -249,82 +249,6 @@ class ChargingFragment : Fragment() {
             ChargingControlService.resetStats(requireContext())
             showToast("Battery statistics reset")
         }
-        
-        // Wakelock Card - Click to show dialog
-        binding.cardWakelocks.setOnClickListener {
-            showWakelockDialog()
-        }
-    }
-    
-    private fun showWakelockDialog() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                // Show loading dialog
-                val loadingDialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Loading Wakelocks...")
-                    .setMessage("Please wait...")
-                    .setCancelable(false)
-                    .create()
-                loadingDialog.show()
-                
-                val wakelockInfo = RootController.getWakelockInfo()
-                
-                loadingDialog.dismiss()
-                
-                if (!isAdded) return@launch
-                
-                if (wakelockInfo.isEmpty()) {
-                    com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("🔒 Wakelock History")
-                        .setMessage("No wakelocks found.\n\nNote: Wakelock data is read from kernel sources and may require root access.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                    return@launch
-                }
-                
-                // Sort by total time descending
-                val sorted = wakelockInfo.sortedByDescending { it.totalTimeMs }
-                
-                // Calculate totals
-                val totalWakelocks = sorted.size
-                val totalTime = sorted.sumOf { it.totalTimeMs }
-                val totalActivations = sorted.sumOf { it.activateCount }
-                
-                // Build the message
-                val message = StringBuilder()
-                message.appendLine("📊 Summary")
-                message.appendLine("Total wakelocks: $totalWakelocks")
-                message.appendLine("Total time: ${formatWakelockTime(totalTime)}")
-                message.appendLine("Total activations: $totalActivations")
-                message.appendLine()
-                message.appendLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                message.appendLine()
-                
-                // List all wakelocks
-                for ((index, wakelock) in sorted.withIndex()) {
-                    val timeStr = formatWakelockTime(wakelock.totalTimeMs)
-                    val name = if (wakelock.name.length > 25) wakelock.name.take(25) + "…" else wakelock.name
-                    message.appendLine("${index + 1}. $name")
-                    message.appendLine("   ⏱ $timeStr  •  🔄 ${wakelock.activateCount}x")
-                    if (index < sorted.size - 1) message.appendLine()
-                }
-                
-                com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("🔒 Wakelock History")
-                    .setMessage(message.toString())
-                    .setPositiveButton("OK", null)
-                    .setNeutralButton("Refresh") { _, _ ->
-                        showWakelockDialog()
-                    }
-                    .show()
-                    
-            } catch (e: Exception) {
-                Log.e(TAG, "Error showing wakelock dialog", e)
-                if (isAdded) {
-                    showToast("Error loading wakelocks: ${e.message}")
-                }
-            }
-        }
     }
     
     private fun startBatteryUpdates() {
@@ -477,18 +401,6 @@ class ChargingFragment : Fragment() {
         binding.tvSportModeStatus.text = if (enabled) "🔥 Turbo Charging" else "⚡ Standard"
         binding.cardSportMode.alpha = if (enabled) 1.0f else 0.8f
         binding.layoutSportStats.visibility = if (enabled) View.VISIBLE else View.GONE
-    }
-    
-    private fun formatWakelockTime(ms: Long): String {
-        val seconds = ms / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
-        
-        return when {
-            hours > 0 -> "${hours}h ${minutes % 60}m"
-            minutes > 0 -> "${minutes}m ${seconds % 60}s"
-            else -> "${seconds}s"
-        }
     }
     
     private fun showToast(message: String) {

@@ -1,18 +1,10 @@
 package com.oof.control.services
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import android.os.PowerManager
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import com.oof.control.MainActivity
-import com.oof.control.R
 import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.PrefsManager
 import com.oof.control.utils.RootController
@@ -20,14 +12,13 @@ import kotlinx.coroutines.*
 
 /**
  * Smart Charging Service - Handles charging current control and charge limit
- * Runs silently without notification (BatteryStatsService handles notification)
+ * Runs as hidden background service (no notification)
  */
 class SmartChargingService : Service() {
     
     private var serviceJob: Job? = null
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private lateinit var prefs: PrefsManager
-    private var wakeLock: PowerManager.WakeLock? = null
     private var isChargingSuspended = false
     
     // Cache to avoid unnecessary operations
@@ -37,15 +28,13 @@ class SmartChargingService : Service() {
     
     companion object {
         private const val TAG = "SmartChargingService"
-        const val CHANNEL_ID = "oof_smart_charging"
-        const val NOTIFICATION_ID = 1001
         const val UPDATE_INTERVAL = 3_000L // 3 seconds
         const val CHARGE_LIMIT_HYSTERESIS = 5
         
         fun start(context: Context) {
             try {
                 val intent = Intent(context, SmartChargingService::class.java)
-                context.startForegroundService(intent)
+                context.startService(intent)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to start service", e)
             }
@@ -65,15 +54,11 @@ class SmartChargingService : Service() {
         super.onCreate()
         Log.d(TAG, "SmartChargingService created")
         prefs = PrefsManager(this)
-        createNotificationChannel()
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "SmartChargingService started")
         try {
-            // Minimal silent notification required for foreground service
-            startForeground(NOTIFICATION_ID, createSilentNotification())
-            acquireWakeLock()
             startChargingControlLoop()
         } catch (e: Exception) {
             Log.e(TAG, "Error in onStartCommand", e)
@@ -88,7 +73,6 @@ class SmartChargingService : Service() {
         Log.d(TAG, "SmartChargingService destroyed")
         serviceJob?.cancel()
         serviceScope.cancel()
-        releaseWakeLock()
         
         // Resume charging on destroy
         runBlocking {
@@ -99,69 +83,6 @@ class SmartChargingService : Service() {
             }
         }
         super.onDestroy()
-    }
-    
-    private fun createNotificationChannel() {
-        try {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Smart Charging",
-                NotificationManager.IMPORTANCE_MIN  // Lowest importance - no sound, no popup
-            ).apply {
-                description = "Controls charging current and limits"
-                setShowBadge(false)
-                setSound(null, null)
-                enableLights(false)
-                enableVibration(false)
-            }
-            
-            val manager = getSystemService(NotificationManager::class.java)
-            manager?.createNotificationChannel(channel)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error creating notification channel", e)
-        }
-    }
-    
-    private fun createSilentNotification(): Notification {
-        val intent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Smart Charging")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentIntent(pendingIntent)
-            .setOngoing(true)
-            .setSilent(true)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .setVisibility(NotificationCompat.VISIBILITY_SECRET)  // Hide from lock screen
-            .build()
-    }
-    
-    private fun acquireWakeLock() {
-        try {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = powerManager.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
-                "OOFControl::SmartCharging"
-            ).apply {
-                acquire(10*60*1000L)
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error acquiring wake lock", e)
-        }
-    }
-    
-    private fun releaseWakeLock() {
-        try {
-            wakeLock?.let {
-                if (it.isHeld) it.release()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error releasing wake lock", e)
-        }
     }
     
     private fun startChargingControlLoop() {

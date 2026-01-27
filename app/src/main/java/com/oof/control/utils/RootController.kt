@@ -392,78 +392,6 @@ object RootController {
         }
     }
 
-    // ============ WAKELOCKS ============
-    
-    suspend fun getWakelockInfo(): List<WakelockData> = withContext(Dispatchers.IO) {
-        val wakelocks = mutableListOf<WakelockData>()
-        
-        try {
-            // Try reading from /sys/kernel/debug/wakeup_sources first (needs root)
-            val debugResult = executeCommand("cat /sys/kernel/debug/wakeup_sources 2>/dev/null || cat /d/wakeup_sources 2>/dev/null")
-            
-            if (debugResult.isSuccess && debugResult.output.isNotEmpty()) {
-                // Parse wakeup_sources format:
-                // name    active_count  event_count  wakeup_count  expire_count  active_since  total_time  max_time  last_change  prevent_suspend_time
-                val lines = debugResult.output.drop(1)
-                for (line in lines) {
-                    try {
-                        val parts = line.trim().split(Regex("\\s+"))
-                        if (parts.size >= 7) {
-                            val name = parts[0]
-                            val activeCount = parts[1].toLongOrNull() ?: 0L
-                            val totalTime = parts[6].toLongOrNull() ?: 0L // total_time in ms
-                            if (totalTime > 0 || activeCount > 0) {
-                                wakelocks.add(WakelockData(name, totalTime, activeCount.toInt()))
-                            }
-                        }
-                    } catch (e: Exception) {
-                        // Skip malformed lines
-                    }
-                }
-            }
-            
-            // If debug method failed, try /sys/power/wake_lock
-            if (wakelocks.isEmpty()) {
-                val wakeLockResult = executeCommand("cat /sys/power/wake_lock 2>/dev/null")
-                if (wakeLockResult.isSuccess && wakeLockResult.output.isNotEmpty()) {
-                    val firstLine = wakeLockResult.output.firstOrNull() ?: ""
-                    val locks = firstLine.trim().split(Regex("\\s+"))
-                    for (name in locks) {
-                        if (name.isNotBlank()) {
-                            wakelocks.add(WakelockData(name, 0L, 1)) // Time unknown from this source
-                        }
-                    }
-                }
-            }
-            
-            // Also try dumpsys power for kernel wakelocks
-            if (wakelocks.isEmpty()) {
-                val dumpsysResult = executeCommand("dumpsys power 2>/dev/null | grep -A 100 'Wake Locks:' | head -50")
-                if (dumpsysResult.isSuccess) {
-                    for (line in dumpsysResult.output) {
-                        // Parse lines like: "PARTIAL_WAKE_LOCK 'AudioMix' held=true"
-                        val match = Regex("'([^']+)'.*?(\\d+)ms").find(line)
-                        if (match != null) {
-                            val name = match.groupValues[1]
-                            val time = match.groupValues[2].toLongOrNull() ?: 0L
-                            wakelocks.add(WakelockData(name, time, 1))
-                        } else if (line.contains("WAKE_LOCK") && line.contains("'")) {
-                            val nameMatch = Regex("'([^']+)'").find(line)
-                            if (nameMatch != null) {
-                                wakelocks.add(WakelockData(nameMatch.groupValues[1], 0L, 1))
-                            }
-                        }
-                    }
-                }
-            }
-            
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting wakelock info", e)
-        }
-        
-        wakelocks
-    }
-
     // ============ SYSTEM PROPS ============
     
     suspend fun getSystemProp(propName: String): String = withContext(Dispatchers.IO) {
@@ -497,12 +425,6 @@ object RootController {
     }
 
     // ============ DATA CLASSES ============
-    
-    data class WakelockData(
-        val name: String,
-        val totalTimeMs: Long,
-        val activateCount: Int
-    )
 
     private data class CommandResult(
         val isSuccess: Boolean,
