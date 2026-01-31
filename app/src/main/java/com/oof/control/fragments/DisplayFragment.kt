@@ -30,6 +30,7 @@ class DisplayFragment : Fragment() {
         const val PROP_KEYBOX = "persist.oof_keybox.enabled"
         const val PROP_UNLIM_PHOTOS = "persist.sys.oof-utils.unligphotos"
         const val PROP_SPOOF_PROVIDER = "persist.sys.oof-utils.spoofprovider"
+        const val PROP_PIF_IMPLEMENTED = "ro.oof_pif.implemented"
     }
     
     override fun onCreateView(
@@ -68,6 +69,9 @@ class DisplayFragment : Fragment() {
                     binding.switchTouchRate.isChecked = prefs.touchRateEnabled
                 }
                 
+                // Check if PIF is implemented
+                checkPifImplementation()
+                
                 // Load prop states
                 loadPropStates()
             }
@@ -76,6 +80,41 @@ class DisplayFragment : Fragment() {
         } finally {
             isUpdatingUI = false
         }
+    }
+    
+    private suspend fun checkPifImplementation() {
+        try {
+            val pifImplemented = getPropBool(PROP_PIF_IMPLEMENTED)
+            
+            // Hide/show spoofing switches based on ro.oof_pif.implemented
+            val visibility = if (pifImplemented) View.VISIBLE else View.GONE
+            
+            binding.cardPif.visibility = visibility
+            binding.cardBlspoof.visibility = visibility
+            binding.cardKeybox.visibility = visibility
+            binding.cardSpoofprovider.visibility = visibility
+            binding.cardUnlimphotos.visibility = visibility
+            binding.cardSpoofInfo.visibility = visibility
+            binding.tvSpoofingSection.visibility = visibility
+            
+            if (!pifImplemented) {
+                Log.i(TAG, "PIF not implemented - spoofing switches hidden")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking PIF implementation", e)
+            // On error, hide the switches to be safe
+            hideSpoofingSwitches()
+        }
+    }
+    
+    private fun hideSpoofingSwitches() {
+        binding.cardPif.visibility = View.GONE
+        binding.cardBlspoof.visibility = View.GONE
+        binding.cardKeybox.visibility = View.GONE
+        binding.cardSpoofprovider.visibility = View.GONE
+        binding.cardUnlimphotos.visibility = View.GONE
+        binding.cardSpoofInfo.visibility = View.GONE
+        binding.tvSpoofingSection.visibility = View.GONE
     }
     
     private suspend fun loadPropStates() {

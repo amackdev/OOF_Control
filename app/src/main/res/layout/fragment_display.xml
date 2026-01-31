@@ -340,6 +340,7 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
+            android:id="@+id/tv_spoofing_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SPOOFING"
@@ -350,6 +351,7 @@
 
         <!-- PIF Spoof Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_pif"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -410,6 +412,7 @@
 
         <!-- BLS Spoof Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_blspoof"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -470,6 +473,7 @@
 
         <!-- Keybox Spoof Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_keybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -530,6 +534,7 @@
 
         <!-- Spoof Provider Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_spoofprovider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -590,6 +595,7 @@
 
         <!-- Unlimited Google Photos Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_unlimphotos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
@@ -650,6 +656,7 @@
 
         <!-- Info Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_spoof_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
