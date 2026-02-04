@@ -31,6 +31,7 @@ class DisplayFragment : Fragment() {
         const val PROP_UNLIM_PHOTOS = "persist.sys.oof-utils.unligphotos"
         const val PROP_SPOOF_PROVIDER = "persist.sys.oof-utils.spoofprovider"
         const val PROP_PIF_IMPLEMENTED = "ro.oof_pif.implemented"
+		const val PROP_DISABLE_FLAG_SECURE = "persist.sys.oof_secureflag"
     }
     
     override fun onCreateView(
@@ -125,6 +126,7 @@ class DisplayFragment : Fragment() {
             binding.switchKeybox.isChecked = getPropBool(PROP_KEYBOX)
             binding.switchUnlimphotos.isChecked = getPropBool(PROP_UNLIM_PHOTOS)
             binding.switchSpoofprovider.isChecked = getPropBool(PROP_SPOOF_PROVIDER)
+            binding.switchFlagSecure.isChecked = getPropBool(PROP_DISABLE_FLAG_SECURE)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading prop states", e)
         } finally {
@@ -258,6 +260,12 @@ class DisplayFragment : Fragment() {
             if (isUpdatingUI) return@setOnCheckedChangeListener
             setProp(PROP_SPOOF_PROVIDER, isChecked, "Spoof Provider")
         }
+
+        // Disable FLAG_SECURE (prop-gated hook)
+        binding.switchFlagSecure.setOnCheckedChangeListener { _, isChecked ->
+            if (isUpdatingUI) return@setOnCheckedChangeListener
+            setProp(PROP_DISABLE_FLAG_SECURE, isChecked, "FLAG_SECURE")
+        }
     }
     
     private fun setRefreshRate(rate: Int) {
@@ -317,6 +325,7 @@ class DisplayFragment : Fragment() {
             PROP_KEYBOX -> binding.switchKeybox.isChecked = value
             PROP_UNLIM_PHOTOS -> binding.switchUnlimphotos.isChecked = value
             PROP_SPOOF_PROVIDER -> binding.switchSpoofprovider.isChecked = value
+            PROP_DISABLE_FLAG_SECURE -> binding.switchFlagSecure.isChecked = value
         }
     }
     
