@@ -33,6 +33,7 @@ class ChargingFragment : Fragment() {
     // Cache previous values to avoid unnecessary UI updates
     private var lastBatteryLevel = -1
     private var lastBatteryTemp = -1
+    private var lastBatteryHealthPercent = -1.0
     private var lastIsCharging = false
     private var lastDrainRate = 0
     
@@ -309,6 +310,7 @@ class ChargingFragment : Fragment() {
             val maxPower = RootController.getMaxPower()
             val sportMode = RootController.getSportMode()
             val drainRate = RootController.getBatteryDrainRate()
+            val healthPercent = RootController.getBatteryHealthPercent()
             
             // Update battery level
             if (batteryLevel != lastBatteryLevel) {
@@ -316,7 +318,18 @@ class ChargingFragment : Fragment() {
                 binding.progressBattery.progress = batteryLevel
                 lastBatteryLevel = batteryLevel
             }
-            
+
+            // Update battery health (below %)
+            if (healthPercent != lastBatteryHealthPercent) {
+                if (healthPercent > 0.0) {
+                    binding.tvBatteryHealth.text = "Health ${kotlin.math.round(healthPercent).toInt()}%"
+                    binding.tvBatteryHealth.visibility = View.VISIBLE
+                } else {
+                    binding.tvBatteryHealth.visibility = View.GONE
+                }
+                lastBatteryHealthPercent = healthPercent
+            }
+
             // Update temperature
             if (batteryTemp != lastBatteryTemp) {
                 val tempCelsius = batteryTemp / 10.0

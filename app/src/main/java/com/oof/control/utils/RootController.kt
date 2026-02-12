@@ -337,6 +337,20 @@ object RootController {
         readFile(DeviceConfig.BATTERY_CAPACITY)?.toIntOrNull() ?: 0
     }
 
+    /**
+     * Battery health as % of design capacity.
+     * Uses charge_full / charge_full_design (commonly µAh).
+     * Returns 0.0 if missing/invalid.
+     */
+    suspend fun getBatteryHealthPercent(): Double = withContext(Dispatchers.IO) {
+        val full = readFile(DeviceConfig.BATTERY_FULL)?.toDoubleOrNull() ?: 0.0
+        val design = readFile(DeviceConfig.BATTERY_FULL_DESIGN)?.toDoubleOrNull() ?: 0.0
+        if (full <= 0.0 || design <= 0.0) return@withContext 0.0
+        // clamp to avoid silly values from some kernels
+        val pct = (full / design) * 100.0
+        pct.coerceIn(0.0, 120.0)
+    }
+
     suspend fun getBatteryTemp(): Int = withContext(Dispatchers.IO) {
         readFile(DeviceConfig.BATTERY_TEMP)?.toIntOrNull() ?: 0
     }

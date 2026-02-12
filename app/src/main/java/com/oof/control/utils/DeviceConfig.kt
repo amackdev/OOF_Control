@@ -79,6 +79,8 @@ object DeviceConfig {
     
     const val BATTERY_CAPACITY = "/sys/class/power_supply/battery/capacity"
     const val BATTERY_TEMP = "/sys/class/power_supply/battery/temp"
+    const val BATTERY_FULL_DESIGN = "/sys/class/power_supply/battery/charge_full_design"
+    const val BATTERY_FULL = "/sys/class/power_supply/battery/charge_full"
     const val BATTERY_STATUS = "/sys/class/power_supply/battery/status"
     const val BATTERY_CURRENT = "/sys/class/power_supply/battery/constant_charge_current"
     const val BATTERY_CHARGE_LIMIT = "/sys/class/power_supply/battery/charge_control_limit"
