@@ -57,7 +57,6 @@ class DisplayFragment : Fragment() {
         try {
             // Load UI state from preferences (instant)
             binding.switchDt2w.isChecked = prefs.dt2wEnabled
-            binding.switchTouchBoost.isChecked = prefs.touchBoost
             updateRefreshRateButtons(prefs.refreshRate)
             
             // Touch Rate - check support in coroutine
@@ -192,32 +191,6 @@ class DisplayFragment : Fragment() {
                     Log.e(TAG, "Error setting Touch Rate", e)
                     isUpdatingUI = true
                     binding.switchTouchRate.isChecked = !isChecked
-                    isUpdatingUI = false
-                    showToast("Error: ${e.message}")
-                }
-            }
-        }
-        
-        // Touch Boost Switch
-        binding.switchTouchBoost.setOnCheckedChangeListener { _, isChecked ->
-            if (isUpdatingUI) return@setOnCheckedChangeListener
-            
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    val success = RootController.setTouchBoost(isChecked)
-                    if (success) {
-                        prefs.touchBoost = isChecked
-                        showToast("Touch Boost ${if (isChecked) "enabled" else "disabled"}")
-                    } else {
-                        isUpdatingUI = true
-                        binding.switchTouchBoost.isChecked = !isChecked
-                        isUpdatingUI = false
-                        showToast("Failed to update Touch Boost")
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error setting Touch Boost", e)
-                    isUpdatingUI = true
-                    binding.switchTouchBoost.isChecked = !isChecked
                     isUpdatingUI = false
                     showToast("Error: ${e.message}")
                 }
