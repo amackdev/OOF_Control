@@ -2,22 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- System Settings -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
-    
-    <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    
-    <!-- Boot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    
-    <!-- Wake Lock -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <!-- Overlay permission — granted automatically to system apps -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OOFControl"
         tools:targetApi="34">
-        
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -37,8 +34,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <!-- Smart Charging Service -->
+
+        <activity
+            android:name=".game.AppPickerActivity"
+            android:exported="false"
+            android:label="Pick App"
+            android:theme="@style/Theme.OOFControl" />
+
+        <!-- Always-running background service — system app, no foreground needed -->
+        <service
+            android:name=".game.GameWatcherService"
+            android:exported="false" />
+
+        <!-- Overlay service — shows floating controls when a game is active -->
+        <service
+            android:name=".game.GameOverlayService"
+            android:exported="false" />
+
         <service
             android:name=".services.SmartChargingService"
             android:foregroundServiceType="specialUse"
@@ -47,8 +59,7 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="charging_control" />
         </service>
-        
-        <!-- Battery Stats Service -->
+
         <service
             android:name=".services.BatteryStatsService"
             android:foregroundServiceType="specialUse"
@@ -57,8 +68,7 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="battery_stats" />
         </service>
-        
-        <!-- Boot Receiver -->
+
         <receiver
             android:name=".services.BootReceiver"
             android:exported="true"
@@ -68,8 +78,7 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-        
-        <!-- Screen State Receiver for Battery Stats -->
+
         <receiver
             android:name=".services.ScreenStateReceiver"
             android:exported="false"
@@ -79,7 +88,7 @@
                 <action android:name="android.intent.action.SCREEN_OFF" />
             </intent-filter>
         </receiver>
-        
+
     </application>
 
 </manifest>

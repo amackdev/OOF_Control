@@ -1,14 +1,5 @@
-
 cmake_minimum_required(VERSION 3.22.1)
-
 project(native_ioctl)
-
-add_library(native_ioctl_v2 SHARED
-    native_ioctl.cpp
-)
-
+add_library(native_ioctl_v2 SHARED native_ioctl.cpp)
 find_library(log-lib log)
-
-target_link_libraries(native_ioctl_v2
-    ${log-lib}
-)
+target_link_libraries(native_ioctl_v2 ${log-lib})

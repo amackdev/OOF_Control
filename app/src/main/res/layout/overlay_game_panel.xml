@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="240dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#E61A1A2E"
+    android:padding="12dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/tv_overlay_game_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Game"
+            android:textColor="#00E676"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-medium"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/btn_overlay_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="@android:color/transparent"
+            android:tint="#AAFFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Sensitivity -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="2dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Sensitivity" android:textColor="#CCFFFFFF" android:textSize="11sp" />
+        <TextView android:id="@+id/tv_overlay_sens_val" android:layout_width="20dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="#00E676" android:textSize="11sp" android:gravity="end" />
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_overlay_sensitivity"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progressTint="#00E676" android:thumbTint="#00E676"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Edge Filter -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="2dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Edge Filter" android:textColor="#CCFFFFFF" android:textSize="11sp" />
+        <TextView android:id="@+id/tv_overlay_edge_val" android:layout_width="20dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="#00E676" android:textSize="11sp" android:gravity="end" />
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_overlay_edge_filter"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progressTint="#00E676" android:thumbTint="#00E676"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Tap Stability -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="2dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Tap Stability" android:textColor="#CCFFFFFF" android:textSize="11sp" />
+        <TextView android:id="@+id/tv_overlay_tap_val" android:layout_width="20dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="#00E676" android:textSize="11sp" android:gravity="end" />
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_overlay_tap_stability"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progressTint="#00E676" android:thumbTint="#00E676"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Up Threshold -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="2dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Up Threshold" android:textColor="#CCFFFFFF" android:textSize="11sp" />
+        <TextView android:id="@+id/tv_overlay_up_val" android:layout_width="20dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="#00E676" android:textSize="11sp" android:gravity="end" />
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_overlay_up_threshold"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progressTint="#00E676" android:thumbTint="#00E676"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Save button -->
+    <Button
+        android:id="@+id/btn_overlay_save"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:text="Save Profile"
+        android:backgroundTint="#00E676"
+        android:textColor="#000000"
+        android:textSize="12sp" />
+
+</LinearLayout>

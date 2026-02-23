@@ -17,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.oof.control.databinding.ActivityMainBinding
 import com.oof.control.fragments.*
+import com.oof.control.game.GameWatcherService
+import com.oof.control.game.GameOverlayService
 import com.oof.control.services.ChargingControlService
 import com.oof.control.utils.*
 import kotlinx.coroutines.launch
@@ -62,6 +64,9 @@ class MainActivity : AppCompatActivity() {
                     if (prefs.batteryStatsEnabled) {
                         ChargingControlService.startStatsOnly(this)
                     }
+                    // Always start game watcher and overlay — system app, always active
+                    GameWatcherService.start(this)
+                    startService(Intent(this, com.oof.control.game.GameOverlayService::class.java))
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to start services", e)
                 }
@@ -157,6 +162,7 @@ class MainActivity : AppCompatActivity() {
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_display -> DisplayFragment()
                 R.id.nav_performance -> PerformanceFragment()
+                R.id.nav_game -> GameFragment()
                 R.id.nav_charging -> ChargingFragment()
                 R.id.nav_about -> AboutFragment()
                 else -> DisplayFragment()

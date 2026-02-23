@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:paddingBottom="88dp">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="OOF CONTROL" android:textColor="@color/accent"
+                android:textSize="11sp" android:letterSpacing="0.15" android:fontFamily="sans-serif-medium"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Game Profiles" android:textColor="@color/text_primary"
+                android:textSize="24sp" android:fontFamily="sans-serif-medium"
+                android:layout_marginTop="4dp"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Auto-applies touch settings when you launch a game"
+                android:textColor="@color/text_secondary" android:textSize="12sp"
+                android:layout_marginTop="4dp" android:layout_marginBottom="12dp"/>
+
+            <TextView android:id="@+id/tv_ioctl_status"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Checking…" android:textSize="11sp"
+                android:fontFamily="monospace" android:layout_marginBottom="16dp"/>
+
+            <!-- Accessibility banner -->
+            <androidx.cardview.widget.CardView android:id="@+id/card_accessibility"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="#1FFFAB00" app:cardCornerRadius="16dp" app:cardElevation="0dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="⚠  Game Watcher not running"
+                        android:textColor="@color/orange" android:textSize="14sp" android:fontFamily="sans-serif-medium"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Game Watcher service is not running. Tap below to start it (requires root)."
+                        android:textColor="@color/text_secondary" android:textSize="12sp"
+                        android:layout_marginTop="4dp" android:layout_marginBottom="12dp"/>
+                    <com.google.android.material.button.MaterialButton android:id="@+id/btn_enable_accessibility"
+                        android:layout_width="wrap_content" android:layout_height="36dp"
+                        android:text="Start Game Watcher" android:textSize="12sp"
+                        style="@style/Widget.Material3.Button.OutlinedButton"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Active game badge -->
+            <androidx.cardview.widget.CardView android:id="@+id/card_active_game"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" android:visibility="gone"
+                app:cardBackgroundColor="#1F00E676" app:cardCornerRadius="16dp" app:cardElevation="0dp">
+                <TextView android:id="@+id/tv_active_game"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:padding="14dp" android:text="🎮 Active: …"
+                    android:textColor="@color/accent" android:textSize="14sp" android:fontFamily="sans-serif-medium"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="YOUR GAMES" android:textColor="@color/text_secondary"
+                android:textSize="12sp" android:letterSpacing="0.1" android:layout_marginBottom="12dp"/>
+
+            <!-- Empty state -->
+            <LinearLayout android:id="@+id/layout_empty"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:gravity="center"
+                android:padding="40dp" android:visibility="gone">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🎮" android:textSize="48sp" android:layout_marginBottom="16dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="No games added yet"
+                    android:textColor="@color/text_primary" android:textSize="18sp"
+                    android:fontFamily="sans-serif-medium" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Tap + to add a game. Touch settings will apply automatically when you launch it."
+                    android:textColor="@color/text_secondary" android:textSize="13sp"
+                    android:gravity="center" android:layout_marginTop="8dp"/>
+            </LinearLayout>
+
+            <!-- Profile list -->
+            <androidx.recyclerview.widget.RecyclerView android:id="@+id/rv_profiles"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:clipToPadding="false" android:nestedScrollingEnabled="false"
+                android:visibility="gone"/>
+
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="← Swipe to remove  •  Tap to configure"
+                android:textColor="@color/text_secondary" android:textSize="11sp"
+                android:gravity="center" android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_game"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end" android:layout_margin="24dp"
+        android:contentDescription="Add game" android:src="@android:drawable/ic_input_add"
+        app:tint="@color/black" app:backgroundTint="@color/accent"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

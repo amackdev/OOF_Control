@@ -118,26 +118,23 @@ object RootController {
     suspend fun setDT2W(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
         val value = if (enabled) 1 else 0
         try {
-            // Try MIUI Touch Feature first
-            if (MiuiTouchFeature.isAvailable()) {
-                if (MiuiTouchFeature.setModeValue(MiuiTouchFeature.TOUCH_ID_PRIMARY, MiuiTouchFeature.TOUCH_DOUBLETAP_MODE, value)) {
-                    Log.i(TAG, "DT2W set via MiuiTouchFeature: $enabled")
+            // 1st priority: Xiaomi Touch ioctl via IoctlBridge
+            if (IoctlBridge.isDeviceAvailable()) {
+                val r = IoctlBridge.setMode(0, TouchConstants.MODE_DOUBLETAP, value)
+                if (r.ok) {
+                    Log.i(TAG, "DT2W set via IoctlBridge: $enabled")
                     return@withContext true
                 }
             }
-            // Fallback to file paths
+
+            // 2nd priority: direct sysfs/procfs paths
             val strValue = if (enabled) "1" else "0"
             when {
-                File("/proc/tp_gesture").exists() -> {
-                    writeFile("/proc/tp_gesture", strValue)
-                }
-                File("/sys/touchpanel/double_tap").exists() -> {
-                    writeFile("/sys/touchpanel/double_tap", strValue)
-                }
-                else -> {
-                    Log.w(TAG, "No DT2W control method available")
-                    false
-                }
+                File("/proc/tp_gesture").exists() -> writeFile("/proc/tp_gesture", strValue)
+                File("/sys/touchpanel/double_tap").exists() -> writeFile("/sys/touchpanel/double_tap", strValue)
+                File("/sys/class/touch/touch_dev/double_tap_enable").exists() ->
+                    writeFile("/sys/class/touch/touch_dev/double_tap_enable", strValue)
+                else -> { Log.w(TAG, "No DT2W control method available"); false }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error setting DT2W", e)
@@ -147,20 +144,12 @@ object RootController {
 
     suspend fun getDT2W(): Boolean = withContext(Dispatchers.IO) {
         try {
-            // Try MIUI Touch Feature first
-            if (MiuiTouchFeature.isAvailable()) {
-                val value = MiuiTouchFeature.getModeValue(
-                    MiuiTouchFeature.TOUCH_ID_PRIMARY,
-                    MiuiTouchFeature.TOUCH_DOUBLETAP_MODE
-                )
-                if (value >= 0) {
-                    return@withContext value == 1
-                }
-            }
-            // Fallback to file paths
+            // sysfs/procfs
             when {
-                File("/proc/tp_gesture").exists() -> { readFile("/proc/tp_gesture") == "1" }
-                File("/sys/touchpanel/double_tap").exists() -> { readFile("/sys/touchpanel/double_tap") == "1" }
+                File("/proc/tp_gesture").exists() -> readFile("/proc/tp_gesture") == "1"
+                File("/sys/touchpanel/double_tap").exists() -> readFile("/sys/touchpanel/double_tap") == "1"
+                File("/sys/class/touch/touch_dev/double_tap_enable").exists() ->
+                    readFile("/sys/class/touch/touch_dev/double_tap_enable") == "1"
                 else -> false
             }
         } catch (e: Exception) {
@@ -275,6 +264,45 @@ object RootController {
 
     suspend fun getPerformanceMode(): Boolean = withContext(Dispatchers.IO) {
         getProperty("persist.xiaomi.performance") == "enable"
+    }
+
+    // ============ GAME FEATURES (via IoctlBridge / native_ioctl_v2) ============
+
+    private val TOUCH_ID = 0
+
+    suspend fun setGameMode(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
+        IoctlBridge.setMode(TOUCH_ID, TouchConstants.MODE_GAME_MODE, if (enabled) 1 else 0).ok
+    }
+
+    suspend fun setGameHighReportRate(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
+        IoctlBridge.setMode(TOUCH_ID, TouchConstants.MODE_REPORT_RATE, if (enabled) 1 else 0).ok
+    }
+
+    suspend fun setGameSensitivity(level: Int): Boolean = withContext(Dispatchers.IO) {
+        IoctlBridge.setMode(TOUCH_ID, TouchConstants.MODE_AIM_SENSITIVITY, level).ok
+    }
+
+    suspend fun setGameEdgeFilter(level: Int): Boolean = withContext(Dispatchers.IO) {
+        IoctlBridge.setMode(TOUCH_ID, TouchConstants.MODE_EDGE_FILTER, level).ok
+    }
+
+    suspend fun setGameTapStability(level: Int): Boolean = withContext(Dispatchers.IO) {
+        IoctlBridge.setMode(TOUCH_ID, TouchConstants.MODE_TAP_STABILITY, level).ok
+    }
+
+    suspend fun setGameUpThreshold(level: Int): Boolean = withContext(Dispatchers.IO) {
+        IoctlBridge.setMode(TOUCH_ID, TouchConstants.MODE_UP_THRESHOLD, level).ok
+    }
+
+    suspend fun resetGameModeDefaults(): Boolean = withContext(Dispatchers.IO) {
+        listOf(
+            TouchConstants.MODE_GAME_MODE,
+            TouchConstants.MODE_REPORT_RATE,
+            TouchConstants.MODE_AIM_SENSITIVITY,
+            TouchConstants.MODE_EDGE_FILTER,
+            TouchConstants.MODE_TAP_STABILITY,
+            TouchConstants.MODE_UP_THRESHOLD,
+        ).map { IoctlBridge.resetMode(TOUCH_ID, it).ok }.any { it }
     }
 
     // ============ TOUCH BOOST ============

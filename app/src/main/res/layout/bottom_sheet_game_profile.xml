@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/card_background">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:background="#40808080" />
+
+    <TextView
+        android:id="@+id/tv_sheet_game_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Game Name"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Touch settings applied when this game is running"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="24dp" />
+
+    <!-- High Report Rate -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡ High Report Rate (480Hz)"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Maximum touch polling via ioctl"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_sheet_high_rr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Sensitivity -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Touch Sensitivity" android:textColor="@color/text_primary"
+            android:textSize="14sp" android:fontFamily="sans-serif-medium"/>
+        <TextView android:id="@+id/tv_sheet_sens_val" android:layout_width="28dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="@color/accent" android:textSize="14sp"
+            android:fontFamily="sans-serif-medium" android:gravity="end"/>
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_sheet_sensitivity"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progress="2" android:layout_marginBottom="16dp"/>
+
+    <!-- Edge Filter -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Edge Filter" android:textColor="@color/text_primary"
+            android:textSize="14sp" android:fontFamily="sans-serif-medium"/>
+        <TextView android:id="@+id/tv_sheet_edge_val" android:layout_width="28dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="@color/accent" android:textSize="14sp"
+            android:fontFamily="sans-serif-medium" android:gravity="end"/>
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_sheet_edge_filter"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progress="2" android:layout_marginBottom="16dp"/>
+
+    <!-- Tap Stability -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Tap Stability" android:textColor="@color/text_primary"
+            android:textSize="14sp" android:fontFamily="sans-serif-medium"/>
+        <TextView android:id="@+id/tv_sheet_tap_val" android:layout_width="28dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="@color/accent" android:textSize="14sp"
+            android:fontFamily="sans-serif-medium" android:gravity="end"/>
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_sheet_tap_stability"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progress="2" android:layout_marginBottom="16dp"/>
+
+    <!-- Up Threshold -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Up Threshold" android:textColor="@color/text_primary"
+            android:textSize="14sp" android:fontFamily="sans-serif-medium"/>
+        <TextView android:id="@+id/tv_sheet_up_val" android:layout_width="28dp" android:layout_height="wrap_content"
+            android:text="2" android:textColor="@color/accent" android:textSize="14sp"
+            android:fontFamily="sans-serif-medium" android:gravity="end"/>
+    </LinearLayout>
+    <SeekBar android:id="@+id/seek_sheet_up_threshold"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="4" android:progress="2" android:layout_marginBottom="28dp"/>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_sheet_cancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Cancel"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_sheet_save"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Save" />
+    </LinearLayout>
+
+</LinearLayout>
