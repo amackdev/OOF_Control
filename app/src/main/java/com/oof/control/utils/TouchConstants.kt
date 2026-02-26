@@ -42,34 +42,9 @@ object TouchConstants {
     const val MODE_TAP_STABILITY = 5
     const val MODE_6             = 6
     const val MODE_EDGE_FILTER   = 7
-    const val MODE_ORIENTATION   = 8
     const val MODE_REPORT_RATE   = 9
-    const val MODE_FOD_LONGPRESS = 10
-    const val MODE_SINGLETAP     = 11
-    const val MODE_12            = 12
-    const val MODE_13            = 13
     const val MODE_DOUBLETAP     = 14
     const val MODE_GRIP_LONG     = 15
-    const val MODE_FOD_SINGLETAP = 16
-    const val MODE_SLEEP_STATE   = 17
-    const val MODE_LOG_LEVEL     = 18
-    const val MODE_TOUCH_POWER   = 19
-    const val MODE_STYLUS_20     = 20
-    const val MODE_21            = 21
-    const val MODE_STYLUS_22     = 22
-    const val MODE_23            = 23
-    const val MODE_STYLUS_QUICK  = 24
-    const val MODE_IC_25         = 25
-    const val MODE_PALM_CTRL     = 26
-    const val MODE_SENSORHUB     = 27
-    const val MODE_28            = 28
-    const val MODE_STYLUS_29     = 29
-    const val MODE_FLIP          = 30
-    const val MODE_SENSOR_ENABLE = 31
-    const val MODE_FOD_GESTURE   = 32
-    const val MODE_STYLUS_33     = 33
-    const val MODE_PAD_SINGLETAP = 34
-
     // Struct sizes
     const val COMMON_DATA_SIZE   = 1030   // s8+u8+u16+u16+s32[256]
     const val HARDWARE_PARAM_SIZE = 214

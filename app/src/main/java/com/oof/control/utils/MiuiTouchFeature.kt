@@ -20,19 +20,8 @@ object MiuiTouchFeature {
     const val TOUCH_WGH_MAX                 = TouchConstants.MODE_TAP_STABILITY
     const val TOUCH_WGH_STEP                = TouchConstants.MODE_6
     const val TOUCH_EDGE_FILTER             = TouchConstants.MODE_EDGE_FILTER
-    const val TOUCH_MODE_DIRECTION          = TouchConstants.MODE_ORIENTATION
     const val TOUCH_DOUBLETAP_MODE          = TouchConstants.MODE_DOUBLETAP
     const val TOUCH_EDGE_MODE               = TouchConstants.MODE_GRIP_LONG
-    const val TOUCH_DEBUG_LEVEL             = TouchConstants.MODE_LOG_LEVEL
-    const val TOUCH_STYLUS_MODE             = TouchConstants.MODE_STYLUS_20
-    const val TOUCH_PERFORMANCE_MODE        = TouchConstants.MODE_21
-    const val TOUCH_STYLUS_HOPPING_MODE     = TouchConstants.MODE_STYLUS_22
-    const val TOUCH_PASSIVE_PEN_MODE        = TouchConstants.MODE_23
-    const val TOUCH_STYLUS_QUICK_NOTE_MODE  = TouchConstants.MODE_STYLUS_QUICK
-    const val TOUCH_TP_EDGE_MODE            = TouchConstants.MODE_IC_25
-    const val TOUCH_STYLUS_SLEEP_STATE      = TouchConstants.MODE_STYLUS_29
-    const val TOUCH_DISPLAY_ID_STATE        = TouchConstants.MODE_FLIP
-    const val TOUCH_SINGLETAP_MODE          = TouchConstants.MODE_PAD_SINGLETAP
 
     const val TOUCH_ID_PRIMARY   = 0
     const val TOUCH_ID_SECONDARY = 1
