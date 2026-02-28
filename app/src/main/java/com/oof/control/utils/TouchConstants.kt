@@ -40,7 +40,7 @@ object TouchConstants {
     const val MODE_TOLERANCE     = 3
     const val MODE_AIM_SENSITIVITY = 4
     const val MODE_TAP_STABILITY = 5
-    const val MODE_6             = 6
+    const val MODE_EXPERT        = 6
     const val MODE_EDGE_FILTER   = 7
     const val MODE_REPORT_RATE   = 9
     const val MODE_DOUBLETAP     = 14
@@ -50,4 +50,8 @@ object TouchConstants {
     const val HARDWARE_PARAM_SIZE = 214
 
     const val MAX_TOUCH_PANELS   = 2
+
+    // ── Marble (legacy) driver constants ────────────────────────────
+    const val MARBLE_BUF_INTS    = 256
+    const val MARBLE_BUF_BYTES   = 1024
 }
