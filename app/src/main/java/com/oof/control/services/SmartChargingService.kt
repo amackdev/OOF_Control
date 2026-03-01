@@ -134,7 +134,7 @@ class SmartChargingService : Service() {
                     ChargingController.stopCharging()
                     isChargingSuspended = true
                     Log.i(TAG, "Charging paused at $batteryLevel% (limit: $effectiveLimit%)")
-                    return
+                    return UPDATE_INTERVAL
                 }
             } else {
                 // No charge limit active - ensure charging is resumed if it was suspended
@@ -147,7 +147,7 @@ class SmartChargingService : Service() {
 
             // If charging is suspended, don't control current
             if (isChargingSuspended) {
-                return
+                return UPDATE_INTERVAL
             }
 
             // Fast charging - control current

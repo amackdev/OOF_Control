@@ -136,43 +136,6 @@ object ChargingController {
         microwatts / 1_000_000f
     }
 
-    // ============ TEMPERATURE-BASED CURRENT ============
-
-    /**
-     * Get recommended charging current based on battery temperature.
-     * Uses DeviceConfig charging tables.
-     *
-     * @param tempDeciC Temperature in tenths of degrees Celsius
-     * @param batteryLevel Current battery percentage
-     * @param sportMode Whether sport mode is enabled
-     * @return Recommended current in microamps
-     */
-    fun getRecommendedCurrent(tempDeciC: Int, batteryLevel: Int, sportMode: Boolean): Int {
-        val tempC = tempDeciC / 10
-
-        // Get appropriate charging table
-        val table = if (sportMode) {
-            DeviceConfig.getChargingTable(sportMode = true)
-        } else {
-            DeviceConfig.getChargingTable(sportMode = false)
-        }
-
-        // Find appropriate current based on temperature
-        for ((maxTemp, current) in table) {
-            if (tempC <= maxTemp) {
-                // Reduce current at high battery levels
-                return when {
-                    batteryLevel >= 90 -> current / 2
-                    batteryLevel >= 80 -> (current * 0.75).toInt()
-                    else -> current
-                }
-            }
-        }
-
-        // Default to minimum current if temperature exceeds all thresholds
-        return table.lastOrNull()?.second ?: 500000 // 500mA minimum
-    }
-
     // ============ CHARGING INFO ============
 
     /**

@@ -92,9 +92,8 @@ class BootReceiver : BroadcastReceiver() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private inline fun applySetting(name: String, block: () -> Unit) {
-        try {
-            block()
-        } catch (_: Exception) { }
+        try { block() } catch (_: Exception) { }
     }
 }
