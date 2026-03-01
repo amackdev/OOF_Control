@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentDisplayBinding
 import com.oof.control.utils.PrefsManager
-import com.oof.control.utils.RootController
+import com.oof.control.utils.TouchController
 import kotlinx.coroutines.launch
 
 class DisplayFragment : Fragment() {
@@ -61,7 +61,7 @@ class DisplayFragment : Fragment() {
             
             // Touch Rate - check support in coroutine
             viewLifecycleOwner.lifecycleScope.launch {
-                val touchRateSupported = RootController.isTouchRateSupported()
+                val touchRateSupported = TouchController.isTouchRateSupported()
                 binding.switchTouchRate.isEnabled = touchRateSupported
                 binding.cardTouchRate.alpha = if (touchRateSupported) 1.0f else 0.5f
                 
@@ -142,7 +142,7 @@ class DisplayFragment : Fragment() {
             
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    val success = RootController.setDT2W(isChecked)
+                    val success = TouchController.setDT2W(isChecked)
                     if (success) {
                         prefs.dt2wEnabled = isChecked
                         showToast("Double Tap to Wake ${if (isChecked) "enabled" else "disabled"}")
@@ -168,7 +168,7 @@ class DisplayFragment : Fragment() {
             
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    if (!RootController.isTouchRateSupported()) {
+                    if (!TouchController.isTouchRateSupported()) {
                         isUpdatingUI = true
                         binding.switchTouchRate.isChecked = false
                         binding.switchTouchRate.isEnabled = false
@@ -177,7 +177,7 @@ class DisplayFragment : Fragment() {
                         return@launch
                     }
                     
-                    val success = RootController.setTouchRate(isChecked)
+                    val success = TouchController.setTouchRate(isChecked)
                     if (success) {
                         prefs.touchRateEnabled = isChecked
                         showToast("High Touch Rate ${if (isChecked) "enabled" else "disabled"}")
@@ -244,7 +244,7 @@ class DisplayFragment : Fragment() {
     private fun setRefreshRate(rate: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val success = RootController.setRefreshRate(requireContext(), rate)
+                val success = TouchController.setRefreshRate(requireContext(), rate)
                 if (success) {
                     prefs.refreshRate = rate
                     updateRefreshRateButtons(rate)
@@ -270,7 +270,7 @@ class DisplayFragment : Fragment() {
     private fun setProp(propName: String, value: Boolean, displayName: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val success = RootController.setSystemProp(propName, value.toString())
+                val success = TouchController.setSystemProp(propName, value.toString())
                 if (success) {
                     showToast("$displayName ${if (value) "enabled" else "disabled"}")
                 } else {
@@ -303,7 +303,7 @@ class DisplayFragment : Fragment() {
     }
     
     private suspend fun getPropBool(propName: String): Boolean {
-        val value = RootController.getSystemProp(propName)
+        val value = TouchController.getSystemProp(propName)
         return value.equals("true", ignoreCase = true) || value == "1"
     }
     

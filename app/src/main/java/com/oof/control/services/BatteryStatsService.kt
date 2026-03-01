@@ -17,9 +17,10 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.oof.control.MainActivity
 import com.oof.control.R
+import com.oof.control.utils.BatteryController
+import com.oof.control.utils.ChargingController
 import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.FileUtils
-import com.oof.control.utils.RootController
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -355,14 +356,14 @@ class BatteryStatsService : Service() {
     }
     
     private suspend fun updateStats() {
-        val batteryLevel = RootController.getBatteryLevel()
-        val temp = RootController.getBatteryTemp()
+        val batteryLevel = BatteryController.getBatteryLevel()
+        val temp = BatteryController.getBatteryTemp()
         val currentMa = getCurrentNow()
-        val isCharging = RootController.getUsbType() != "Unknown"
-        
+        val isCharging = ChargingController.getUsbType() != "Unknown"
+
         if (isCharging) {
             val tempC = temp / 10.0
-            val sportMode = RootController.getSportMode()
+            val sportMode = ChargingController.getSportMode()
             
             // Get charging current (positive value) in mA
             val chargingCurrent = kotlin.math.abs(currentMa)

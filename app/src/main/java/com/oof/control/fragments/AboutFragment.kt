@@ -8,9 +8,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentAboutBinding
+import com.oof.control.utils.ChargingController
 import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.PrefsManager
-import com.oof.control.utils.RootController
+import com.oof.control.utils.TouchController
 import kotlinx.coroutines.launch
 
 class AboutFragment : Fragment() {
@@ -87,8 +88,8 @@ class AboutFragment : Fragment() {
             }
             
             // Feature support
-            binding.tvTouchRateSupport.text = if (RootController.isTouchRateSupported()) "✓" else "✗"
-            binding.tvSportModeSupport.text = if (RootController.isSportModeSupported()) "✓" else "✗"
+            binding.tvTouchRateSupport.text = if (TouchController.isTouchRateSupported()) "✓" else "✗"
+            binding.tvSportModeSupport.text = if (ChargingController.isSportModeSupported()) "✓" else "✗"
             binding.tvDt2wSupport.text = if (DeviceConfig.dt2wPath != null) "✓" else "✗"
         }
     }

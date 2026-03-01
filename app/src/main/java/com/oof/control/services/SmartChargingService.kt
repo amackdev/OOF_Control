@@ -5,9 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.oof.control.utils.BatteryController
+import com.oof.control.utils.ChargingController
 import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.PrefsManager
-import com.oof.control.utils.RootController
 import kotlinx.coroutines.*
 
 /**
@@ -77,7 +78,7 @@ class SmartChargingService : Service() {
         // Resume charging on destroy
         runBlocking {
             try {
-                RootController.resumeCharging()
+                ChargingController.resumeCharging()
             } catch (e: Exception) {
                 Log.e(TAG, "Error resuming charging on destroy", e)
             }
@@ -102,39 +103,39 @@ class SmartChargingService : Service() {
     
     private suspend fun controlCharging() {
         try {
-            val usbType = RootController.getUsbType()
+            val usbType = ChargingController.getUsbType()
             val isChargerConnected = usbType != "Unknown"
-            
+
             // If not charging, ALWAYS disable suspend and clear state
             if (!isChargerConnected) {
                 // Always call resumeCharging to ensure input_suspend is set to 0
-                RootController.resumeCharging()
+                ChargingController.resumeCharging()
                 if (isChargingSuspended) {
                     isChargingSuspended = false
                     Log.i(TAG, "Charging latch cleared on disconnect")
                 }
                 return
             }
-            
-            val batteryLevel = RootController.getBatteryLevel()
-            
+
+            val batteryLevel = BatteryController.getBatteryLevel()
+
             // Get effective charge limit - prefer OS value if available, else use app setting
             val effectiveLimit = getEffectiveChargeLimit()
 
             // Charge limit control - check resume FIRST before suspend
             if (effectiveLimit != null) {
                 val resumeThreshold = effectiveLimit - CHARGE_LIMIT_HYSTERESIS
-                
+
                 // Check if we should RESUME charging (battery dropped below threshold)
                 if (isChargingSuspended && batteryLevel <= resumeThreshold) {
-                    RootController.resumeCharging()
+                    ChargingController.resumeCharging()
                     isChargingSuspended = false
                     Log.i(TAG, "Charging resumed - battery at $batteryLevel% (threshold: $resumeThreshold%)")
                 }
-                
+
                 // Check if we should SUSPEND charging (battery reached limit)
                 if (!isChargingSuspended && batteryLevel >= effectiveLimit && usbType != "USB") {
-                    RootController.stopCharging()
+                    ChargingController.stopCharging()
                     isChargingSuspended = true
                     Log.i(TAG, "Charging paused at $batteryLevel% (limit: $effectiveLimit%)")
                     return
@@ -142,31 +143,31 @@ class SmartChargingService : Service() {
             } else {
                 // No charge limit active - ensure charging is resumed if it was suspended
                 if (isChargingSuspended) {
-                    RootController.resumeCharging()
+                    ChargingController.resumeCharging()
                     isChargingSuspended = false
                     Log.i(TAG, "Charging resumed - charge limit disabled")
                 }
             }
-            
+
             // If charging is suspended, don't control current
             if (isChargingSuspended) {
                 return
             }
 
             // Fast charging - control current
-            val isFastCharging = RootController.isFastCharging()
+            val isFastCharging = ChargingController.isFastCharging()
             if (isFastCharging) {
-                val temp = RootController.getBatteryTemp()
-                val sportMode = RootController.getSportMode()
-                val maxPower = RootController.getMaxPower()
-                
+                val temp = BatteryController.getBatteryTemp()
+                val sportMode = ChargingController.getSportMode()
+                val maxPower = ChargingController.getMaxPower()
+
                 val needsUpdate = (batteryLevel != lastBatteryLevel) ||
                     (kotlin.math.abs(temp - lastTemp) > 10) ||
                     (sportMode != lastSportMode)
 
                 if (needsUpdate) {
                     val current = DeviceConfig.getChargingCurrent(temp, batteryLevel, sportMode, maxPower)
-                    RootController.setChargingCurrent(current)
+                    ChargingController.setChargingCurrent(current)
 
                     lastBatteryLevel = batteryLevel
                     lastTemp = temp

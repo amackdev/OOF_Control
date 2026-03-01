@@ -1,448 +1,233 @@
 package com.oof.control.utils
 
 import android.content.Context
-import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
-import com.oof.control.utils.FileUtils
 
 /**
- * Handles all root/system operations
- * Uses MIUI ITouchFeature where available, direct file access as fallback
+ * Legacy facade for backward compatibility.
+ *
+ * This object delegates to the new specialized controllers:
+ * - [TouchController] for touch and display operations
+ * - [BatteryController] for battery information
+ * - [ChargingController] for charging control
+ * - [ShellExecutor] for low-level shell operations
+ *
+ * All methods are deprecated - migrate to the appropriate controller.
  */
+@Suppress("DEPRECATION")
 object RootController {
-
-    private const val TAG = "RootController"
-    
-    // Battery drain tracking
-    private var lastCurrentNow = 0
-    private var lastUpdateTime = 0L
-
-    // ============ SHELL EXECUTION ============
-
-    private fun executeCommandSync(command: String): CommandResult {
-        return try {
-            val process = Runtime.getRuntime().exec(arrayOf("sh", "-c", command))
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            val errorReader = BufferedReader(InputStreamReader(process.errorStream))
-
-            val output = reader.readLines()
-            val errors = errorReader.readLines()
-            val exitCode = process.waitFor()
-
-            reader.close()
-            errorReader.close()
-
-            CommandResult(exitCode == 0, output, errors)
-        } catch (e: Exception) {
-            Log.e(TAG, "Command failed: $command", e)
-            CommandResult(false, emptyList(), listOf(e.message ?: "Unknown error"))
-        }
-    }
-
-    private suspend fun executeCommand(command: String): CommandResult = withContext(Dispatchers.IO) {
-        executeCommandSync(command)
-    }
-
-    // ============ DIRECT FILE ACCESS ============
-
-    private fun readFile(path: String): String? {
-        return try {
-            FileUtils.readOneLine(path)
-                ?: run {
-                    // Root fallback
-                    val result = executeCommandSync("cat '$path' 2>/dev/null")
-                    result.output.firstOrNull()?.trim()
-                }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error reading $path", e)
-            null
-        }
-    }
-
-    private fun writeFile(path: String, value: String): Boolean {
-        return try {
-            if (FileUtils.fileExists(path) && FileUtils.isFileWritable(path)) {
-                FileUtils.writeLine(path, value)
-            } else {
-                // Root fallback
-                executeCommandSync("echo '$value' > '$path'").isSuccess
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error writing $path", e)
-            executeCommandSync("echo '$value' > '$path'").isSuccess
-        }
-    }
 
     // ============ INITIALIZATION ============
 
-    suspend fun isRootAvailable(): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val file = File(DeviceConfig.BATTERY_CAPACITY)
-            file.exists() && file.canRead()
-        } catch (e: Exception) {
-            false
-        }
-    }
+    @Deprecated(
+        "Use BatteryController.isAvailable() instead",
+        ReplaceWith("BatteryController.isAvailable()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun isRootAvailable(): Boolean = BatteryController.isAvailable()
 
     // ============ SYSTEM PROPERTY OPERATIONS ============
 
-    suspend fun setProperty(prop: String, value: String): Boolean = withContext(Dispatchers.IO) {
-        val result = executeCommand("setprop '$prop' '$value'")
-        if (!result.isSuccess) {
-            val resetResult = executeCommand("resetprop '$prop' '$value'")
-            resetResult.isSuccess
-        } else {
-            true
-        }
-    }
+    @Deprecated(
+        "Use ShellExecutor.setProperty() instead",
+        ReplaceWith("ShellExecutor.setProperty(prop, value)", "com.oof.control.utils.ShellExecutor")
+    )
+    suspend fun setProperty(prop: String, value: String): Boolean = ShellExecutor.setProperty(prop, value)
 
-    suspend fun getProperty(prop: String): String? = withContext(Dispatchers.IO) {
-        try {
-            val process = Runtime.getRuntime().exec(arrayOf("getprop", prop))
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            val result = reader.readLine()?.trim()
-            reader.close()
-            process.waitFor()
-            result?.takeIf { it.isNotEmpty() }
-        } catch (e: Exception) {
-            null
-        }
-    }
+    @Deprecated(
+        "Use ShellExecutor.getProperty() instead",
+        ReplaceWith("ShellExecutor.getProperty(prop)", "com.oof.control.utils.ShellExecutor")
+    )
+    suspend fun getProperty(prop: String): String? = ShellExecutor.getProperty(prop)
 
     // ============ DOUBLE TAP TO WAKE ============
 
-    suspend fun setDT2W(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
-        val value = if (enabled) 1 else 0
-        try {
-            // Try MIUI Touch Feature first
-            if (MiuiTouchFeature.isAvailable()) {
-                if (MiuiTouchFeature.setModeValue(MiuiTouchFeature.TOUCH_ID_PRIMARY, MiuiTouchFeature.TOUCH_DOUBLETAP_MODE, value)) {
-                    Log.i(TAG, "DT2W set via MiuiTouchFeature: $enabled")
-                    return@withContext true
-                }
-            }
-            // Fallback to file paths
-            val strValue = if (enabled) "1" else "0"
-            when {
-                File("/proc/tp_gesture").exists() -> {
-                    writeFile("/proc/tp_gesture", strValue)
-                }
-                File("/sys/touchpanel/double_tap").exists() -> {
-                    writeFile("/sys/touchpanel/double_tap", strValue)
-                }
-                else -> {
-                    Log.w(TAG, "No DT2W control method available")
-                    false
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting DT2W", e)
-            false
-        }
-    }
+    @Deprecated(
+        "Use TouchController.setDT2W() instead",
+        ReplaceWith("TouchController.setDT2W(enabled)", "com.oof.control.utils.TouchController")
+    )
+    suspend fun setDT2W(enabled: Boolean): Boolean = TouchController.setDT2W(enabled)
 
-    suspend fun getDT2W(): Boolean = withContext(Dispatchers.IO) {
-        try {
-            // Try MIUI Touch Feature first
-            if (MiuiTouchFeature.isAvailable()) {
-                val value = MiuiTouchFeature.getModeValue(
-                    MiuiTouchFeature.TOUCH_ID_PRIMARY,
-                    MiuiTouchFeature.TOUCH_DOUBLETAP_MODE
-                )
-                if (value >= 0) {
-                    return@withContext value == 1
-                }
-            }
-            // Fallback to file paths
-            when {
-                File("/proc/tp_gesture").exists() -> { readFile("/proc/tp_gesture") == "1" }
-                File("/sys/touchpanel/double_tap").exists() -> { readFile("/sys/touchpanel/double_tap") == "1" }
-                else -> false
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting DT2W", e)
-            false
-        }
-    }
+    @Deprecated(
+        "Use TouchController.getDT2W() instead",
+        ReplaceWith("TouchController.getDT2W()", "com.oof.control.utils.TouchController")
+    )
+    suspend fun getDT2W(): Boolean = TouchController.getDT2W()
 
     // ============ TOUCH RATE (480Hz) ============
 
-    suspend fun setTouchRate(highRate: Boolean): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val path = DeviceConfig.touchRatePath
-            if (path == null) {
-                Log.w(TAG, "Touch rate path not available")
-                return@withContext false
-            }
+    @Deprecated(
+        "Use TouchController.setTouchRate() instead",
+        ReplaceWith("TouchController.setTouchRate(highRate)", "com.oof.control.utils.TouchController")
+    )
+    suspend fun setTouchRate(highRate: Boolean): Boolean = TouchController.setTouchRate(highRate)
 
-            if (!File(path).exists()) {
-                Log.w(TAG, "Touch rate file doesn't exist: $path")
-                return@withContext false
-            }
+    @Deprecated(
+        "Use TouchController.getTouchRate() instead",
+        ReplaceWith("TouchController.getTouchRate()", "com.oof.control.utils.TouchController")
+    )
+    suspend fun getTouchRate(): Boolean = TouchController.getTouchRate()
 
-            val value = if (highRate) "1" else "0"
-            val success = writeFile(path, value)
-
-            if (success) {
-                Log.i(TAG, "Touch rate set to ${if (highRate) "480Hz" else "240Hz"}")
-            } else {
-                Log.e(TAG, "Failed to set touch rate")
-            }
-
-            success
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting touch rate", e)
-            false
-        }
-    }
-
-    suspend fun getTouchRate(): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val path = DeviceConfig.touchRatePath ?: return@withContext false
-            if (!File(path).exists()) return@withContext false
-
-            readFile(path)?.contains("480HZ", ignoreCase = true) == true
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting touch rate", e)
-            false
-        }
-    }
-
-    suspend fun isTouchRateSupported(): Boolean = withContext(Dispatchers.IO) {
-        val path = DeviceConfig.touchRatePath
-        path != null && File(path).exists()
-    }
+    @Deprecated(
+        "Use TouchController.isTouchRateSupported() instead",
+        ReplaceWith("TouchController.isTouchRateSupported()", "com.oof.control.utils.TouchController")
+    )
+    suspend fun isTouchRateSupported(): Boolean = TouchController.isTouchRateSupported()
 
     // ============ REFRESH RATE ============
 
-    suspend fun setRefreshRate(context: Context, rate: Int): Boolean = withContext(Dispatchers.IO) {
-        try {
-            // Method 1: Direct Settings.System (requires WRITE_SETTINGS)
-            try {
-                android.provider.Settings.System.putFloat(
-                    context.contentResolver,
-                    "peak_refresh_rate",
-                    rate.toFloat()
-                )
-                android.provider.Settings.System.putFloat(
-                    context.contentResolver,
-                    "min_refresh_rate",
-                    rate.toFloat()
-                )
-                Log.i(TAG, "Refresh rate set via Settings.System: ${rate}Hz")
-                return@withContext true
-            } catch (se: SecurityException) {
-                Log.w(TAG, "No WRITE_SETTINGS permission, trying alternatives")
-            }
+    @Deprecated(
+        "Use TouchController.setRefreshRate() instead",
+        ReplaceWith("TouchController.setRefreshRate(context, rate)", "com.oof.control.utils.TouchController")
+    )
+    suspend fun setRefreshRate(context: Context, rate: Int): Boolean = TouchController.setRefreshRate(context, rate)
 
-            // Method 2: Shell settings command
-            val cmd1 = executeCommand("settings put system peak_refresh_rate $rate.0")
-            val cmd2 = executeCommand("settings put system min_refresh_rate $rate.0")
-
-            if (cmd1.isSuccess && cmd2.isSuccess) {
-                Log.i(TAG, "Refresh rate set via shell: ${rate}Hz")
-                return@withContext true
-            }
-
-            Log.e(TAG, "All refresh rate methods failed")
-            false
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting refresh rate", e)
-            false
-        }
-    }
-
-    suspend fun getRefreshRate(): Int = withContext(Dispatchers.IO) {
-        try {
-            val result = executeCommand("settings get system min_refresh_rate")
-            if (result.isSuccess && result.output.isNotEmpty()) {
-                result.output[0].trim().toFloatOrNull()?.toInt() ?: 120
-            } else 120
-        } catch (e: Exception) {
-            120
-        }
-    }
+    @Deprecated(
+        "Use TouchController.getRefreshRate() instead",
+        ReplaceWith("TouchController.getRefreshRate()", "com.oof.control.utils.TouchController")
+    )
+    suspend fun getRefreshRate(): Int = TouchController.getRefreshRate()
 
     // ============ PERFORMANCE MODE ============
 
-    suspend fun setPerformanceMode(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
-        setProperty("persist.xiaomi.performance", if (enabled) "enable" else "disable")
-    }
+    @Deprecated(
+        "Use TouchController.setPerformanceMode() instead",
+        ReplaceWith("TouchController.setPerformanceMode(enabled)", "com.oof.control.utils.TouchController")
+    )
+    suspend fun setPerformanceMode(enabled: Boolean): Boolean = TouchController.setPerformanceMode(enabled)
 
-    suspend fun getPerformanceMode(): Boolean = withContext(Dispatchers.IO) {
-        getProperty("persist.xiaomi.performance") == "enable"
-    }
+    @Deprecated(
+        "Use TouchController.getPerformanceMode() instead",
+        ReplaceWith("TouchController.getPerformanceMode()", "com.oof.control.utils.TouchController")
+    )
+    suspend fun getPerformanceMode(): Boolean = TouchController.getPerformanceMode()
 
     // ============ TOUCH BOOST ============
 
-    suspend fun setTouchBoost(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
-        setProperty("persist.oof_touchboost.enable", if (enabled) "true" else "false")
-    }
+    @Deprecated(
+        "Use TouchController.setTouchBoost() instead",
+        ReplaceWith("TouchController.setTouchBoost(enabled)", "com.oof.control.utils.TouchController")
+    )
+    suspend fun setTouchBoost(enabled: Boolean): Boolean = TouchController.setTouchBoost(enabled)
 
-    suspend fun getTouchBoost(): Boolean = withContext(Dispatchers.IO) {
-        getProperty("persist.oof_touchboost.enable") == "true"
-    }
+    @Deprecated(
+        "Use TouchController.getTouchBoost() instead",
+        ReplaceWith("TouchController.getTouchBoost()", "com.oof.control.utils.TouchController")
+    )
+    suspend fun getTouchBoost(): Boolean = TouchController.getTouchBoost()
 
     // ============ SPORT MODE (90W CHARGING) ============
-    suspend fun isSportModeSupported(): Boolean = withContext(Dispatchers.IO) {
-        File(DeviceConfig.SPORT_MODE_PATH).exists()
-    }
 
-	suspend fun setSportMode(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
-		setProperty("persist.sys.oof_sport_mode", if (enabled) "1" else "0")
-	}
+    @Deprecated(
+        "Use ChargingController.isSportModeSupported() instead",
+        ReplaceWith("ChargingController.isSportModeSupported()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun isSportModeSupported(): Boolean = ChargingController.isSportModeSupported()
 
-	suspend fun getSportMode(): Boolean = withContext(Dispatchers.IO) {
-		getProperty("persist.sys.oof_sport_mode") == "1"
-	}
+    @Deprecated(
+        "Use ChargingController.setSportMode() instead",
+        ReplaceWith("ChargingController.setSportMode(enabled)", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun setSportMode(enabled: Boolean): Boolean = ChargingController.setSportMode(enabled)
+
+    @Deprecated(
+        "Use ChargingController.getSportMode() instead",
+        ReplaceWith("ChargingController.getSportMode()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun getSportMode(): Boolean = ChargingController.getSportMode()
 
     // ============ CHARGING CONTROL ============
 
-    suspend fun stopCharging(): Boolean = withContext(Dispatchers.IO) {
-        writeFile("${DeviceConfig.chargingPath}/input_suspend", "1")
-    }
+    @Deprecated(
+        "Use ChargingController.stopCharging() instead",
+        ReplaceWith("ChargingController.stopCharging()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun stopCharging(): Boolean = ChargingController.stopCharging()
 
-    suspend fun resumeCharging(): Boolean = withContext(Dispatchers.IO) {
-        writeFile("${DeviceConfig.chargingPath}/input_suspend", "0")
-    }
+    @Deprecated(
+        "Use ChargingController.resumeCharging() instead",
+        ReplaceWith("ChargingController.resumeCharging()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun resumeCharging(): Boolean = ChargingController.resumeCharging()
 
-    suspend fun setChargingCurrent(current: Int): Boolean = withContext(Dispatchers.IO) {
-        try {
-            writeFile(DeviceConfig.BATTERY_CHARGE_LIMIT, "0")
-            writeFile(DeviceConfig.BATTERY_CURRENT, current.toString())
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting charging current", e)
-            false
-        }
-    }
+    @Deprecated(
+        "Use ChargingController.setChargingCurrent() instead",
+        ReplaceWith("ChargingController.setChargingCurrent(current)", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun setChargingCurrent(current: Int): Boolean = ChargingController.setChargingCurrent(current)
 
-    suspend fun isCharging(): Boolean = withContext(Dispatchers.IO) {
-        val status = readFile(DeviceConfig.BATTERY_STATUS)
-        status == "Charging" || status == "Full"
-    }
+    @Deprecated(
+        "Use ChargingController.isCharging() instead",
+        ReplaceWith("ChargingController.isCharging()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun isCharging(): Boolean = ChargingController.isCharging()
 
-    suspend fun isFastCharging(): Boolean = withContext(Dispatchers.IO) {
-        readFile(DeviceConfig.FASTCHG_MODE) == "1"
-    }
+    @Deprecated(
+        "Use ChargingController.isFastCharging() instead",
+        ReplaceWith("ChargingController.isFastCharging()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun isFastCharging(): Boolean = ChargingController.isFastCharging()
 
-    suspend fun getUsbType(): String = withContext(Dispatchers.IO) {
-        readFile(DeviceConfig.USB_TYPE) ?: "Unknown"
-    }
+    @Deprecated(
+        "Use ChargingController.getUsbType() instead",
+        ReplaceWith("ChargingController.getUsbType()", "com.oof.control.utils.ChargingController")
+    )
+    suspend fun getUsbType(): String = ChargingController.getUsbType()
 
-    suspend fun getBatteryLevel(): Int = withContext(Dispatchers.IO) {
-        readFile(DeviceConfig.BATTERY_CAPACITY)?.toIntOrNull() ?: 0
-    }
+    // ============ BATTERY INFO ============
 
-    /**
-     * Battery health as % of design capacity.
-     * Uses charge_full / charge_full_design (commonly µAh).
-     * Returns 0.0 if missing/invalid.
-     */
-    suspend fun getBatteryHealthPercent(): Double = withContext(Dispatchers.IO) {
-        val full = readFile(DeviceConfig.BATTERY_FULL)?.toDoubleOrNull() ?: 0.0
-        val design = readFile(DeviceConfig.BATTERY_FULL_DESIGN)?.toDoubleOrNull() ?: 0.0
-        if (full <= 0.0 || design <= 0.0) return@withContext 0.0
-        // clamp to avoid silly values from some kernels
-        val pct = (full / design) * 100.0
-        pct.coerceIn(0.0, 120.0)
-    }
+    @Deprecated(
+        "Use BatteryController.getBatteryLevel() instead",
+        ReplaceWith("BatteryController.getBatteryLevel()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getBatteryLevel(): Int = BatteryController.getBatteryLevel()
 
-    suspend fun getBatteryTemp(): Int = withContext(Dispatchers.IO) {
-        readFile(DeviceConfig.BATTERY_TEMP)?.toIntOrNull() ?: 0
-    }
+    @Deprecated(
+        "Use BatteryController.getBatteryHealthPercent() instead",
+        ReplaceWith("BatteryController.getBatteryHealthPercent()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getBatteryHealthPercent(): Double = BatteryController.getBatteryHealthPercent()
 
-    suspend fun getBatteryVoltage(): Int = withContext(Dispatchers.IO) {
-        // Returns voltage in microvolts
-        readFile("/sys/class/power_supply/battery/voltage_now")?.toIntOrNull() ?: 4000000
-    }
+    @Deprecated(
+        "Use BatteryController.getBatteryTemp() instead",
+        ReplaceWith("BatteryController.getBatteryTemp()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getBatteryTemp(): Int = BatteryController.getBatteryTemp()
 
-    suspend fun getMaxPower(): Int = withContext(Dispatchers.IO) {
-        readFile(DeviceConfig.POWER_MAX)?.toIntOrNull() ?: 0
-    }
+    @Deprecated(
+        "Use BatteryController.getBatteryVoltage() instead",
+        ReplaceWith("BatteryController.getBatteryVoltage()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getBatteryVoltage(): Int = BatteryController.getBatteryVoltage()
 
-	suspend fun getBatteryStatus(): String? = withContext(Dispatchers.IO) {
-		readFile(DeviceConfig.STATUS)?.toString()
-	}
+    @Deprecated(
+        "Use BatteryController.getMaxPower() or ChargingController.getMaxPower() instead",
+        ReplaceWith("BatteryController.getMaxPower()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getMaxPower(): Int = BatteryController.getMaxPower()
 
-    /**
-     * Get battery drain rate in mA/h
-     * Positive = charging, Negative = discharging
-     */
-    suspend fun getBatteryDrainRate(): Int = withContext(Dispatchers.IO) {
-        try {
-            // Try current_now first (microamps)
-            val currentNowPath = "/sys/class/power_supply/battery/current_now"
-            val currentNow = readFile(currentNowPath)?.toIntOrNull()
-            
-            if (currentNow != null) {
-                // Convert microamps to milliamps
-                val currentMa = currentNow / 1000
-                
-                // Negative current_now means charging on some devices
-                // Positive current_now means discharging
-                // We want: positive = charging, negative = discharging
-                val drainRate = -currentMa
-                
-                return@withContext drainRate
-            }
-            
-            // Fallback: try current_avg
-            val currentAvgPath = "/sys/class/power_supply/battery/current_avg"
-            val currentAvg = readFile(currentAvgPath)?.toIntOrNull()
-            
-            if (currentAvg != null) {
-                return@withContext -(currentAvg / 1000)
-            }
-            
-            // If all else fails, return 0
-            0
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting battery drain rate", e)
-            0
-        }
-    }
+    @Deprecated(
+        "Use BatteryController.getBatteryStatus() instead",
+        ReplaceWith("BatteryController.getBatteryStatus()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getBatteryStatus(): String? = BatteryController.getBatteryStatus()
+
+    @Deprecated(
+        "Use BatteryController.getBatteryDrainRate() instead",
+        ReplaceWith("BatteryController.getBatteryDrainRate()", "com.oof.control.utils.BatteryController")
+    )
+    suspend fun getBatteryDrainRate(): Int = BatteryController.getBatteryDrainRate()
 
     // ============ SYSTEM PROPS ============
-    
-    suspend fun getSystemProp(propName: String): String = withContext(Dispatchers.IO) {
-        try {
-            val result = executeCommand("getprop $propName")
-            if (result.isSuccess && result.output.isNotEmpty()) {
-                result.output.first().trim()
-            } else {
-                ""
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting prop $propName", e)
-            ""
-        }
-    }
-    
-    suspend fun setSystemProp(propName: String, value: String): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val result = executeCommand("setprop $propName $value")
-            if (result.isSuccess) {
-                // Verify the prop was set
-                val verify = getSystemProp(propName)
-                verify.equals(value, ignoreCase = true)
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting prop $propName", e)
-            false
-        }
-    }
 
-    // ============ DATA CLASSES ============
-
-    private data class CommandResult(
-        val isSuccess: Boolean,
-        val output: List<String>,
-        val errors: List<String>
+    @Deprecated(
+        "Use TouchController.getSystemProp() instead",
+        ReplaceWith("TouchController.getSystemProp(propName)", "com.oof.control.utils.TouchController")
     )
+    suspend fun getSystemProp(propName: String): String = TouchController.getSystemProp(propName)
+
+    @Deprecated(
+        "Use TouchController.setSystemProp() instead",
+        ReplaceWith("TouchController.setSystemProp(propName, value)", "com.oof.control.utils.TouchController")
+    )
+    suspend fun setSystemProp(propName: String, value: String): Boolean = TouchController.setSystemProp(propName, value)
 }

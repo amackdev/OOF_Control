@@ -10,10 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentChargingBinding
 import com.oof.control.services.ChargingControlService
+import com.oof.control.utils.BatteryController
 import com.oof.control.utils.BatteryStatsTracker
+import com.oof.control.utils.ChargingController
 import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.PrefsManager
-import com.oof.control.utils.RootController
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -91,10 +92,10 @@ class ChargingFragment : Fragment() {
             
             // Sport Mode - check support in coroutine
             viewLifecycleOwner.lifecycleScope.launch {
-                val sportModeSupported = RootController.isSportModeSupported()
+                val sportModeSupported = ChargingController.isSportModeSupported()
                 binding.switchSportMode.isEnabled = sportModeSupported
                 binding.cardSportMode.alpha = if (sportModeSupported) 1.0f else 0.5f
-                
+
                 if (sportModeSupported) {
                     binding.switchSportMode.isChecked = prefs.sportMode
                     updateSportModeStatus(prefs.sportMode)
@@ -149,7 +150,7 @@ class ChargingFragment : Fragment() {
             
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    if (!RootController.isSportModeSupported()) {
+                    if (!ChargingController.isSportModeSupported()) {
                         isUpdatingUI = true
                         binding.switchSportMode.isChecked = false
                         binding.switchSportMode.isEnabled = false
@@ -157,8 +158,8 @@ class ChargingFragment : Fragment() {
                         showToast("Sport mode not available")
                         return@launch
                     }
-                    
-                    val success = RootController.setSportMode(isChecked)
+
+                    val success = ChargingController.setSportMode(isChecked)
                     if (success) {
                         prefs.sportMode = isChecked
                         updateSportModeStatus(isChecked)
@@ -303,14 +304,14 @@ class ChargingFragment : Fragment() {
         if (_binding == null) return
         
         try {
-            val batteryLevel = RootController.getBatteryLevel()
-            val batteryTemp = RootController.getBatteryTemp()
-            val isCharging = RootController.isCharging()
-            val isFastCharging = RootController.isFastCharging()
-            val maxPower = RootController.getMaxPower()
-            val sportMode = RootController.getSportMode()
-            val drainRate = RootController.getBatteryDrainRate()
-            val healthPercent = RootController.getBatteryHealthPercent()
+            val batteryLevel = BatteryController.getBatteryLevel()
+            val batteryTemp = BatteryController.getBatteryTemp()
+            val isCharging = ChargingController.isCharging()
+            val isFastCharging = ChargingController.isFastCharging()
+            val maxPower = ChargingController.getMaxPower()
+            val sportMode = ChargingController.getSportMode()
+            val drainRate = BatteryController.getBatteryDrainRate()
+            val healthPercent = BatteryController.getBatteryHealthPercent()
             
             // Update battery level
             if (batteryLevel != lastBatteryLevel) {

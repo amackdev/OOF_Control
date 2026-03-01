@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.oof.control.utils.BatteryController
+import com.oof.control.utils.ChargingController
 import com.oof.control.utils.PrefsManager
-import com.oof.control.utils.RootController
+import com.oof.control.utils.TouchController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,74 +51,74 @@ class BootReceiver : BroadcastReceiver() {
             Log.i(TAG, "Applying saved settings...")
             
             // Check root access
-            if (!RootController.isRootAvailable()) {
+            if (!BatteryController.isAvailable()) {
                 Log.e(TAG, "Root not available - cannot apply settings")
                 return
             }
-            
+
             // Apply each setting with error handling
             try {
-                RootController.setDT2W(prefs.dt2wEnabled)
+                TouchController.setDT2W(prefs.dt2wEnabled)
                 Log.i(TAG, "DT2W applied: ${prefs.dt2wEnabled}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to apply DT2W", e)
             }
-            
+
             delay(500)
-            
+
             try {
-                if (RootController.isTouchRateSupported()) {
-                    RootController.setTouchRate(prefs.touchRateEnabled)
+                if (TouchController.isTouchRateSupported()) {
+                    TouchController.setTouchRate(prefs.touchRateEnabled)
                     Log.i(TAG, "Touch rate applied: ${prefs.touchRateEnabled}")
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to apply touch rate", e)
             }
-            
+
             delay(500)
-            
+
             try {
-                RootController.setRefreshRate(context, prefs.refreshRate)
+                TouchController.setRefreshRate(context, prefs.refreshRate)
                 Log.i(TAG, "Refresh rate applied: ${prefs.refreshRate}Hz")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to apply refresh rate", e)
             }
-            
+
             delay(500)
-            
+
             try {
-                RootController.setPerformanceMode(prefs.performanceMode)
+                TouchController.setPerformanceMode(prefs.performanceMode)
                 Log.i(TAG, "Performance mode applied: ${prefs.performanceMode}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to apply performance mode", e)
             }
-            
+
             delay(500)
-            
+
             try {
-                RootController.setTouchBoost(prefs.touchBoost)
+                TouchController.setTouchBoost(prefs.touchBoost)
                 Log.i(TAG, "Touch boost applied: ${prefs.touchBoost}")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to apply touch boost", e)
             }
-            
+
             delay(500)
-            
-			// Apply Sport Mode via prop only
-			try {
-				if (RootController.isSportModeSupported()) {
-					val success = RootController.setSportMode(prefs.sportMode)
-					if (success) {
-						Log.i(TAG, "Sport mode applied via prop: ${prefs.sportMode}")
-					} else {
-						Log.e(TAG, "Failed to apply sport mode - prop set failed")
-					}
-				} else {
-					Log.w(TAG, "Sport mode not supported on this device")
-				}
-			} catch (e: Exception) {
-				Log.e(TAG, "Failed to apply sport mode", e)
-			}
+
+            // Apply Sport Mode via prop only
+            try {
+                if (ChargingController.isSportModeSupported()) {
+                    val success = ChargingController.setSportMode(prefs.sportMode)
+                    if (success) {
+                        Log.i(TAG, "Sport mode applied via prop: ${prefs.sportMode}")
+                    } else {
+                        Log.e(TAG, "Failed to apply sport mode - prop set failed")
+                    }
+                } else {
+                    Log.w(TAG, "Sport mode not supported on this device")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to apply sport mode", e)
+            }
             delay(500)
             
             // Start charging control service if enabled

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentPerformanceBinding
 import com.oof.control.utils.PrefsManager
-import com.oof.control.utils.RootController
+import com.oof.control.utils.TouchController
 import kotlinx.coroutines.launch
 
 class PerformanceFragment : Fragment() {
@@ -38,13 +38,13 @@ class PerformanceFragment : Fragment() {
     private fun loadCurrentStates() {
         lifecycleScope.launch {
             // Performance Mode - read actual property
-            val perfEnabled = RootController.getPerformanceMode()
+            val perfEnabled = TouchController.getPerformanceMode()
             binding.switchPerformance.isChecked = perfEnabled
             prefs.performanceMode = perfEnabled
             updatePerformanceStatus(perfEnabled)
             
             // Touch Boost - read actual property
-            val touchBoostEnabled = RootController.getTouchBoost()
+            val touchBoostEnabled = TouchController.getTouchBoost()
             binding.switchTouchBoost.isChecked = touchBoostEnabled
             prefs.touchBoost = touchBoostEnabled
         }
@@ -54,7 +54,7 @@ class PerformanceFragment : Fragment() {
         // Performance Mode Switch - directly sets property
         binding.switchPerformance.setOnCheckedChangeListener { _, isChecked ->
             lifecycleScope.launch {
-                val success = RootController.setPerformanceMode(isChecked)
+                val success = TouchController.setPerformanceMode(isChecked)
                 if (success) {
                     prefs.performanceMode = isChecked
                     updatePerformanceStatus(isChecked)
@@ -69,7 +69,7 @@ class PerformanceFragment : Fragment() {
         // Touch Boost Switch - directly sets property
         binding.switchTouchBoost.setOnCheckedChangeListener { _, isChecked ->
             lifecycleScope.launch {
-                val success = RootController.setTouchBoost(isChecked)
+                val success = TouchController.setTouchBoost(isChecked)
                 if (success) {
                     prefs.touchBoost = isChecked
                     showToast("Touch Boost ${if (isChecked) "enabled" else "disabled"}")
