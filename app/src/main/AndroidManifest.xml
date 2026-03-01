@@ -7,7 +7,7 @@
     <!-- System Settings -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
-    
+
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
@@ -18,6 +18,20 @@
     
     <!-- Wake Lock -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- UsageStatsManager: detect foreground app (same as XiaomiParts Thermal).
+         Auto-granted when installed as system priv-app.
+         Otherwise user grants via: Settings > Apps > Special app access > Usage access.
+         adb: appops set com.oof.control GET_USAGE_STATS allow -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- CRITICAL: Without this on Android 11+ (targetSdk 30+), PackageManager AND LauncherApps
+         both return a severely filtered list — only 3-4 system apps visible.
+         Same permission used by thermal/launcher apps to enumerate all packages.
+         Not subject to Play review since this app is sideloaded/system-installed. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:allowBackup="true"
@@ -31,7 +45,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.OOFControl">
+            android:theme="@style/Theme.OOFControl.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -80,6 +94,17 @@
             </intent-filter>
         </receiver>
         
+
+        <!-- Game Mode Service -->
+        <service
+            android:name=".services.GameModeService"
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="game_mode_touch" />
+        </service>
+
     </application>
 
 </manifest>

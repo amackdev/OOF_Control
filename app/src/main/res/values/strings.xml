@@ -3,6 +3,7 @@
     <string name="app_name">OOF Control</string>
     <string name="nav_display">Utils</string>
     <string name="nav_performance">Perf</string>
+    <string name="nav_game_mode">Game</string>
     <string name="nav_charging">Charging</string>
     <string name="nav_about">About</string>
 </resources>

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import com.oof.control.utils.GameAppEntry
+import org.json.JSONArray
 
 /**
  * Manages app preferences/settings
@@ -28,6 +30,10 @@ class PrefsManager(context: Context) {
         const val KEY_BATTERY_STATS_ENABLED = "battery_stats_enabled"
         const val KEY_APPLY_ON_BOOT = "apply_on_boot"
         const val KEY_THEME_MODE = "theme_mode"
+        const val KEY_GAME_MODE_ENABLED = "game_mode_enabled"
+        const val KEY_GAME_APPS = "game_apps"
+        const val KEY_GAME_MODE_PROFILE = "game_mode_profile"
+        const val KEY_GAME_SERVICE_ENABLED = "game_service_enabled"
         
         // Theme modes
         const val THEME_SYSTEM = 0
@@ -94,6 +100,46 @@ class PrefsManager(context: Context) {
         get() = prefs.getInt(KEY_THEME_MODE, THEME_SYSTEM)
         set(value) = prefs.edit { putInt(KEY_THEME_MODE, value) }
     
+    // Game Mode
+    var gameModeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_GAME_MODE_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_GAME_MODE_ENABLED, value) }
+
+    var gameServiceEnabled: Boolean
+        get() = prefs.getBoolean(KEY_GAME_SERVICE_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_GAME_SERVICE_ENABLED, value) }
+
+    var gameModeProfileJson: String
+        get() = prefs.getString(KEY_GAME_MODE_PROFILE, "") ?: ""
+        set(value) = prefs.edit { putString(KEY_GAME_MODE_PROFILE, value) }
+
+    fun getGameApps(): List<GameAppEntry> {
+        val json = prefs.getString(KEY_GAME_APPS, "[]") ?: "[]"
+        return try {
+            val arr = JSONArray(json)
+            (0 until arr.length()).mapNotNull { GameAppEntry.fromJson(arr.getString(it)) }
+        } catch (e: Exception) { emptyList() }
+    }
+
+    fun setGameApps(apps: List<GameAppEntry>) {
+        val arr = JSONArray()
+        apps.forEach { arr.put(it.toJson()) }
+        prefs.edit { putString(KEY_GAME_APPS, arr.toString()) }
+    }
+
+    fun addGameApp(app: GameAppEntry) {
+        val current = getGameApps().toMutableList()
+        if (current.none { it.packageName == app.packageName }) {
+            current.add(app)
+            setGameApps(current)
+        }
+    }
+
+    fun removeGameApp(packageName: String) {
+        val updated = getGameApps().filter { it.packageName != packageName }
+        setGameApps(updated)
+    }
+
     fun applyTheme() {
         val nightMode = when (themeMode) {
             THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO

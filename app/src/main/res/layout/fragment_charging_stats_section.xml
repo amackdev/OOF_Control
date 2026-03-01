@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Add this section to your fragment_charging.xml -->
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -31,8 +31,8 @@
             android:layout_height="wrap_content"
             android:text="Now: 404 mA (1.7 W) • 35.1° • 2h 56m left"
             android:textSize="14sp"
-            android:textColor="@android:color/white"
-            android:background="#2E2E2E"
+            android:textColor="?attr/colorOnSurface"
+            android:background="?attr/colorSurfaceVariant"
             android:padding="8dp"
             android:layout_marginBottom="8dp"
             android:fontFamily="monospace" />
@@ -51,7 +51,7 @@
                 android:layout_weight="1"
                 android:text="Active: 55.4%/h"
                 android:textSize="13sp"
-                android:textColor="#4CAF50" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/tvIdleRate"
@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:text="Idle: 0.0%/h"
                 android:textSize="13sp"
-                android:textColor="#9E9E9E"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="end" />
         </LinearLayout>
 
@@ -68,7 +68,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#3E3E3E"
+            android:background="?attr/colorOutline"
             android:layout_marginVertical="8dp" />
 
         <!-- Screen On Stats -->
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:text="Screen On: 1m 5s • 1.0% (14 mAh)"
             android:textSize="13sp"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="4dp" />
 
         <!-- Screen Off Stats -->
@@ -88,14 +88,14 @@
             android:layout_height="wrap_content"
             android:text="Screen Off: 0s • 0.0% (0 mAh)"
             android:textSize="13sp"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="4dp" />
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#3E3E3E"
+            android:background="?attr/colorOutline"
             android:layout_marginVertical="8dp" />
 
         <!-- Deep Sleep Stats -->
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:text="Deep sleep: 0s • 0.0%"
             android:textSize="13sp"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="4dp" />
 
         <!-- Awake Stats -->
@@ -115,7 +115,7 @@
             android:layout_height="wrap_content"
             android:text="Awake: 0s • 0.0%"
             android:textSize="13sp"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="8dp" />
 
         <!-- Reset Button -->
@@ -130,4 +130,4 @@
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

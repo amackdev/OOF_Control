@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView 
+<androidx.core.widget.NestedScrollView 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:fillViewport="true">
+    android:background="?attr/colorSurface"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="OOF Control"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -37,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="v2.0 - Standalone"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
         <TextView
@@ -46,16 +48,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="✓ Supported"
-            android:textColor="@color/accent"
+            android:textColor="?attr/colorPrimary"
             android:textSize="14sp" />
 
         <!-- Device Info Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -64,27 +66,27 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DEVICE INFO" android:textColor="@color/text_secondary" android:textSize="11sp" android:layout_marginBottom="16dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DEVICE INFO" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Codename" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_device_codename" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UNKNOWN" android:textColor="@color/text_primary" android:textSize="14sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Codename" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_device_codename" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UNKNOWN" android:textColor="?attr/colorOnSurface" android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Brand" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="@color/text_primary" android:textSize="14sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Brand" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="?attr/colorOnSurface" android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Feature Support Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -93,32 +95,32 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FEATURE SUPPORT" android:textColor="@color/text_secondary" android:textSize="11sp" android:layout_marginBottom="16dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FEATURE SUPPORT" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="DT2W" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_dt2w_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="@color/accent" android:textSize="14sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="DT2W" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_dt2w_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Touch Rate 480Hz" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_touch_rate_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="@color/accent" android:textSize="14sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Touch Rate 480Hz" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_touch_rate_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="90W Sport Mode" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_sport_mode_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="@color/accent" android:textSize="14sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="90W Sport Mode" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_sport_mode_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Supported Devices Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -127,27 +129,27 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPPORTED DEVICES" android:textColor="@color/text_secondary" android:textSize="11sp" android:layout_marginBottom="16dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPPORTED DEVICES" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="12dp">
                     <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/dot_green" />
-                    <TextView android:id="@+id/tv_device_peridot" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="POCO F6 (peridot)" android:textColor="@color/text_primary" android:textSize="14sp" android:alpha="0.5" />
+                    <TextView android:id="@+id/tv_device_peridot" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="POCO F6 (peridot)" android:textColor="?attr/colorOnSurface" android:textSize="14sp" android:alpha="0.5" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
                     <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/dot_green" />
-                    <TextView android:id="@+id/tv_device_marble" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="POCO F5 (marble)" android:textColor="@color/text_primary" android:textSize="14sp" android:alpha="0.5" />
+                    <TextView android:id="@+id/tv_device_marble" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="POCO F5 (marble)" android:textColor="?attr/colorOnSurface" android:textSize="14sp" android:alpha="0.5" />
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Theme Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -166,8 +168,8 @@
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Theme" android:textColor="@color/text_primary" android:textSize="15sp" />
-                        <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System default" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Theme" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
+                        <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System default" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -185,7 +187,7 @@
                         android:layout_marginEnd="8dp"
                         android:text="Auto"
                         android:textSize="12sp"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:background="@drawable/rr_button_selector" />
 
                     <Button
@@ -196,7 +198,7 @@
                         android:layout_marginEnd="8dp"
                         android:text="Light"
                         android:textSize="12sp"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:background="@drawable/rr_button_selector" />
 
                     <Button
@@ -206,20 +208,20 @@
                         android:layout_weight="1"
                         android:text="Dark"
                         android:textSize="12sp"
-                        android:textColor="@color/text_primary"
+                        android:textColor="?attr/colorOnSurface"
                         android:background="@drawable/rr_button_selector" />
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Settings Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -233,8 +235,8 @@
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply on Boot" android:textColor="@color/text_primary" android:textSize="15sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Restore settings after reboot" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply on Boot" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Restore settings after reboot" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -242,7 +244,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

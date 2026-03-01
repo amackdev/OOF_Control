@@ -139,6 +139,18 @@ class BootReceiver : BroadcastReceiver() {
                 }
             }
             
+            // Start game mode service if enabled
+            if (prefs.gameServiceEnabled) {
+                try {
+                    val gmIntent = android.content.Intent(context, GameModeService::class.java)
+                    gmIntent.action = GameModeService.ACTION_START
+                    context.startForegroundService(gmIntent)
+                    Log.i(TAG, "Game mode service started on boot")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to start game mode service", e)
+                }
+            }
+
             Log.i(TAG, "Boot initialization complete")
             
         } catch (e: Exception) {

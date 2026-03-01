@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView 
+<androidx.core.widget.NestedScrollView 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:fillViewport="true">
+    android:background="?attr/colorSurface"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OOF CONTROL"
-            android:textColor="@color/accent"
+            android:textColor="?attr/colorPrimary"
             android:textSize="11sp"
             android:letterSpacing="0.15" />
 
@@ -25,17 +27,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Charging"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="24sp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="24dp" />
 
         <!-- Battery Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
@@ -61,7 +63,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="BATTERY"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="12sp" />
 
                         <TextView
@@ -69,7 +71,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0%"
-                            android:textColor="@color/text_primary"
+                            android:textColor="?attr/colorOnSurface"
                             android:textSize="48sp" />
 
                         <TextView
@@ -78,7 +80,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:text="Health --%"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="13sp"
                             android:visibility="gone" />
                     </LinearLayout>
@@ -93,7 +95,7 @@
                             android:id="@+id/tv_charging_power"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/accent"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:visibility="gone" />
 
@@ -101,7 +103,7 @@
                             android:id="@+id/tv_current_current"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/blue"
+                            android:textColor="?attr/colorSecondary"
                             android:textSize="16sp"
                             android:visibility="gone" />
 
@@ -110,7 +112,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0°C"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="14sp" />
 
                         <TextView
@@ -119,7 +121,7 @@
                             android:layout_height="wrap_content"
                             android:text="0mA/h"
                             android:textSize="13sp"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:layout_marginTop="4dp"
                             android:visibility="visible" />
                     </LinearLayout>
@@ -138,20 +140,20 @@
                     android:id="@+id/tv_estimated_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="12sp"
                     android:layout_marginTop="12dp"
                     android:visibility="gone" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Charging Service -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -174,8 +176,8 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smart Charging Service" android:textColor="@color/text_primary" android:textSize="15sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Background current control" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smart Charging Service" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Background current control" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -183,15 +185,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Sport Mode -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_sport_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
@@ -212,8 +214,8 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="90W SPORT MODE" android:textColor="@color/orange" android:textSize="11sp" />
-                        <TextView android:id="@+id/tv_sport_mode_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡ Standard" android:textColor="@color/text_primary" android:textSize="22sp" android:layout_marginTop="8dp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Maximum 90W fast charging" android:textColor="@color/text_secondary" android:textSize="13sp" android:layout_marginTop="8dp" />
+                        <TextView android:id="@+id/tv_sport_mode_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⚡ Standard" android:textColor="?attr/colorOnSurface" android:textSize="22sp" android:layout_marginTop="8dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Maximum 90W fast charging" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="13sp" android:layout_marginTop="8dp" />
                     </LinearLayout>
 
                     <com.google.android.material.materialswitch.MaterialSwitch
@@ -230,24 +232,24 @@
                     android:visibility="gone">
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="8dp" android:background="@drawable/stat_bg_orange" android:gravity="center" android:orientation="vertical" android:padding="12dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="90W" android:textColor="@color/orange" android:textSize="20sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MAX" android:textColor="@color/text_secondary" android:textSize="10sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MAX" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="10sp" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@drawable/stat_bg_orange" android:gravity="center" android:orientation="vertical" android:padding="12dp">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="~35min" android:textColor="@color/orange" android:textSize="20sp" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0-100%" android:textColor="@color/text_secondary" android:textSize="10sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0-100%" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="10sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Charge Limit Enable -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_charge_limit_enable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -261,8 +263,8 @@
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enable Charge Limit" android:textColor="@color/text_primary" android:textSize="15sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Protect battery health" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enable Charge Limit" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Protect battery health" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -270,15 +272,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Charge Limit Slider - Improved Design -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_charge_limit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/card_background"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
@@ -317,7 +319,7 @@
                             android:layout_width="wrap_content" 
                             android:layout_height="wrap_content" 
                             android:text="CHARGE LIMIT" 
-                            android:textColor="@color/accent" 
+                            android:textColor="?attr/colorPrimary" 
                             android:textSize="11sp"
                             android:letterSpacing="0.1" />
                         <TextView
@@ -325,7 +327,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="80%"
-                            android:textColor="@color/text_primary"
+                            android:textColor="?attr/colorOnSurface"
                             android:textSize="36sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -341,13 +343,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="✓ Optimal"
-                            android:textColor="@color/accent"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="12sp" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Battery Health"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="?attr/colorOnSurfaceVariant"
                             android:textSize="10sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -364,7 +366,7 @@
                     app:thumbColor="@color/accent"
                     app:trackColorActive="@color/accent"
                     app:trackColorInactive="@color/icon_bg_green"
-                    app:haloColor="#4000E676"
+                    app:haloColor="@color/icon_bg_green"
                     app:tickVisible="false"
                     app:labelBehavior="gone" />
 
@@ -373,9 +375,9 @@
                     android:layout_width="match_parent" 
                     android:layout_height="wrap_content" 
                     android:layout_marginTop="4dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="50%" android:textColor="@color/text_secondary" android:textSize="11sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="80%" android:textColor="@color/accent" android:textSize="11sp" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="100%" android:textColor="@color/text_secondary" android:textSize="11sp" android:gravity="end" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="50%" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="80%" android:textColor="?attr/colorPrimary" android:textSize="11sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="100%" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:gravity="end" />
                 </LinearLayout>
 
                 <!-- Info text -->
@@ -384,31 +386,31 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="💡 Charging to 80% can extend battery lifespan by up to 2x"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="12sp"
                     android:background="@drawable/icon_bg_green"
                     android:padding="12dp" />
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="BATTERY MONITOR"
-            android:textColor="@color/text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="12sp"
             android:letterSpacing="0.1"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp" />
 
         <!-- Battery Stats Service Enable -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -422,8 +424,8 @@
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Battery Stats Service" android:textColor="@color/text_primary" android:textSize="15sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Track drain, screen time, deep sleep" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Battery Stats Service" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Track drain, screen time, deep sleep" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -431,15 +433,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Reset Stats Button -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            app:cardBackgroundColor="@color/card_background"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -453,8 +455,8 @@
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Reset Statistics" android:textColor="@color/text_primary" android:textSize="15sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Clear all battery tracking data" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Reset Statistics" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Clear all battery tracking data" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
                 </LinearLayout>
 
                 <Button
@@ -462,12 +464,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:text="Reset"
-                    android:textColor="@color/text_primary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="12sp"
                     android:background="@drawable/rr_button_selector"
                     android:paddingHorizontal="16dp" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

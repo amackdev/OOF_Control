@@ -1,36 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.OOFControl" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+    <style name="Theme.OOFControl" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/accent</item>
-        <item name="colorPrimaryVariant">@color/purple</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimaryContainer">@color/icon_bg_blue</item>
+        <item name="colorOnPrimaryContainer">@color/accent</item>
         <item name="colorSecondary">@color/blue</item>
-        <item name="colorSecondaryVariant">@color/blue</item>
-        <item name="colorOnSecondary">@color/white</item>
-        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondaryContainer">@color/icon_bg_blue</item>
+        <item name="colorTertiary">@color/purple</item>
+        <item name="colorOnTertiary">@color/black</item>
+        <item name="colorTertiaryContainer">@color/icon_bg_purple</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
-        <item name="android:statusBarColor">@color/background</item>
-        <item name="android:navigationBarColor">@color/surface</item>
+        <item name="colorSurfaceVariant">@color/card_background</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">#1FFFFFFF</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/background</item>
-        <!-- Modern Switch Styling -->
-        <item name="switchStyle">@style/Widget.OOFControl.Switch</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
         <item name="materialSwitchStyle">@style/Widget.OOFControl.MaterialSwitch</item>
+        <item name="materialCardViewStyle">@style/Widget.OOFControl.Card</item>
     </style>
-    
-    <!-- Material Switch Style (for com.google.android.material.materialswitch.MaterialSwitch) -->
+
     <style name="Widget.OOFControl.MaterialSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
         <item name="thumbTint">@color/switch_thumb_color</item>
         <item name="trackTint">@color/switch_track_color</item>
         <item name="trackDecorationTint">@android:color/transparent</item>
     </style>
-    
-    <!-- Fallback Switch Style -->
-    <style name="Widget.OOFControl.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
-        <item name="android:textOn">""</item>
-        <item name="android:textOff">""</item>
-        <item name="showText">false</item>
-        <item name="thumbTint">@color/switch_thumb_color</item>
-        <item name="trackTint">@color/switch_track_color</item>
+
+    <style name="Widget.OOFControl.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
     </style>
+
+    <style name="TextAppearance.OOFControl.SectionHeader" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+
+    <style name="TextAppearance.OOFControl.PageTitle" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.OOFControl.Nav.Indicator" parent="">
+        <item name="android:color">@color/icon_bg_blue</item>
+        <item name="android:width">64dp</item>
+        <item name="android:height">32dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.OOFControl.Pill</item>
+    </style>
+
+    <style name="ShapeAppearance.OOFControl.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Widget.OOFControl.NavDrawer.Indicator" parent="">
+        <item name="android:color">@color/icon_bg_blue</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.OOFControl.Pill</item>
+    </style>
+
 </resources>

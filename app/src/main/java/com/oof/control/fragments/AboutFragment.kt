@@ -74,7 +74,7 @@ class AboutFragment : Fragment() {
             // Supported status
             if (DeviceConfig.isSupported) {
                 binding.tvSupportStatus.text = "✓ Fully Supported"
-                binding.tvSupportStatus.setTextColor(resources.getColor(android.R.color.holo_green_light, null))
+                binding.tvSupportStatus.setTextColor(com.google.android.material.color.MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorPrimary))
             } else {
                 binding.tvSupportStatus.text = "⚠ Partial Support"
                 binding.tvSupportStatus.setTextColor(resources.getColor(android.R.color.holo_orange_light, null))
