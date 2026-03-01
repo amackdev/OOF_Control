@@ -3,10 +3,7 @@ package com.oof.control.utils
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.DataOutputStream
 import java.io.File
-import java.io.InputStreamReader
 
 /**
  * Safe shell execution utility that prevents command injection vulnerabilities.
@@ -15,6 +12,8 @@ import java.io.InputStreamReader
  * 1. Using ProcessBuilder with explicit argument arrays instead of shell string interpolation
  * 2. Providing dedicated methods for file I/O that don't go through shell
  * 3. Using proper escaping only when shell is absolutely required
+ *
+ * Note: This app runs as a system/priv-app with root privileges, so no 'su' is needed.
  */
 object ShellExecutor {
 
@@ -133,10 +132,11 @@ object ShellExecutor {
     /**
      * Write to a file using tee command (injection-safe).
      * Uses stdin to pass the value, avoiding shell metacharacter issues.
+     * No 'su' needed - app runs as system/priv-app with root privileges.
      */
     private fun writeWithTee(path: String, value: String): Boolean {
         return try {
-            val process = ProcessBuilder("su", "-c", "tee", path)
+            val process = ProcessBuilder("tee", path)
                 .redirectErrorStream(false)
                 .start()
 
@@ -150,34 +150,30 @@ object ShellExecutor {
             exitCode == 0
         } catch (e: Exception) {
             Log.e(TAG, "tee write failed for $path", e)
-            // Final fallback: try with printf (safer than echo)
-            writeWithPrintf(path, value)
+            // Final fallback: try direct shell write
+            writeWithShell(path, value)
         }
     }
 
     /**
-     * Write to a file using printf (handles special characters better than echo).
+     * Write to a file using shell with stdin (handles special characters safely).
+     * No 'su' needed - app runs as system/priv-app with root privileges.
      */
-    private fun writeWithPrintf(path: String, value: String): Boolean {
+    private fun writeWithShell(path: String, value: String): Boolean {
         return try {
-            // Escape value for printf %s format
-            val process = ProcessBuilder("su", "-c", "printf", "%s", value)
+            // Use sh -c with cat reading from stdin - safe from injection
+            val process = ProcessBuilder("sh", "-c", "cat > ${escapeShellArg(path)}")
                 .redirectErrorStream(false)
                 .start()
 
-            // Redirect printf output to file
-            val printfProcess = ProcessBuilder("su", "-c", "sh", "-c", "cat > ${escapeShellArg(path)}")
-                .redirectErrorStream(false)
-                .start()
-
-            printfProcess.outputStream.bufferedWriter().use { writer ->
+            process.outputStream.bufferedWriter().use { writer ->
                 writer.write(value)
                 writer.flush()
             }
 
-            printfProcess.waitFor() == 0
+            process.waitFor() == 0
         } catch (e: Exception) {
-            Log.e(TAG, "printf write failed for $path", e)
+            Log.e(TAG, "shell write failed for $path", e)
             false
         }
     }
