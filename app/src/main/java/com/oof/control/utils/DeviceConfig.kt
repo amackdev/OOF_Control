@@ -1,8 +1,6 @@
 package com.oof.control.utils
 
 import android.util.Log
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 /**
  * Device-specific configuration and system paths
@@ -218,28 +216,17 @@ object DeviceConfig {
     }
     
     // ============ HELPER FUNCTIONS - SAFE VERSIONS ============
-    
+
     private fun getPropertySafe(prop: String): String? {
         return try {
-            val process = Runtime.getRuntime().exec(arrayOf("getprop", prop))
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            val result = reader.readLine()?.trim()
-            reader.close()
-            process.waitFor()
-            result?.takeIf { it.isNotEmpty() }
+            ShellExecutor.getPropertySync(prop)
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting property $prop: ${e.message}")
             null
         }
     }
-    
+
     private fun pathExistsSafe(path: String): Boolean {
-        return try {
-            java.io.File(path).exists()
-        } catch (e: Exception) {
-            Log.e(TAG, "Error checking path $path: ${e.message}")
-            false
-        }
+        return ShellExecutor.pathExists(path)
     }
     
     /**

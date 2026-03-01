@@ -13,6 +13,7 @@ import android.os.HandlerThread
 import android.os.IBinder
 import android.util.Log
 import com.oof.control.R
+import com.oof.control.utils.GameAppEntry
 import com.oof.control.utils.GameModeManager
 import com.oof.control.utils.PrefsManager
 
@@ -41,8 +42,8 @@ class GameModeService : Service() {
         private const val NOTIF_CHANNEL = "game_mode_service"
         private const val NOTIF_ID      = 2001
 
-        /** Poll interval in ms. XiaomiParts Thermal uses 1000 ms; 500 ms for faster game detection. */
-        private const val POLL_MS = 500L
+        /** Poll interval in ms. XiaomiParts Thermal uses 1000 ms. */
+        private const val POLL_MS = 1000L
 
         const val ACTION_START = "com.oof.control.GAME_MODE_START"
         const val ACTION_STOP  = "com.oof.control.GAME_MODE_STOP"
@@ -62,6 +63,9 @@ class GameModeService : Service() {
 
     /** Track last seen foreground to avoid redundant enable/disable calls. */
     private var lastForegroundPkg: String = ""
+
+    /** Cached game apps map for O(1) lookup instead of O(n) list search. */
+    private var gameAppsCache: Map<String, GameAppEntry>? = null
 
     // ── Core polling Runnable ─────────────────────────────────────────────────
 
@@ -117,10 +121,9 @@ class GameModeService : Service() {
     // ── App change handler ────────────────────────────────────────────────────
 
     private fun handleForegroundChanged(pkg: String) {
-        Log.d(TAG, "Foreground changed -> $pkg")
-
-        val gameApps = prefs.getGameApps()
-        val entry    = gameApps.find { it.packageName == pkg }
+        // Use cached map for O(1) lookup
+        val cache = gameAppsCache ?: prefs.getGameApps().associateBy { it.packageName }.also { gameAppsCache = it }
+        val entry = cache[pkg]
 
         if (entry != null) {
             // A game app is now foreground

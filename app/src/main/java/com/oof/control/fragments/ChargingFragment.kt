@@ -26,8 +26,7 @@ class ChargingFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var prefs: PrefsManager
     private lateinit var batteryStatsTracker: BatteryStatsTracker
-    private var updateJob: Job? = null
-    private var statsJob: Job? = null
+    private var updateJob: Job? = null  // Single combined update job
     
     private var isUpdatingUI = false
     
@@ -59,8 +58,7 @@ class ChargingFragment : Fragment() {
         
         setupListeners()
         loadSavedStates()
-        startBatteryUpdates()
-        startStatsMonitoring()
+        startUpdates()
     }
     
     private fun loadSavedStates() {
@@ -253,51 +251,24 @@ class ChargingFragment : Fragment() {
         }
     }
     
-    private fun startBatteryUpdates() {
+    /** Combined update loop for battery info and stats - reduces overhead */
+    private fun startUpdates() {
         updateJob = viewLifecycleOwner.lifecycleScope.launch {
             while (isActive) {
                 try {
                     updateBatteryInfo()
+                    batteryStatsTracker.updateStats()
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error updating battery info", e)
+                    if (isActive) Log.e(TAG, "Error in update loop", e)
                 }
                 delay(UPDATE_INTERVAL)
             }
         }
     }
-    
-    private fun startStatsMonitoring() {
-        statsJob = viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                while (isActive) {
-                    try {
-                        batteryStatsTracker.updateStats()
-                        
-                        // Collect stats and update UI - only while active
-                        batteryStatsTracker.stats.collect { stats ->
-                            if (isActive && _binding != null) {
-                                updateStatsDisplay(stats)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        if (isActive) {
-                            Log.e(TAG, "Error in stats monitoring loop", e)
-                        }
-                    }
-                    delay(UPDATE_INTERVAL)
-                }
-            } catch (e: Exception) {
-                // Job cancelled or other error - ignore if not active
-                if (isActive) {
-                    Log.e(TAG, "Stats monitoring stopped", e)
-                }
-            }
-        }
-    }
-    
-    @Suppress("UNUSED_PARAMETER")
-    private fun updateStatsDisplay(stats: BatteryStatsTracker.BatteryStats) {
-        // Stats are now shown in notification, not in UI
+
+    private fun stopUpdates() {
+        updateJob?.cancel()
+        updateJob = null
     }
     
     private suspend fun updateBatteryInfo() {
@@ -425,13 +396,21 @@ class ChargingFragment : Fragment() {
     
     override fun onResume() {
         super.onResume()
-        // Don't reload everything, just continue updating
+        // Restart updates when fragment becomes visible again
+        if (updateJob == null || updateJob?.isActive != true) {
+            startUpdates()
+        }
     }
-    
+
+    override fun onPause() {
+        super.onPause()
+        // Stop updates when fragment is not visible to save battery
+        stopUpdates()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        updateJob?.cancel()
-        statsJob?.cancel()
+        stopUpdates()
         _binding = null
     }
 }

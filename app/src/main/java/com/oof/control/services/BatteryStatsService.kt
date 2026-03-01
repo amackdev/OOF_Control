@@ -444,7 +444,7 @@ class BatteryStatsService : Service() {
         updateNotification(title, statsText.toString())
     }
     
-    private fun resetStats(currentLevel: Int) {
+    private fun resetStats(currentLevel: Int, showNotification: Boolean = false) {
         sessionStartTime = System.currentTimeMillis()
         sessionStartLevel = currentLevel
         totalScreenOnTime = 0
@@ -459,27 +459,12 @@ class BatteryStatsService : Service() {
         screenOffDeepSleepStart = 0
         lastDeepSleepMs = getSystemDeepSleepTime()
         isScreenOn = true
-        Log.d(TAG, "Stats reset - charging detected")
+        if (showNotification) {
+            updateNotification("Stats Reset", "Monitoring started fresh")
+        }
     }
-    
-    private fun resetStatsManual(currentLevel: Int) {
-        sessionStartTime = System.currentTimeMillis()
-        sessionStartLevel = currentLevel
-        totalScreenOnTime = 0
-        totalScreenOffTime = 0
-        screenOnDrainMah = 0
-        screenOffDrainMah = 0
-        deepSleepTime = 0
-        awakeTime = 0
-        screenOnStartTime = sessionStartTime
-        screenOffStartTime = 0
-        lastLevelForDrain = currentLevel
-        screenOffDeepSleepStart = 0
-        lastDeepSleepMs = getSystemDeepSleepTime()
-        isScreenOn = true
-        updateNotification("Stats Reset", "Monitoring started fresh")
-        Log.d(TAG, "Stats manually reset")
-    }
+
+    private fun resetStatsManual(currentLevel: Int) = resetStats(currentLevel, showNotification = true)
     
     private fun formatTime(millis: Long): String {
         val totalSeconds = millis / 1000

@@ -29,7 +29,8 @@ class SmartChargingService : Service() {
     
     companion object {
         private const val TAG = "SmartChargingService"
-        const val UPDATE_INTERVAL = 3_000L // 3 seconds
+        private const val UPDATE_INTERVAL = 3_000L // 3 seconds when charging
+        private const val IDLE_INTERVAL = 10_000L  // 10 seconds when not charging
         const val CHARGE_LIMIT_HYSTERESIS = 5
         
         fun start(context: Context) {
@@ -71,50 +72,45 @@ class SmartChargingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     
     override fun onDestroy() {
-        Log.d(TAG, "SmartChargingService destroyed")
         serviceJob?.cancel()
         serviceScope.cancel()
-        
-        // Resume charging on destroy
-        runBlocking {
+
+        // Resume charging on destroy (non-blocking)
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 ChargingController.resumeCharging()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error resuming charging on destroy", e)
-            }
+            } catch (_: Exception) { }
         }
         super.onDestroy()
     }
     
     private fun startChargingControlLoop() {
         serviceJob = serviceScope.launch {
-            delay(2000)
-            
             while (isActive) {
-                try {
+                val interval = try {
                     controlCharging()
                 } catch (e: Exception) {
                     Log.e(TAG, "Error in charging control loop", e)
+                    UPDATE_INTERVAL
                 }
-                delay(UPDATE_INTERVAL)
+                delay(interval)
             }
         }
     }
-    
-    private suspend fun controlCharging() {
+
+    /** Returns the delay for next iteration based on charging state */
+    private suspend fun controlCharging(): Long {
         try {
             val usbType = ChargingController.getUsbType()
             val isChargerConnected = usbType != "Unknown"
 
-            // If not charging, ALWAYS disable suspend and clear state
+            // If not charging, clear state and use longer polling interval
             if (!isChargerConnected) {
-                // Always call resumeCharging to ensure input_suspend is set to 0
-                ChargingController.resumeCharging()
                 if (isChargingSuspended) {
+                    ChargingController.resumeCharging()
                     isChargingSuspended = false
-                    Log.i(TAG, "Charging latch cleared on disconnect")
                 }
-                return
+                return IDLE_INTERVAL // Sleep longer when not charging
             }
 
             val batteryLevel = BatteryController.getBatteryLevel()
@@ -178,6 +174,7 @@ class SmartChargingService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "Error in controlCharging", e)
         }
+        return UPDATE_INTERVAL
     }
     
     private fun getEffectiveChargeLimit(): Int? {

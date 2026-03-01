@@ -113,18 +113,29 @@ class PrefsManager(context: Context) {
         get() = prefs.getString(KEY_GAME_MODE_PROFILE, "") ?: ""
         set(value) = prefs.edit { putString(KEY_GAME_MODE_PROFILE, value) }
 
+    // Cached game apps list to avoid JSON parsing on every call
+    @Volatile private var gameAppsCache: List<GameAppEntry>? = null
+    @Volatile private var gameAppsCacheVersion = 0
+
     fun getGameApps(): List<GameAppEntry> {
+        gameAppsCache?.let { return it }
+
         val json = prefs.getString(KEY_GAME_APPS, "[]") ?: "[]"
-        return try {
+        val apps = try {
             val arr = JSONArray(json)
             (0 until arr.length()).mapNotNull { GameAppEntry.fromJson(arr.getString(it)) }
         } catch (e: Exception) { emptyList() }
+
+        gameAppsCache = apps
+        return apps
     }
 
     fun setGameApps(apps: List<GameAppEntry>) {
         val arr = JSONArray()
         apps.forEach { arr.put(it.toJson()) }
         prefs.edit { putString(KEY_GAME_APPS, arr.toString()) }
+        gameAppsCache = apps
+        gameAppsCacheVersion++
     }
 
     fun addGameApp(app: GameAppEntry) {
@@ -138,6 +149,12 @@ class PrefsManager(context: Context) {
     fun removeGameApp(packageName: String) {
         val updated = getGameApps().filter { it.packageName != packageName }
         setGameApps(updated)
+    }
+
+    /** Invalidate game apps cache - call when external changes may have occurred */
+    fun invalidateGameAppsCache() {
+        gameAppsCache = null
+        gameAppsCacheVersion++
     }
 
     fun applyTheme() {

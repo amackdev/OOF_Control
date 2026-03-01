@@ -1,11 +1,12 @@
 package com.oof.control.utils
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.util.Log
-import kotlinx.coroutines.delay
+import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,7 +73,12 @@ class BatteryStatsTracker(private val context: Context) {
     
     // Track level changes
     private val levelHistory = mutableListOf<Pair<Long, Int>>() // timestamp, level
-    
+
+    // Cached battery status to avoid repeated registerReceiver calls
+    @Volatile private var cachedBatteryIntent: Intent? = null
+    private var lastBatteryIntentTime = 0L
+    private val BATTERY_CACHE_TTL = 2000L // Cache for 2 seconds
+
     init {
         // Initialize session if needed
         if (lastBatteryLevel == -1) {
@@ -95,11 +101,11 @@ class BatteryStatsTracker(private val context: Context) {
             // Track level changes
             if (currentLevel != lastBatteryLevel) {
                 levelHistory.add(Pair(System.currentTimeMillis(), currentLevel))
-                
-                // Keep only last hour of history
+
+                // Keep only last hour of history - use iterator for efficiency
                 val oneHourAgo = System.currentTimeMillis() - 3600000
-                levelHistory.removeAll { it.first < oneHourAgo }
-                
+                levelHistory.removeIf { it.first < oneHourAgo }
+
                 lastBatteryLevel = currentLevel
                 saveToPrefs()
             }
@@ -271,7 +277,7 @@ class BatteryStatsTracker(private val context: Context) {
     }
     
     private fun saveToPrefs() {
-        prefs.edit().apply {
+        prefs.edit {
             putLong(KEY_SESSION_START, sessionStartTime)
             putInt(KEY_LAST_LEVEL, lastBatteryLevel)
             putLong(KEY_SCREEN_ON_TIME, totalScreenOnTime)
@@ -280,7 +286,6 @@ class BatteryStatsTracker(private val context: Context) {
             putInt(KEY_SCREEN_OFF_DRAIN, totalScreenOffDrain)
             putLong(KEY_DEEP_SLEEP_TIME, totalDeepSleepTime)
             putLong(KEY_AWAKE_TIME, totalAwakeTime)
-            apply()
         }
     }
     
@@ -291,9 +296,19 @@ class BatteryStatsTracker(private val context: Context) {
         return if (h > 0) "${h}h ${m}m left" else "${m}m left"
     }
     
-    // Battery info helpers
+    // Battery info helpers - with caching to avoid repeated registerReceiver calls
+    private fun getBatteryIntent(): Intent? {
+        val now = System.currentTimeMillis()
+        if (cachedBatteryIntent != null && (now - lastBatteryIntentTime) < BATTERY_CACHE_TTL) {
+            return cachedBatteryIntent
+        }
+        cachedBatteryIntent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        lastBatteryIntentTime = now
+        return cachedBatteryIntent
+    }
+
     private fun getBatteryLevel(): Int {
-        val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val batteryStatus = getBatteryIntent()
         val level = batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
         val scale = batteryStatus?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
         return if (level >= 0 && scale > 0) (level * 100 / scale) else 0
@@ -324,14 +339,14 @@ class BatteryStatsTracker(private val context: Context) {
     }
     
     private fun isCharging(): Boolean {
-        val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val batteryStatus = getBatteryIntent()
         val status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
-        return status == BatteryManager.BATTERY_STATUS_CHARGING || 
+        return status == BatteryManager.BATTERY_STATUS_CHARGING ||
                status == BatteryManager.BATTERY_STATUS_FULL
     }
-    
+
     private fun getBatteryHealth(): String {
-        val batteryStatus = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val batteryStatus = getBatteryIntent()
         return when (batteryStatus?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
             BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
             BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"

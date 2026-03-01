@@ -20,7 +20,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.color.DynamicColors
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.oof.control.databinding.ActivityMainBinding
 import com.oof.control.fragments.*
@@ -73,17 +76,20 @@ class MainActivity : AppCompatActivity() {
 
             checkDeviceSupport()
 
-            binding.root.postDelayed({
+            // Use lifecycleScope for proper lifecycle handling
+            lifecycleScope.launch {
+                delay(1000)
                 try {
-                    if (prefs.chargingServiceEnabled) ChargingControlService.startChargingOnly(this)
-                    if (prefs.batteryStatsEnabled) ChargingControlService.startStatsOnly(this)
+                    if (prefs.chargingServiceEnabled) ChargingControlService.startChargingOnly(this@MainActivity)
+                    if (prefs.batteryStatsEnabled) ChargingControlService.startStatsOnly(this@MainActivity)
                     if (prefs.gameServiceEnabled) {
-                        val gmIntent = Intent(this, GameModeService::class.java)
-                        gmIntent.action = GameModeService.ACTION_START
+                        val gmIntent = Intent(this@MainActivity, GameModeService::class.java).apply {
+                            action = GameModeService.ACTION_START
+                        }
                         startForegroundService(gmIntent)
                     }
                 } catch (e: Exception) { Log.e(TAG, "Failed to start services", e) }
-            }, 1000)
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error in onCreate", e)
             Toast.makeText(this, "Error initializing app: ${e.message}", Toast.LENGTH_LONG).show()

@@ -10,6 +10,8 @@ import com.oof.control.utils.PrefsManager
 import com.oof.control.utils.TouchController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -47,116 +49,52 @@ class BootReceiver : BroadcastReceiver() {
         try {
             // Wait for system to be ready
             delay(BOOT_DELAY)
-            
-            Log.i(TAG, "Applying saved settings...")
-            
+
             // Check root access
             if (!BatteryController.isAvailable()) {
                 Log.e(TAG, "Root not available - cannot apply settings")
                 return
             }
 
-            // Apply each setting with error handling
-            try {
-                TouchController.setDT2W(prefs.dt2wEnabled)
-                Log.i(TAG, "DT2W applied: ${prefs.dt2wEnabled}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply DT2W", e)
-            }
+            // Apply settings in parallel for faster boot (saves ~3 seconds)
+            val scope = CoroutineScope(Dispatchers.IO)
+            listOf(
+                scope.async { applySetting("DT2W") { TouchController.setDT2W(prefs.dt2wEnabled) } },
+                scope.async { applySetting("Touch rate") {
+                    if (TouchController.isTouchRateSupported()) TouchController.setTouchRate(prefs.touchRateEnabled)
+                } },
+                scope.async { applySetting("Refresh rate") { TouchController.setRefreshRate(context, prefs.refreshRate) } },
+                scope.async { applySetting("Performance mode") { TouchController.setPerformanceMode(prefs.performanceMode) } },
+                scope.async { applySetting("Touch boost") { TouchController.setTouchBoost(prefs.touchBoost) } },
+                scope.async { applySetting("Sport mode") {
+                    if (ChargingController.isSportModeSupported()) ChargingController.setSportMode(prefs.sportMode)
+                } }
+            ).awaitAll()
 
-            delay(500)
-
-            try {
-                if (TouchController.isTouchRateSupported()) {
-                    TouchController.setTouchRate(prefs.touchRateEnabled)
-                    Log.i(TAG, "Touch rate applied: ${prefs.touchRateEnabled}")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply touch rate", e)
-            }
-
-            delay(500)
-
-            try {
-                TouchController.setRefreshRate(context, prefs.refreshRate)
-                Log.i(TAG, "Refresh rate applied: ${prefs.refreshRate}Hz")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply refresh rate", e)
-            }
-
-            delay(500)
-
-            try {
-                TouchController.setPerformanceMode(prefs.performanceMode)
-                Log.i(TAG, "Performance mode applied: ${prefs.performanceMode}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply performance mode", e)
-            }
-
-            delay(500)
-
-            try {
-                TouchController.setTouchBoost(prefs.touchBoost)
-                Log.i(TAG, "Touch boost applied: ${prefs.touchBoost}")
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply touch boost", e)
-            }
-
-            delay(500)
-
-            // Apply Sport Mode via prop only
-            try {
-                if (ChargingController.isSportModeSupported()) {
-                    val success = ChargingController.setSportMode(prefs.sportMode)
-                    if (success) {
-                        Log.i(TAG, "Sport mode applied via prop: ${prefs.sportMode}")
-                    } else {
-                        Log.e(TAG, "Failed to apply sport mode - prop set failed")
-                    }
-                } else {
-                    Log.w(TAG, "Sport mode not supported on this device")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to apply sport mode", e)
-            }
-            delay(500)
-            
-            // Start charging control service if enabled
+            // Start services (must be sequential for Android service binding)
             if (prefs.chargingServiceEnabled) {
-                try {
-                    ChargingControlService.startChargingOnly(context)
-                    Log.i(TAG, "Smart charging service started")
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to start charging service", e)
-                }
+                try { ChargingControlService.startChargingOnly(context) } catch (_: Exception) { }
             }
-            
-            // Start battery stats service if enabled
             if (prefs.batteryStatsEnabled) {
-                try {
-                    ChargingControlService.startStatsOnly(context)
-                    Log.i(TAG, "Battery stats service started")
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to start battery stats service", e)
-                }
+                try { ChargingControlService.startStatsOnly(context) } catch (_: Exception) { }
             }
-            
-            // Start game mode service if enabled
             if (prefs.gameServiceEnabled) {
                 try {
-                    val gmIntent = android.content.Intent(context, GameModeService::class.java)
-                    gmIntent.action = GameModeService.ACTION_START
+                    val gmIntent = Intent(context, GameModeService::class.java).apply {
+                        action = GameModeService.ACTION_START
+                    }
                     context.startForegroundService(gmIntent)
-                    Log.i(TAG, "Game mode service started on boot")
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to start game mode service", e)
-                }
+                } catch (_: Exception) { }
             }
 
-            Log.i(TAG, "Boot initialization complete")
-            
         } catch (e: Exception) {
             Log.e(TAG, "Error during boot initialization", e)
         }
+    }
+
+    private inline fun applySetting(name: String, block: () -> Unit) {
+        try {
+            block()
+        } catch (_: Exception) { }
     }
 }
