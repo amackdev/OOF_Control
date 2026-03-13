@@ -90,7 +90,6 @@ class AboutFragment : Fragment() {
             // Feature support
             binding.tvTouchRateSupport.text = if (TouchController.isTouchRateSupported()) "✓" else "✗"
             binding.tvSportModeSupport.text = if (ChargingController.isSportModeSupported()) "✓" else "✗"
-            binding.tvDt2wSupport.text = if (DeviceConfig.dt2wPath != null) "✓" else "✗"
         }
     }
     

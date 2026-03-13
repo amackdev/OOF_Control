@@ -18,7 +18,6 @@ class PrefsManager(context: Context) {
         private const val PREFS_NAME = "oof_control_prefs"
         
         // Keys
-        const val KEY_DT2W_ENABLED = "dt2w_enabled"
         const val KEY_TOUCH_RATE_ENABLED = "touch_rate_enabled"
         const val KEY_REFRESH_RATE = "refresh_rate"
         const val KEY_PERFORMANCE_MODE = "performance_mode"
@@ -40,11 +39,6 @@ class PrefsManager(context: Context) {
         const val THEME_LIGHT = 1
         const val THEME_DARK = 2
     }
-    
-    // DT2W
-    var dt2wEnabled: Boolean
-        get() = prefs.getBoolean(KEY_DT2W_ENABLED, false)
-        set(value) = prefs.edit { putBoolean(KEY_DT2W_ENABLED, value) }
     
     // Touch Rate
     var touchRateEnabled: Boolean

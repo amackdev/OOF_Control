@@ -98,11 +98,6 @@
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FEATURE SUPPORT" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="DT2W" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_dt2w_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Touch Rate 480Hz" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
                     <TextView android:id="@+id/tv_touch_rate_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
                 </LinearLayout>

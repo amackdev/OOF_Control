@@ -8,7 +8,6 @@ import java.io.File
 
 /**
  * Controller for touch-related operations including:
- * - Double Tap to Wake (DT2W)
  * - Touch Rate (240Hz/480Hz)
  * - Touch Boost
  * - Performance Mode
@@ -17,84 +16,6 @@ import java.io.File
 object TouchController {
 
     private const val TAG = "TouchController"
-
-    // DT2W file paths (fallbacks)
-    private const val DT2W_PROC_PATH = "/proc/tp_gesture"
-    private const val DT2W_SYS_PATH = "/sys/touchpanel/double_tap"
-
-    // ============ DOUBLE TAP TO WAKE ============
-
-    /**
-     * Enable or disable Double Tap to Wake.
-     * Tries MIUI Touch Feature first, then falls back to file paths.
-     */
-    suspend fun setDT2W(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
-        val value = if (enabled) 1 else 0
-        try {
-            // Try MIUI Touch Feature first
-            if (MiuiTouchFeature.isAvailable()) {
-                if (MiuiTouchFeature.setModeValue(
-                        MiuiTouchFeature.TOUCH_ID_PRIMARY,
-                        MiuiTouchFeature.TOUCH_DOUBLETAP_MODE,
-                        value
-                    )
-                ) {
-                    Log.i(TAG, "DT2W set via MiuiTouchFeature: $enabled")
-                    return@withContext true
-                }
-            }
-
-            // Fallback to file paths
-            val strValue = if (enabled) "1" else "0"
-            when {
-                File(DT2W_PROC_PATH).exists() -> {
-                    ShellExecutor.writeFile(DT2W_PROC_PATH, strValue)
-                }
-                File(DT2W_SYS_PATH).exists() -> {
-                    ShellExecutor.writeFile(DT2W_SYS_PATH, strValue)
-                }
-                else -> {
-                    Log.w(TAG, "No DT2W control method available")
-                    false
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting DT2W", e)
-            false
-        }
-    }
-
-    /**
-     * Get current DT2W state.
-     */
-    suspend fun getDT2W(): Boolean = withContext(Dispatchers.IO) {
-        try {
-            // Try MIUI Touch Feature first
-            if (MiuiTouchFeature.isAvailable()) {
-                val value = MiuiTouchFeature.getModeValue(
-                    MiuiTouchFeature.TOUCH_ID_PRIMARY,
-                    MiuiTouchFeature.TOUCH_DOUBLETAP_MODE
-                )
-                if (value >= 0) {
-                    return@withContext value == 1
-                }
-            }
-
-            // Fallback to file paths
-            when {
-                File(DT2W_PROC_PATH).exists() -> {
-                    ShellExecutor.readFile(DT2W_PROC_PATH) == "1"
-                }
-                File(DT2W_SYS_PATH).exists() -> {
-                    ShellExecutor.readFile(DT2W_SYS_PATH) == "1"
-                }
-                else -> false
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error getting DT2W", e)
-            false
-        }
-    }
 
     // ============ TOUCH RATE (480Hz) ============
 

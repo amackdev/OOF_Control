@@ -59,7 +59,6 @@ class BootReceiver : BroadcastReceiver() {
             // Apply settings in parallel for faster boot (saves ~3 seconds)
             val scope = CoroutineScope(Dispatchers.IO)
             listOf(
-                scope.async { applySetting("DT2W") { TouchController.setDT2W(prefs.dt2wEnabled) } },
                 scope.async { applySetting("Touch rate") {
                     if (TouchController.isTouchRateSupported()) TouchController.setTouchRate(prefs.touchRateEnabled)
                 } },

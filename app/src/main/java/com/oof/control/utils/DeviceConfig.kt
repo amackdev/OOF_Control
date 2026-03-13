@@ -19,7 +19,6 @@ object DeviceConfig {
     private var _deviceBrand: String? = null
     private var _chargingPath: String? = null
     private var _touchRatePath: String? = null
-    private var _dt2wPath: String? = null
     private var _hasXiaomiTouch: Boolean? = null
     
     // Current device codename
@@ -102,20 +101,6 @@ object DeviceConfig {
                 }
             }
             return _touchRatePath?.takeIf { it.isNotEmpty() }
-        }
-    
-    // DT2W paths
-    val dt2wPath: String?
-        get() {
-            if (_dt2wPath == null) {
-                _dt2wPath = when {
-                    pathExistsSafe("/proc/tp_gesture") -> "/proc/tp_gesture"
-                    pathExistsSafe("/sys/touchpanel/double_tap") -> "/sys/touchpanel/double_tap"
-                    hasXiaomiTouch -> "xiaomi_touch"
-                    else -> ""
-                }
-            }
-            return _dt2wPath?.takeIf { it.isNotEmpty() }
         }
     
     val hasXiaomiTouch: Boolean
@@ -237,7 +222,6 @@ object DeviceConfig {
         _deviceBrand = null
         _chargingPath = null
         _touchRatePath = null
-        _dt2wPath = null
         _hasXiaomiTouch = null
     }
 }

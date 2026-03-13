@@ -56,7 +56,6 @@ class DisplayFragment : Fragment() {
         
         try {
             // Load UI state from preferences (instant)
-            binding.switchDt2w.isChecked = prefs.dt2wEnabled
             updateRefreshRateButtons(prefs.refreshRate)
             
             // Touch Rate - check support in coroutine
@@ -135,32 +134,6 @@ class DisplayFragment : Fragment() {
     
     private fun setupListeners() {
         // ============ TOUCH SETTINGS ============
-        
-        // DT2W Switch
-        binding.switchDt2w.setOnCheckedChangeListener { _, isChecked ->
-            if (isUpdatingUI) return@setOnCheckedChangeListener
-            
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    val success = TouchController.setDT2W(isChecked)
-                    if (success) {
-                        prefs.dt2wEnabled = isChecked
-                        showToast("Double Tap to Wake ${if (isChecked) "enabled" else "disabled"}")
-                    } else {
-                        isUpdatingUI = true
-                        binding.switchDt2w.isChecked = !isChecked
-                        isUpdatingUI = false
-                        showToast("Failed to update DT2W")
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error setting DT2W", e)
-                    isUpdatingUI = true
-                    binding.switchDt2w.isChecked = !isChecked
-                    isUpdatingUI = false
-                    showToast("Error: ${e.message}")
-                }
-            }
-        }
         
         // Touch Rate Switch
         binding.switchTouchRate.setOnCheckedChangeListener { _, isChecked ->
