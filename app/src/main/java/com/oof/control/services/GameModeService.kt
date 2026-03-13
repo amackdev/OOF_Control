@@ -130,12 +130,8 @@ class GameModeService : Service() {
             if (!GameModeManager.isGameModeActive()) {
                 Log.i(TAG, "Game detected: ${entry.label} — enabling game mode")
                 val ok = GameModeManager.enable(entry.profile)
-                if (ok) {
-                    activeGamePackage = pkg
-                    updateNotification("Game Mode ON · ${entry.label}")
-                } else {
-                    Log.e(TAG, "Failed to enable game mode for $pkg")
-                }
+                if (ok) activeGamePackage = pkg
+                else Log.e(TAG, "Failed to enable game mode for $pkg")
             }
         } else {
             // Not a game app — disable game mode if it was active
@@ -143,7 +139,6 @@ class GameModeService : Service() {
                 Log.i(TAG, "Left game ($activeGamePackage) — disabling game mode")
                 GameModeManager.disable()
                 activeGamePackage = null
-                updateNotification("Monitoring games...")
             }
         }
     }
@@ -175,7 +170,11 @@ class GameModeService : Service() {
                 return START_NOT_STICKY
             }
             isRunning = true
-            startForeground(NOTIF_ID, buildNotification("Monitoring games..."))
+            // Android requires startForeground() be called within 5 s of startForegroundService().
+            // We immediately demote to background so no notification is shown to the user.
+            startForeground(NOTIF_ID, buildSilentNotification())
+            @Suppress("DEPRECATION")
+            stopForeground(true)   // remove the notification immediately
             monitorHandler.post(pollRunnable)
             Log.i(TAG, "GameModeService started — UsageEvents polling at ${POLL_MS}ms")
         }
@@ -212,28 +211,23 @@ class GameModeService : Service() {
         }
     }
 
-    // ── Notification ──────────────────────────────────────────────────────────
+    // ── Notification (minimal, immediately removed) ────────────────────────────
 
     private fun createNotificationChannel() {
         val ch = NotificationChannel(
-            NOTIF_CHANNEL, "Game Mode", NotificationManager.IMPORTANCE_LOW
+            NOTIF_CHANNEL, "Game Mode", NotificationManager.IMPORTANCE_NONE
         ).apply {
-            description = "Game mode per-app monitoring"
+            description = "Game mode monitor"
             setShowBadge(false)
         }
         getSystemService(NotificationManager::class.java).createNotificationChannel(ch)
     }
 
-    private fun buildNotification(text: String): Notification =
+    /** Minimal silent notification used only to satisfy startForeground() requirement. */
+    private fun buildSilentNotification(): Notification =
         Notification.Builder(this, NOTIF_CHANNEL)
-            .setContentTitle("OOF Game Mode")
-            .setContentText(text)
+            .setContentTitle("")
+            .setContentText("")
             .setSmallIcon(R.drawable.ic_notification)
-            .setOngoing(true)
             .build()
-
-    private fun updateNotification(text: String) {
-        getSystemService(NotificationManager::class.java)
-            .notify(NOTIF_ID, buildNotification(text))
-    }
 }
