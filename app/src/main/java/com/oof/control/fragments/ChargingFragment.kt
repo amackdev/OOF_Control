@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentChargingBinding
 import com.oof.control.services.ChargingControlService
 import com.oof.control.utils.BatteryController
-import com.oof.control.utils.BatteryStatsTracker
 import com.oof.control.utils.ChargingController
 import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.PrefsManager
@@ -25,7 +24,6 @@ class ChargingFragment : Fragment() {
     private var _binding: FragmentChargingBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: PrefsManager
-    private lateinit var batteryStatsTracker: BatteryStatsTracker
     private var updateJob: Job? = null  // Single combined update job
     
     private var isUpdatingUI = false
@@ -54,7 +52,6 @@ class ChargingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         prefs = PrefsManager(requireContext())
-        batteryStatsTracker = BatteryStatsTracker(requireContext())
         
         setupListeners()
         loadSavedStates()
@@ -257,7 +254,6 @@ class ChargingFragment : Fragment() {
             while (isActive) {
                 try {
                     updateBatteryInfo()
-                    batteryStatsTracker.updateStats()
                 } catch (e: Exception) {
                     if (isActive) Log.e(TAG, "Error in update loop", e)
                 }

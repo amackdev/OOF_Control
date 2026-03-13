@@ -6,7 +6,6 @@ import java.io.*
 object FileUtils {
 
     private const val TAG = "FileUtils"
-    private const val DEBUG = true
 
     /**
      * Reads the first line of text from the given file.

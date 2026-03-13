@@ -75,12 +75,12 @@ class SmartChargingService : Service() {
         serviceJob?.cancel()
         serviceScope.cancel()
 
-        // Resume charging on destroy (non-blocking)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
+        // Resume charging on destroy — must complete before service is gone
+        try {
+            kotlinx.coroutines.runBlocking(Dispatchers.IO) {
                 ChargingController.resumeCharging()
-            } catch (_: Exception) { }
-        }
+            }
+        } catch (_: Exception) { }
         super.onDestroy()
     }
     

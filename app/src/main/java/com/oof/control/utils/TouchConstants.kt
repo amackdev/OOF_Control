@@ -43,7 +43,6 @@ object TouchConstants {
     const val MODE_EXPERT        = 6
     const val MODE_EDGE_FILTER   = 7
     const val MODE_REPORT_RATE   = 9
-    const val MODE_DOUBLETAP     = 14
     const val MODE_GRIP_LONG     = 15
     // Struct sizes
     const val COMMON_DATA_SIZE   = 1030   // s8+u8+u16+u16+s32[256]
