@@ -13,25 +13,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "2.0"
-
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
-    }
-
-    signingConfigs {
-        create("release") {
-            storeFile = file("../keystore/oof_release.jks")
-            storePassword = "oofcontrol123"
-            keyAlias = "oof"
-            keyPassword = "oofcontrol123"
-        }
     }
 
     buildTypes {
@@ -42,10 +23,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
-        }
-        debug {
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
