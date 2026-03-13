@@ -164,13 +164,14 @@ class GameModeFragment : Fragment() {
     }
 
     private fun applyParamChange() {
-        if (!prefs.gameModeEnabled || isBusy) { saveProfile(); return }
-        // Re-apply live if game mode is currently active
+        val profile = buildProfileFromUI()
+        saveProfile()
+        if (!prefs.gameModeEnabled || isBusy) return
+        // Re-apply live if game mode is currently active — writes gamemode.txt immediately
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                GameModeManager.enable(buildProfileFromUI()) // enable() is idempotent-like
+                GameModeManager.applyProfile(profile)
             }
-            saveProfile()
         }
     }
 

@@ -22,24 +22,42 @@ object GameModeManager {
      */
     fun enable(profile: GameModeProfile): Boolean {
         if (gameModeActive) return true
-        Log.i(TAG, "Enabling game mode: \$profile")
+        Log.i(TAG, "Enabling game mode: $profile")
 
         saveCurrentParams()
+        writeProfile(profile)
 
-        // Assemble current state map to be written to daemon struct
+        gameModeActive = true
+        Log.i(TAG, "Game mode ENABLED")
+        return true
+    }
+
+    /**
+     * Apply updated parameters while game mode is already active.
+     * Unlike enable(), this always writes the config file — used for live
+     * seekbar/slider changes in the UI without toggling game mode off/on.
+     */
+    fun applyProfile(profile: GameModeProfile) {
+        if (!gameModeActive) return   // only relevant when game mode is ON
+        Log.i(TAG, "Applying live profile update")
+        writeProfile(profile)
+    }
+
+    /** Shared config writer used by both enable() and applyProfile(). */
+    private fun writeProfile(profile: GameModeProfile) {
         val currentState = mutableMapOf<Int, Int>()
 
-        // Push game mode master switch
+        // Push game mode master switch ON
         currentState[TouchConstants.MODE_GAME_MODE] = 1
 
         // Push all profile parameters
-        currentState[TouchConstants.MODE_ACTIVE] = profile.activeMode
-        currentState[TouchConstants.MODE_UP_THRESHOLD] = profile.upThreshold
-        currentState[TouchConstants.MODE_TOLERANCE] = profile.tolerance
+        currentState[TouchConstants.MODE_ACTIVE]          = profile.activeMode
+        currentState[TouchConstants.MODE_UP_THRESHOLD]    = profile.upThreshold
+        currentState[TouchConstants.MODE_TOLERANCE]       = profile.tolerance
         currentState[TouchConstants.MODE_AIM_SENSITIVITY] = profile.aimSensitivity
-        currentState[TouchConstants.MODE_TAP_STABILITY] = profile.tapStability
-        currentState[TouchConstants.MODE_EDGE_FILTER] = profile.edgeFilter
-        currentState[TouchConstants.MODE_REPORT_RATE] = profile.reportRate
+        currentState[TouchConstants.MODE_TAP_STABILITY]   = profile.tapStability
+        currentState[TouchConstants.MODE_EDGE_FILTER]     = profile.edgeFilter
+        currentState[TouchConstants.MODE_REPORT_RATE]     = profile.reportRate
 
         // Build the grip zone array
         val grip = buildGripArray(profile.edgeFilter)
@@ -49,10 +67,6 @@ object GameModeManager {
 
         // Signal game mode state to rest of system
         ShellExecutor.setPropertySync("persist.oofcontrol_gamemode", "1")
-
-        gameModeActive = true
-        Log.i(TAG, "Game mode ENABLED")
-        return true
     }
 
     /**
