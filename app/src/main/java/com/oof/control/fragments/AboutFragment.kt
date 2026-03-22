@@ -74,10 +74,10 @@ class AboutFragment : Fragment() {
             
             // Supported status
             if (DeviceConfig.isSupported) {
-                binding.tvSupportStatus.text = "✓ Fully Supported"
+                binding.tvSupportStatus.text = "Fully Supported"
                 binding.tvSupportStatus.setTextColor(com.google.android.material.color.MaterialColors.getColor(binding.root, com.google.android.material.R.attr.colorPrimary))
             } else {
-                binding.tvSupportStatus.text = "⚠ Partial Support"
+                binding.tvSupportStatus.text = "Partial Support"
                 binding.tvSupportStatus.setTextColor(resources.getColor(android.R.color.holo_orange_light, null))
             }
             
@@ -88,8 +88,8 @@ class AboutFragment : Fragment() {
             }
             
             // Feature support
-            binding.tvTouchRateSupport.text = if (TouchController.isTouchRateSupported()) "✓" else "✗"
-            binding.tvSportModeSupport.text = if (ChargingController.isSportModeSupported()) "✓" else "✗"
+            binding.tvTouchRateSupport.text = if (TouchController.isTouchRateSupported()) "Yes" else "No"
+            binding.tvSportModeSupport.text = if (ChargingController.isSportModeSupported()) "Yes" else "No"
         }
     }
     

@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Surfaces — grey light theme -->
-    <color name="background">#E8EAED</color>
+    <!-- Surfaces — light theme -->
+    <color name="background">#F2F4F6</color>
     <color name="surface">#F2F4F6</color>
-    <color name="card_background">#ECEEF1</color>
-    <color name="surface_dim">#DCDEE1</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="surface_dim">#E4E6E9</color>
 
     <!-- Text -->
-    <color name="text_primary">#1A1C1E</color>
-    <color name="text_secondary">#74777F</color>
+    <color name="text_primary">#1A1A1A</color>
+    <color name="text_secondary">#666666</color>
 
     <!-- Base colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- Accent palette — dull blue replaces green -->
-    <color name="accent">#5B8DB8</color>
-    <color name="blue">#4A7FA5</color>
+    <!-- OnePlus Red accent -->
+    <color name="accent">#F5001D</color>
+    <color name="blue">#CC0018</color>
     <color name="purple">#7C4DFF</color>
     <color name="pink">#FF4081</color>
     <color name="orange">#FF6B35</color>
     <color name="yellow">#FFAB00</color>
 
-    <!-- Icon container backgrounds -->
-    <color name="icon_bg_blue">#DDE9F5</color>
-    <color name="icon_bg_green">#DDE9F5</color>
+    <!-- Icon container backgrounds — neutral -->
+    <color name="icon_bg_blue">#EDEDED</color>
+    <color name="icon_bg_green">#EDEDED</color>
     <color name="icon_bg_purple">#EDE7F6</color>
-    <color name="icon_bg_yellow">#FFF8E1</color>
+    <color name="icon_bg_yellow">#FFF3E0</color>
 
     <!-- Nav -->
-    <color name="bottom_nav_color">#74777F</color>
+    <color name="bottom_nav_color">#888888</color>
 
-    <!-- Switch states — dull blue -->
+    <!-- Switch states — OnePlus red -->
     <color name="switch_thumb_on">@color/accent</color>
     <color name="switch_thumb_off">#BDBDBD</color>
-    <color name="switch_track_on">#805B8DB8</color>
+    <color name="switch_track_on">#80F5001D</color>
     <color name="switch_track_off">#42000000</color>
 
     <!-- Segment button colors -->
-    <color name="segment_selected_bg">#1A5B8DB8</color>
+    <color name="segment_selected_bg">#1AF5001D</color>
     <color name="segment_default_bg">@android:color/transparent</color>
 </resources>

@@ -124,15 +124,15 @@ class ChargingFragment : Fragment() {
         if (_binding == null) return
         when {
             limit <= 80 -> {
-                binding.tvHealthIndicator.text = "✓ Optimal"
+                binding.tvHealthIndicator.text = "Optimal"
                 binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.accent, null))
             }
             limit <= 90 -> {
-                binding.tvHealthIndicator.text = "⚡ Good"
+                binding.tvHealthIndicator.text = "Good"
                 binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.blue, null))
             }
             else -> {
-                binding.tvHealthIndicator.text = "⚠ High"
+                binding.tvHealthIndicator.text = "High"
                 binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.orange, null))
             }
         }
@@ -308,9 +308,9 @@ class ChargingFragment : Fragment() {
             // Update charging status
             if (isCharging != lastIsCharging) {
                 binding.tvBatteryStatus.text = when {
-                    isFastCharging && sportMode -> "🔥 TURBO CHARGING"
-                    isFastCharging -> "⚡ FAST CHARGING"
-                    isCharging -> "🔌 CHARGING"
+                    isFastCharging && sportMode -> "TURBO CHARGING"
+                    isFastCharging -> "FAST CHARGING"
+                    isCharging -> "CHARGING"
                     else -> "BATTERY"
                 }
                 lastIsCharging = isCharging
@@ -379,7 +379,7 @@ class ChargingFragment : Fragment() {
     
     private fun updateSportModeStatus(enabled: Boolean) {
         if (_binding == null) return
-        binding.tvSportModeStatus.text = if (enabled) "🔥 Turbo Charging" else "⚡ Standard"
+        binding.tvSportModeStatus.text = if (enabled) "Turbo Charging" else "Standard"
         binding.cardSportMode.alpha = if (enabled) 1.0f else 0.8f
         binding.layoutSportStats.visibility = if (enabled) View.VISIBLE else View.GONE
     }

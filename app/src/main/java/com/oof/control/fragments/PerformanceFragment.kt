@@ -82,7 +82,7 @@ class PerformanceFragment : Fragment() {
     }
     
     private fun updatePerformanceStatus(enabled: Boolean) {
-        binding.tvPerformanceStatus.text = if (enabled) "🔥 Active" else "😴 Disabled"
+        binding.tvPerformanceStatus.text = if (enabled) "Active" else "Disabled"
         binding.cardPerformance.alpha = if (enabled) 1.0f else 0.8f
         binding.tvPerformanceWarning.visibility = if (enabled) View.VISIBLE else View.GONE
     }

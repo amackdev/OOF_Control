@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView 
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,38 +7,42 @@
     android:background="?attr/colorSurface"
     android:fillViewport="true"
     android:clipToPadding="false"
+    android:paddingBottom="96dp"
     android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="8dp"
         android:gravity="center_horizontal">
 
         <!-- App Icon -->
         <ImageView
             android:id="@+id/iv_app_icon"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginTop="40dp"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:layout_marginTop="32dp"
             android:src="@mipmap/ic_launcher"
             android:contentDescription="App Icon" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="20dp"
             android:text="OOF Control"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="24sp"
+            android:textSize="26sp"
+            android:fontFamily="sans-serif"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="v2.0 - Standalone"
+            android:layout_marginTop="6dp"
+            android:text="v2.0 — Standalone"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
@@ -46,18 +50,20 @@
             android:id="@+id/tv_support_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="✓ Supported"
+            android:layout_marginTop="14dp"
+            android:text="Supported"
             android:textColor="?attr/colorPrimary"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium" />
 
         <!-- Device Info Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="28dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -66,16 +72,16 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DEVICE INFO" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DEVICE INFO" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:letterSpacing="0.08" android:layout_marginBottom="16dp" />
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Codename" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_device_codename" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UNKNOWN" android:textColor="?attr/colorOnSurface" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_device_codename" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UNKNOWN" android:textColor="?attr/colorOnSurface" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Brand" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="?attr/colorOnSurface" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="?attr/colorOnSurface" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -84,9 +90,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -95,16 +102,16 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FEATURE SUPPORT" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FEATURE SUPPORT" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:letterSpacing="0.08" android:layout_marginBottom="16dp" />
 
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Touch Rate 480Hz" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_touch_rate_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_touch_rate_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textColor="?attr/colorPrimary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="90W Sport Mode" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_sport_mode_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✓" android:textColor="?attr/colorPrimary" android:textSize="14sp" />
+                    <TextView android:id="@+id/tv_sport_mode_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textColor="?attr/colorPrimary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -113,9 +120,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -124,11 +132,11 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPPORTED DEVICES" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:layout_marginBottom="16dp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SUPPORTED DEVICES" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:letterSpacing="0.08" android:layout_marginBottom="16dp" />
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginBottom="12dp">
                     <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/dot_green" />
-                    <TextView android:id="@+id/tv_device_peridot" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="POCO F6 (peridot)" android:textColor="?attr/colorOnSurface" android:textSize="14sp" android:alpha="0.5" />
+                    <TextView android:id="@+id/tv_device_peridot" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:text="POCO F6 Pro (peridot)" android:textColor="?attr/colorOnSurface" android:textSize="14sp" android:alpha="0.5" />
                 </LinearLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
@@ -142,9 +150,10 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -158,13 +167,13 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical">
 
-                    <LinearLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_blue" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎨" android:textSize="20sp" />
-                    </LinearLayout>
+                    <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_blue">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_display" app:tint="?attr/colorPrimary" />
+                    </FrameLayout>
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Theme" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
-                        <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System default" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Theme" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                        <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System default" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" android:layout_marginTop="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -209,14 +218,15 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Settings Card -->
+        <!-- Apply on Boot Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant" app:strokeWidth="0dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="?attr/colorSurfaceVariant"
+            app:strokeWidth="0dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -225,13 +235,13 @@
                 android:gravity="center_vertical"
                 android:padding="18dp">
 
-                <LinearLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_purple" android:gravity="center">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔄" android:textSize="20sp" />
-                </LinearLayout>
+                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_purple">
+                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_about" app:tint="?attr/colorTertiary" />
+                </FrameLayout>
 
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply on Boot" android:textColor="?attr/colorOnSurface" android:textSize="15sp" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Restore settings after reboot" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply on Boot" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Restore settings after reboot" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" android:layout_marginTop="2dp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch

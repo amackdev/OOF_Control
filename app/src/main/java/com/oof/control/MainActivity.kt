@@ -8,28 +8,25 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.color.DynamicColors
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.oof.control.databinding.ActivityMainBinding
 import com.oof.control.fragments.*
 import com.oof.control.services.GameModeService
 import com.oof.control.services.ChargingControlService
 import com.oof.control.utils.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,26 +54,29 @@ class MainActivity : AppCompatActivity() {
             binding = ActivityMainBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
-            // Apply status bar height as top padding on toolbar so content starts below status bar
-            ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
+            // Fragment container: top padding = status bar height
+            ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainer) { view, insets ->
                 val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-                view.setPadding(view.paddingLeft, statusBar, view.paddingRight, view.paddingBottom)
+                view.setPadding(0, statusBar, 0, 0)
+                insets
+            }
+
+            // Bottom nav: bottom padding = system nav bar height
+            ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { view, insets ->
+                val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, navBar)
                 insets
             }
 
             checkPermissions()
-            setupNavDrawer()
-            expandDrawerEdgeSize()
-            setupEdgeSwipe()
+            setupBottomNav()
 
             if (savedInstanceState == null) {
-                binding.navigationView.setCheckedItem(R.id.nav_display)
                 loadFragment(DisplayFragment(), animate = false, forward = true)
             }
 
             checkDeviceSupport()
 
-            // Use lifecycleScope for proper lifecycle handling
             lifecycleScope.launch {
                 delay(1000)
                 try {
@@ -96,58 +96,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** Expand DrawerLayout native edge drag zone via reflection (default is ~18dp, we want ~80dp) */
-    private fun expandDrawerEdgeSize() {
-        try {
-            val density = resources.displayMetrics.density
-            val edgePx = (80 * density).toInt()
-            val draggerField = binding.drawerLayout.javaClass.getDeclaredField("mLeftDragger")
-            draggerField.isAccessible = true
-            val dragger = draggerField.get(binding.drawerLayout)
-            if (dragger != null) {
-                val edgeField = dragger.javaClass.getDeclaredField("mEdgeSize")
-                edgeField.isAccessible = true
-                edgeField.setInt(dragger, edgePx)
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "Could not expand drawer edge size", e)
-        }
-    }
-
-    /** Transparent 32dp edge zone also catches swipe-right gestures to open drawer */
-    private fun setupEdgeSwipe() {
-        val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(e1: MotionEvent?, e2: MotionEvent, vX: Float, vY: Float): Boolean {
-                // Open on rightward fling with reasonable velocity
-                if (vX > 300 && Math.abs(vY) < Math.abs(vX)) {
-                    if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                        binding.drawerLayout.openDrawer(GravityCompat.START)
-                        return true
-                    }
-                }
-                return false
-            }
-        })
-        binding.edgeSwipeZone.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
-            false // let DrawerLayout also handle it natively
-        }
-    }
-
-    private fun setupNavDrawer() {
-        binding.btnMenu.setOnClickListener {
-            if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-            } else {
-                binding.drawerLayout.openDrawer(GravityCompat.START)
-            }
-        }
-
-        binding.navigationView.setNavigationItemSelectedListener { item ->
-            if (item.itemId == currentNavId) {
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                return@setNavigationItemSelectedListener false
-            }
+    private fun setupBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            if (item.itemId == currentNavId) return@setOnItemSelectedListener true
             val forward = navOrder.indexOf(item.itemId) > navOrder.indexOf(currentNavId)
             currentNavId = item.itemId
             val fragment: Fragment = when (item.itemId) {
@@ -158,9 +109,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_about -> AboutFragment()
                 else -> DisplayFragment()
             }
-            item.isChecked = true
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            binding.root.postDelayed({ loadFragment(fragment, animate = true, forward = forward) }, 200)
+            loadFragment(fragment, animate = true, forward = forward)
             true
         }
     }
@@ -231,14 +180,5 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         } catch (e: Exception) { Log.e(TAG, "Error checking device support", e) }
-    }
-
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
-        }
     }
 }
