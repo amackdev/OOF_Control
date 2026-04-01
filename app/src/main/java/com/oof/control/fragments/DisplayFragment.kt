@@ -91,7 +91,7 @@ class DisplayFragment : Fragment() {
             binding.cardPif.visibility = visibility
             binding.cardBlspoof.visibility = visibility
             binding.cardKeybox.visibility = visibility
-            binding.cardSpoofprovider.visibility = visibility
+            binding.cardSpoofProvider.visibility = visibility
             binding.cardUnlimphotos.visibility = visibility
             binding.cardSpoofInfo.visibility = visibility
             binding.tvSpoofingSection.visibility = visibility
@@ -110,7 +110,7 @@ class DisplayFragment : Fragment() {
         binding.cardPif.visibility = View.GONE
         binding.cardBlspoof.visibility = View.GONE
         binding.cardKeybox.visibility = View.GONE
-        binding.cardSpoofprovider.visibility = View.GONE
+        binding.cardSpoofProvider.visibility = View.GONE
         binding.cardUnlimphotos.visibility = View.GONE
         binding.cardSpoofInfo.visibility = View.GONE
         binding.tvSpoofingSection.visibility = View.GONE
@@ -123,7 +123,7 @@ class DisplayFragment : Fragment() {
             binding.switchBlspoof.isChecked = getPropBool(PROP_BLSPOOF)
             binding.switchKeybox.isChecked = getPropBool(PROP_KEYBOX)
             binding.switchUnlimphotos.isChecked = getPropBool(PROP_UNLIM_PHOTOS)
-            binding.switchSpoofprovider.isChecked = getPropBool(PROP_SPOOF_PROVIDER)
+            binding.switchSpoofProvider.isChecked = getPropBool(PROP_SPOOF_PROVIDER)
             binding.switchFlagSecure.isChecked = getPropBool(PROP_DISABLE_FLAG_SECURE)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading prop states", e)
@@ -202,7 +202,7 @@ class DisplayFragment : Fragment() {
         }
         
         // Spoof Provider
-        binding.switchSpoofprovider.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchSpoofProvider.setOnCheckedChangeListener { _, isChecked ->
             if (isUpdatingUI) return@setOnCheckedChangeListener
             setProp(PROP_SPOOF_PROVIDER, isChecked, "Spoof Provider")
         }
@@ -270,7 +270,7 @@ class DisplayFragment : Fragment() {
             PROP_BLSPOOF -> binding.switchBlspoof.isChecked = value
             PROP_KEYBOX -> binding.switchKeybox.isChecked = value
             PROP_UNLIM_PHOTOS -> binding.switchUnlimphotos.isChecked = value
-            PROP_SPOOF_PROVIDER -> binding.switchSpoofprovider.isChecked = value
+            PROP_SPOOF_PROVIDER -> binding.switchSpoofProvider.isChecked = value
             PROP_DISABLE_FLAG_SECURE -> binding.switchFlagSecure.isChecked = value
         }
     }

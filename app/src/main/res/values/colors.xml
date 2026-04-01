@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Surfaces — light theme -->
-    <color name="background">#F2F4F6</color>
-    <color name="surface">#F2F4F6</color>
-    <color name="card_background">#FFFFFF</color>
-    <color name="surface_dim">#E4E6E9</color>
+    <!-- Modern Midnight Dashboard Palette -->
+    <color name="background">#0A0A0B</color>
+    <color name="surface">#121214</color>
+    <color name="card_background">#1A1A1D</color>
+    <color name="surface_dim">#151518</color>
 
-    <!-- Text -->
-    <color name="text_primary">#1A1A1A</color>
-    <color name="text_secondary">#666666</color>
+    <!-- Refined Text Hierarchy -->
+    <color name="text_primary">#F0F0F0</color>
+    <color name="text_secondary">#A0A0A5</color>
+    <color name="text_tertiary">#606065</color>
 
     <!-- Base colors -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- OnePlus Red accent -->
+    <!-- Vibrant Crimson Accent (OxygenOS inspired) -->
     <color name="accent">#F5001D</color>
-    <color name="blue">#CC0018</color>
-    <color name="purple">#7C4DFF</color>
-    <color name="pink">#FF4081</color>
-    <color name="orange">#FF6B35</color>
-    <color name="yellow">#FFAB00</color>
+    <color name="accent_vibrant">#FF1A38</color>
+    <color name="blue">#007AFF</color>
+    <color name="purple">#BF5AF2</color>
+    <color name="pink">#FF375F</color>
+    <color name="orange">#FF9F0A</color>
+    <color name="yellow">#FFD60A</color>
+    <color name="green">#32D74B</color>
 
-    <!-- Icon container backgrounds — neutral -->
-    <color name="icon_bg_blue">#EDEDED</color>
-    <color name="icon_bg_green">#EDEDED</color>
-    <color name="icon_bg_purple">#EDE7F6</color>
-    <color name="icon_bg_yellow">#FFF3E0</color>
+    <!-- Semantic Status Colors -->
+    <color name="state_charging">#FF1A38</color>
+    <color name="state_healthy">#32D74B</color>
+    <color name="state_idle">#A0A0A5</color>
 
-    <!-- Nav -->
-    <color name="bottom_nav_color">#888888</color>
+    <!-- Glassmorphism Foundations -->
+    <color name="glass_white">#1AFFFFFF</color>
+    <color name="glass_border">#20FFFFFF</color>
 
-    <!-- Switch states — OnePlus red -->
+    <!-- Nav & UI Elements -->
+    <color name="bottom_nav_color">#F0F0F0</color>
+    <color name="nav_indicator">#2AF5001D</color>
+
+    <!-- Custom Icon backgrounds -->
+    <color name="icon_bg_blue">#1A007AFF</color>
+    <color name="icon_bg_green">#1A32D74B</color>
+    <color name="icon_bg_purple">#1A7C4DFF</color>
+    <color name="icon_bg_yellow">#1AFFD60A</color>
+
+    <!-- Switch states -->
     <color name="switch_thumb_on">@color/accent</color>
-    <color name="switch_thumb_off">#BDBDBD</color>
-    <color name="switch_track_on">#80F5001D</color>
-    <color name="switch_track_off">#42000000</color>
+    <color name="switch_thumb_off">#404045</color>
+    <color name="switch_track_on">#30F5001D</color>
+    <color name="switch_track_off">#1AFFFFFF</color>
 
-    <!-- Segment button colors -->
-    <color name="segment_selected_bg">#1AF5001D</color>
+    <color name="segment_selected_bg">#2AF5001D</color>
     <color name="segment_default_bg">@android:color/transparent</color>
 </resources>
+

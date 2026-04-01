@@ -67,10 +67,8 @@ class ChargingFragment : Fragment() {
             
             // Hide charge limit controls if OS has the feature
             if (osHasChargeLimit) {
-                binding.cardChargeLimitEnable.visibility = View.GONE
                 binding.cardChargeLimit.visibility = View.GONE
             } else {
-                binding.cardChargeLimitEnable.visibility = View.VISIBLE
                 binding.cardChargeLimit.visibility = View.VISIBLE
                 
                 // Load UI state from preferences (instant)
@@ -125,7 +123,7 @@ class ChargingFragment : Fragment() {
         when {
             limit <= 80 -> {
                 binding.tvHealthIndicator.text = "Optimal"
-                binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.accent, null))
+                binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.green, null))
             }
             limit <= 90 -> {
                 binding.tvHealthIndicator.text = "Good"
@@ -318,19 +316,17 @@ class ChargingFragment : Fragment() {
             
             // Update drain rate display
             if (drainRate != lastDrainRate) {
-                // Always show drain rate (positive = charging, negative = discharging)
                 if (drainRate > 0) {
                     binding.tvDrainRate.text = "+${drainRate}mA/h"
-                    binding.tvDrainRate.setTextColor(resources.getColor(android.R.color.holo_green_light, null))
+                    binding.tvDrainRate.setTextColor(resources.getColor(com.oof.control.R.color.green, null))
                 } else if (drainRate < 0) {
                     binding.tvDrainRate.text = "${drainRate}mA/h"
-                    binding.tvDrainRate.setTextColor(resources.getColor(android.R.color.holo_red_light, null))
+                    binding.tvDrainRate.setTextColor(resources.getColor(com.oof.control.R.color.accent, null))
                 } else {
                     binding.tvDrainRate.text = "0mA/h"
-                    binding.tvDrainRate.setTextColor(resources.getColor(android.R.color.white, null))
+                    binding.tvDrainRate.setTextColor(resources.getColor(com.oof.control.R.color.text_primary, null))
                 }
                 binding.tvDrainRate.visibility = View.VISIBLE
-                
                 lastDrainRate = drainRate
             }
             

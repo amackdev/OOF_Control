@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- OnePlus OxygenOS-style Material 3 theme -->
-    <style name="Theme.OOFControl" parent="Theme.Material3.Light.NoActionBar">
+    <!-- Professional Midnight Dashboard Theme -->
+    <style name="Theme.OOFControl" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/accent</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/segment_selected_bg</item>
@@ -17,13 +17,13 @@
         <item name="colorOnSurface">@color/text_primary</item>
         <item name="colorSurfaceVariant">@color/card_background</item>
         <item name="colorOnSurfaceVariant">@color/text_secondary</item>
-        <item name="colorOutline">#18000000</item>
+        <item name="colorOutline">#20FFFFFF</item>
         <item name="android:colorBackground">@color/background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/background</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
         <item name="materialSwitchStyle">@style/Widget.OOFControl.MaterialSwitch</item>
         <item name="materialCardViewStyle">@style/Widget.OOFControl.Card</item>
     </style>
@@ -41,31 +41,33 @@
     </style>
 
     <style name="Widget.OOFControl.Card" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardCornerRadius">24dp</item>
         <item name="cardElevation">0dp</item>
-        <item name="strokeWidth">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/glass_border</item>
+        <item name="cardBackgroundColor">@color/card_background</item>
     </style>
 
-    <!-- Section header: gray, not primary-colored -->
+    <!-- Section header: subtle, tracked -->
     <style name="TextAppearance.OOFControl.SectionHeader" parent="TextAppearance.Material3.LabelMedium">
-        <item name="android:textSize">11sp</item>
-        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_tertiary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">0.08</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
-    <!-- Bold OnePlus-style page title -->
+    <!-- Bold Dashboard Title -->
     <style name="TextAppearance.OOFControl.PageTitle" parent="TextAppearance.Material3.HeadlineMedium">
-        <item name="android:textSize">30sp</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-black</item>
     </style>
 
-    <!-- Bottom nav indicator: red pill -->
+    <!-- Bottom nav indicator: refined pill -->
     <style name="Widget.OOFControl.Nav.Indicator" parent="">
-        <item name="android:color">@color/segment_selected_bg</item>
-        <item name="android:width">56dp</item>
+        <item name="android:color">@color/nav_indicator</item>
+        <item name="android:width">48dp</item>
         <item name="android:height">32dp</item>
         <item name="shapeAppearance">@style/ShapeAppearance.OOFControl.Pill</item>
     </style>
@@ -81,3 +83,4 @@
     </style>
 
 </resources>
+

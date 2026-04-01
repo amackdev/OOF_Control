@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@color/background"
     android:clipToPadding="false"
     android:fillViewport="true"
     android:paddingBottom="96dp"
@@ -14,11 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="8dp">
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp">
 
-        <!-- Header -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,50 +26,42 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Utils"
+            android:text="Display &amp; Utils"
             style="@style/TextAppearance.OOFControl.PageTitle"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="28dp" />
+            android:layout_marginBottom="32dp" />
 
-        <!-- Section: Touch Settings -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TOUCH SETTINGS"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="11sp"
-            android:letterSpacing="0.08"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginBottom="12dp" />
+            android:text="INTERACTION"
+            style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginBottom="16dp" />
 
         <!-- Touch Rate Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_touch_rate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
+            android:layout_marginBottom="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="18dp">
+                android:padding="20dp">
 
                 <FrameLayout
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="@drawable/icon_bg_blue">
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_display"
-                        app:tint="?attr/colorPrimary" />
+                        app:tint="@color/blue" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -80,8 +70,8 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="High Touch Sampling Rate" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="480Hz touch response for gaming" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" android:layout_marginTop="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="High Sampling Rate" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enhanced 480Hz response" android:textColor="@color/text_secondary" android:textSize="13sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -91,27 +81,19 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Section: Display -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DISPLAY"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="11sp"
-            android:letterSpacing="0.08"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="12dp" />
+            android:text="VISUALS"
+            style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="16dp" />
 
         <!-- Refresh Rate Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
+            android:layout_marginBottom="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,18 +106,18 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="20dp">
 
                     <FrameLayout
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/icon_bg_purple">
                         <ImageView
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_display"
-                            app:tint="?attr/colorTertiary" />
+                            app:tint="@color/purple" />
                     </FrameLayout>
 
                     <LinearLayout
@@ -144,28 +126,21 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:layout_marginStart="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Force Refresh Rate" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lock display to specific Hz" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" android:layout_marginTop="2dp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Force Refresh Rate" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
+                        <TextView android:id="@+id/tv_current_rr" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="120Hz Active" android:textColor="@color/accent" android:textSize="13sp" />
                     </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_current_rr"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="120Hz"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="18sp"
-                        android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bg_card_glass"
+                    android:padding="4dp">
 
-                    <Button android:id="@+id/btn_60hz" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:layout_marginEnd="8dp" android:text="60Hz" android:textColor="?attr/colorOnSurface" android:background="@drawable/rr_button_selector" android:textSize="13sp" android:fontFamily="sans-serif-medium" />
-                    <Button android:id="@+id/btn_90hz" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:layout_marginEnd="8dp" android:text="90Hz" android:textColor="?attr/colorOnSurface" android:background="@drawable/rr_button_selector" android:textSize="13sp" android:fontFamily="sans-serif-medium" />
-                    <Button android:id="@+id/btn_120hz" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:text="120Hz" android:textColor="?attr/colorOnSurface" android:background="@drawable/rr_button_selector" android:textSize="13sp" android:fontFamily="sans-serif-medium" />
+                    <Button android:id="@+id/btn_60hz" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="60" style="@style/Widget.Material3.Button.TextButton" android:textColor="@color/text_primary" />
+                    <Button android:id="@+id/btn_90hz" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="90" style="@style/Widget.Material3.Button.TextButton" android:textColor="@color/text_primary" />
+                    <Button android:id="@+id/btn_120hz" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="120" style="@style/Widget.Material3.Button.TextButton" android:textColor="@color/text_primary" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -175,29 +150,25 @@
             android:id="@+id/card_flag_secure"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
+            android:layout_marginBottom="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="18dp">
+                android:padding="20dp">
 
                 <FrameLayout
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:background="@drawable/icon_bg_purple">
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/icon_bg_green">
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_shield"
-                        app:tint="?attr/colorTertiary" />
+                        app:tint="@color/green" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -206,8 +177,8 @@
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Disable FLAG_SECURE" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Allow screenshots in secure apps" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" android:layout_marginTop="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Allow Screenshots" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bypass secure app restrictions" android:textColor="@color/text_secondary" android:textSize="13sp" />
                 </LinearLayout>
 
                 <com.google.android.material.materialswitch.MaterialSwitch
@@ -217,60 +188,30 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Section: Spoofing -->
         <TextView
             android:id="@+id/tv_spoofing_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SPOOFING"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="11sp"
-            android:letterSpacing="0.08"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="12dp" />
+            android:text="SPOOFING &amp; SECURITY"
+            style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="16dp" />
 
         <!-- PIF Spoof -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_pif"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="18dp">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_blue">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_pif" app:tint="?attr/colorPrimary" />
+            android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <FrameLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/icon_bg_blue">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" android:src="@drawable/ic_pif" app:tint="@color/blue" />
                 </FrameLayout>
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PIF Spoof" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="persist.sys.oof.pif" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PIF Spoof" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Device integrity spoofing" android:textColor="@color/text_secondary" android:textSize="12sp" />
                 </LinearLayout>
                 <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_pif" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- BLS Spoof -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_blspoof"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="18dp">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_blue">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_shield" app:tint="?attr/colorPrimary" />
-                </FrameLayout>
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="BLS Spoof" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="persist.sys.oof.blspoof" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginTop="2dp" />
-                </LinearLayout>
-                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_blspoof" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -279,42 +220,52 @@
             android:id="@+id/card_keybox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="18dp">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_purple">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_key" app:tint="?attr/colorTertiary" />
+            android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <FrameLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/icon_bg_purple">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" android:src="@drawable/ic_key" app:tint="@color/purple" />
                 </FrameLayout>
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Keybox Spoof" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="persist.oof_keybox.enabled" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Keybox Spoofing" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Strong integrity bypass" android:textColor="@color/text_secondary" android:textSize="12sp" />
                 </LinearLayout>
                 <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_keybox" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Spoof Provider -->
+        <!-- Blspoof -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_spoofprovider"
+            android:id="@+id/card_blspoof"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="18dp">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_yellow">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_location" app:tint="@color/orange" />
+            android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <FrameLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/icon_bg_yellow">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" android:src="@drawable/ic_performance" app:tint="@color/orange" />
                 </FrameLayout>
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Spoof Provider" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="persist.sys.oof-utils.spoofprovider" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bootloader Spoof" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hide bootloader status" android:textColor="@color/text_secondary" android:textSize="12sp" />
                 </LinearLayout>
-                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_spoofprovider" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_blspoof" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Spoof Provider -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_spoof_provider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <FrameLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/icon_bg_green">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" android:src="@drawable/ic_shield" app:tint="@color/green" />
+                </FrameLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Spoof Provider" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="External provider spoofing" android:textColor="@color/text_secondary" android:textSize="12sp" />
+                </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_spoof_provider" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -323,18 +274,14 @@
             android:id="@+id/card_unlimphotos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:cardBackgroundColor="?attr/colorSurfaceVariant"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="18dp">
-                <FrameLayout android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/icon_bg_blue">
-                    <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:src="@drawable/ic_cloud_upload" app:tint="?attr/colorPrimary" />
+            android:layout_marginBottom="8dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp">
+                <FrameLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/icon_bg_purple">
+                    <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center" android:src="@drawable/ic_about" app:tint="@color/purple" />
                 </FrameLayout>
                 <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unlimited Google Photos" android:textColor="?attr/colorOnSurface" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="persist.sys.oof-utils.unligphotos" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="11sp" android:fontFamily="monospace" android:layout_marginTop="2dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unlimited Storage" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pixel XL photo backup spoof" android:textColor="@color/text_secondary" android:textSize="12sp" />
                 </LinearLayout>
                 <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_unlimphotos" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
@@ -345,16 +292,14 @@
             android:id="@+id/card_spoof_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            app:cardBackgroundColor="@color/icon_bg_blue"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="14dp">
-                <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@drawable/ic_lightbulb" app:tint="?attr/colorPrimary" />
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:text="Spoofing changes require a reboot to take effect" android:textColor="?attr/colorOnSurfaceVariant" android:textSize="12sp" />
+            android:layout_marginTop="12dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="16dp" android:background="@color/icon_bg_blue">
+                <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_lightbulb" app:tint="@color/blue" />
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:text="Reboot required for spoofing changes" android:textColor="@color/blue" android:textSize="12sp" android:fontFamily="sans-serif-medium" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
+
+
