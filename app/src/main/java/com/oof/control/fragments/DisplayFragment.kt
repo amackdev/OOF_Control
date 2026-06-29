@@ -1,17 +1,26 @@
 package com.oof.control.fragments
 
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Base64
 import android.util.Log
+import java.io.BufferedWriter
+import java.io.OutputStreamWriter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentDisplayBinding
 import com.oof.control.utils.PrefsManager
+import com.oof.control.utils.ShellExecutor
 import com.oof.control.utils.TouchController
 import kotlinx.coroutines.launch
+import java.io.File
 
 class DisplayFragment : Fragment() {
     
@@ -23,7 +32,7 @@ class DisplayFragment : Fragment() {
     
     companion object {
         private const val TAG = "DisplayFragment"
-        
+
         // Prop names
         const val PROP_PIF = "persist.sys.oof.pif"
         const val PROP_BLSPOOF = "persist.sys.oof.blspoof"
@@ -32,6 +41,16 @@ class DisplayFragment : Fragment() {
         const val PROP_SPOOF_PROVIDER = "persist.sys.oof-utils.spoofprovider"
         const val PROP_PIF_IMPLEMENTED = "ro.oof_pif.implemented"
 		const val PROP_DISABLE_FLAG_SECURE = "persist.sys.oof_secureflag"
+
+        // PIF Updater props
+        const val PROP_UPDATE_FINGERPRINT = "persist.custom_pif.update"
+        const val PROP_UPDATE_KEYBOX_PATH = "ro.custom_keybox.updatepath"
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val keyboxFilePicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        uri?.let { handleKeyboxFileSelected(it) }
     }
     
     override fun onCreateView(
@@ -212,6 +231,18 @@ class DisplayFragment : Fragment() {
             if (isUpdatingUI) return@setOnCheckedChangeListener
             setProp(PROP_DISABLE_FLAG_SECURE, isChecked, "FLAG_SECURE")
         }
+
+        // ============ PIF UPDATER ============
+
+        // Update Fingerprint
+        binding.cardUpdateFingerprint.setOnClickListener {
+            updateFingerprint()
+        }
+
+        // Update Keybox
+        binding.cardUpdateKeybox.setOnClickListener {
+            keyboxFilePicker.launch(arrayOf("application/xml", "text/xml"))
+        }
     }
     
     private fun setRefreshRate(rate: Int) {
@@ -279,7 +310,70 @@ class DisplayFragment : Fragment() {
         val value = TouchController.getSystemProp(propName)
         return value.equals("true", ignoreCase = true) || value == "1"
     }
-    
+
+    private fun updateFingerprint() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val success = TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "true")
+                if (success) {
+                    showToast("Fingerprint update triggered")
+                    handler.postDelayed({
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "false")
+                        }
+                    }, 10000)
+                } else {
+                    showToast("Failed to trigger fingerprint update")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating fingerprint", e)
+                showToast("Error: ${e.message}")
+            }
+        }
+    }
+
+    private fun handleKeyboxFileSelected(uri: Uri) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                requireContext().contentResolver.takePersistableUriPermission(
+                    uri,
+                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not persist URI permission", e)
+            }
+
+            try {
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                val xmlContent = inputStream?.bufferedReader()?.use { it.readText() } ?: throw Exception("Failed to read file")
+                inputStream?.close()
+
+                val encryptedBase64 = Base64.encodeToString(xmlContent.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+                val outputPath = "/sdcard/Download/Keylogger.zsl"
+
+                val file = File(outputPath)
+                file.writeText(encryptedBase64)
+
+                binding.tvKeyboxPath.text = outputPath
+                showToast("Keybox written to $outputPath")
+
+                try {
+                    TouchController.setSystemProp("persist.custom_keybox.state", "true")
+                    handler.postDelayed({
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            TouchController.setSystemProp("persist.custom_keybox.state", "false")
+                        }
+                    }, 10000)
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to toggle keybox state", e)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error processing keybox", e)
+                showToast("Error: ${e.message}")
+            }
+        }
+    }
+
     private fun showToast(message: String) {
         if (isAdded && context != null) {
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
