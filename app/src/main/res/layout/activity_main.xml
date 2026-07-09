@@ -15,6 +15,7 @@
 
     <!-- Modern Floating Navigation Bar -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_nav_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -26,17 +27,156 @@
         app:strokeColor="@color/glass_border"
         app:cardBackgroundColor="@color/card_background">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_nav"
+        <LinearLayout
+            android:id="@+id/bottom_nav_container"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:background="@android:color/transparent"
-            app:menu="@menu/bottom_nav_menu"
-            app:itemIconTint="@color/bottom_nav_color"
-            app:itemTextColor="@color/bottom_nav_color"
-            app:labelVisibilityMode="unlabeled"
-            app:itemActiveIndicatorStyle="@style/Widget.OOFControl.Nav.Indicator"
-            app:elevation="0dp" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- Item 1: Display/Utils -->
+            <FrameLayout
+                android:id="@+id/nav_display"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/nav_item_background"
+                android:clipChildren="false">
+
+                <View
+                    android:id="@+id/nav_indicator_display"
+                    android:layout_width="44dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/nav_indicator_bg" />
+
+                <ImageView
+                    android:id="@+id/nav_icon_display"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_display"
+                    app:tint="@color/text_primary" />
+            </FrameLayout>
+
+            <!-- Item 2: Performance -->
+            <FrameLayout
+                android:id="@+id/nav_performance"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/nav_item_background"
+                android:clipChildren="false">
+
+                <View
+                    android:id="@+id/nav_indicator_performance"
+                    android:layout_width="44dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/nav_indicator_bg" />
+
+                <ImageView
+                    android:id="@+id/nav_icon_performance"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_performance"
+                    app:tint="@color/text_secondary" />
+            </FrameLayout>
+
+            <!-- Item 3: Game Mode -->
+            <FrameLayout
+                android:id="@+id/nav_game_mode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/nav_item_background"
+                android:clipChildren="false">
+
+                <View
+                    android:id="@+id/nav_indicator_game_mode"
+                    android:layout_width="44dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/nav_indicator_bg" />
+
+                <ImageView
+                    android:id="@+id/nav_icon_game_mode"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_gamepad"
+                    app:tint="@color/text_secondary" />
+            </FrameLayout>
+
+            <!-- Item 4: Charging -->
+            <FrameLayout
+                android:id="@+id/nav_charging"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/nav_item_background"
+                android:clipChildren="false">
+
+                <View
+                    android:id="@+id/nav_indicator_charging"
+                    android:layout_width="44dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/nav_indicator_bg" />
+
+                <ImageView
+                    android:id="@+id/nav_icon_charging"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_charging"
+                    app:tint="@color/text_secondary" />
+            </FrameLayout>
+
+            <!-- Item 5: About -->
+            <FrameLayout
+                android:id="@+id/nav_about"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/nav_item_background"
+                android:clipChildren="false">
+
+                <View
+                    android:id="@+id/nav_indicator_about"
+                    android:layout_width="44dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:background="@drawable/nav_indicator_bg" />
+
+                <ImageView
+                    android:id="@+id/nav_icon_about"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_about"
+                    app:tint="@color/text_secondary" />
+            </FrameLayout>
+
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,27 @@
+# Gradle files
+.gradle/
+build/
+app/build/
+.kotlin/
+
+# Local configuration
+local.properties
+inject_signature.py
+
+# Android Studio / IntelliJ files
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Output files
+*.apk
+oof_control.apk
+
+# ROM/Signature specific files
+framework-res.apk
+
+# System files
+.DS_Store
+Thumbs.db

@@ -61,10 +61,13 @@ class MainActivity : AppCompatActivity() {
                 insets
             }
 
-            // Bottom nav: bottom padding = system nav bar height
-            ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { view, insets ->
+            // Bottom nav card: adjust bottom margin to float above system navigation bar
+            ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavCard) { view, insets ->
                 val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-                view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, navBar)
+                val layoutParams = view.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+                val baseMargin = (24 * view.resources.displayMetrics.density).toInt()
+                layoutParams.bottomMargin = baseMargin + navBar
+                view.layoutParams = layoutParams
                 insets
             }
 
@@ -97,22 +100,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNav() {
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            if (item.itemId == currentNavId) return@setOnItemSelectedListener true
-            val forward = navOrder.indexOf(item.itemId) > navOrder.indexOf(currentNavId)
-            currentNavId = item.itemId
-            val fragment: Fragment = when (item.itemId) {
-                R.id.nav_display -> DisplayFragment()
-                R.id.nav_performance -> PerformanceFragment()
-                R.id.nav_game_mode -> GameModeFragment()
-                R.id.nav_charging -> ChargingFragment()
-                R.id.nav_about -> AboutFragment()
-                else -> DisplayFragment()
+        val navItems = listOf(
+            NavigationItem(R.id.nav_display, binding.navDisplay, binding.navIndicatorDisplay, binding.navIconDisplay, DisplayFragment()::class.java),
+            NavigationItem(R.id.nav_performance, binding.navPerformance, binding.navIndicatorPerformance, binding.navIconPerformance, PerformanceFragment()::class.java),
+            NavigationItem(R.id.nav_game_mode, binding.navGameMode, binding.navIndicatorGameMode, binding.navIconGameMode, GameModeFragment()::class.java),
+            NavigationItem(R.id.nav_charging, binding.navCharging, binding.navIndicatorCharging, binding.navIconCharging, ChargingFragment()::class.java),
+            NavigationItem(R.id.nav_about, binding.navAbout, binding.navIndicatorAbout, binding.navIconAbout, AboutFragment()::class.java)
+        )
+
+        navItems.forEach { item ->
+            item.button.setOnClickListener {
+                if (item.id == currentNavId) return@setOnClickListener
+                
+                val forward = navOrder.indexOf(item.id) > navOrder.indexOf(currentNavId)
+                currentNavId = item.id
+                
+                // Update UI selection states
+                navItems.forEach { other ->
+                    val isActive = other.id == item.id
+                    other.indicator.visibility = if (isActive) android.view.View.VISIBLE else android.view.View.INVISIBLE
+                    other.icon.imageTintList = ContextCompat.getColorStateList(
+                        this,
+                        if (isActive) R.color.text_primary else R.color.text_secondary
+                    )
+                }
+
+                // Load fragment
+                val fragment = item.fragmentClass.getDeclaredConstructor().newInstance()
+                loadFragment(fragment, animate = true, forward = forward)
             }
-            loadFragment(fragment, animate = true, forward = forward)
-            true
         }
     }
+
+    private data class NavigationItem(
+        val id: Int,
+        val button: android.view.View,
+        val indicator: android.view.View,
+        val icon: android.widget.ImageView,
+        val fragmentClass: Class<out Fragment>
+    )
 
     private fun loadFragment(fragment: Fragment, animate: Boolean = true, forward: Boolean = true) {
         try {
