@@ -328,11 +328,12 @@
         </LinearLayout>
 
         <!-- Game app list container -->
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/layout_game_apps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

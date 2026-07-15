@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private val navOrder = listOf(R.id.nav_display, R.id.nav_performance, R.id.nav_game_mode, R.id.nav_charging, R.id.nav_about)
     private var currentNavId = R.id.nav_display
+    private val fragments = mutableMapOf<Int, Fragment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             setupBottomNav()
 
             if (savedInstanceState == null) {
-                loadFragment(DisplayFragment(), animate = false, forward = true)
+                loadFragment(R.id.nav_display, { DisplayFragment() }, animate = false, forward = true)
             }
 
             checkDeviceSupport()
@@ -101,11 +102,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNav() {
         val navItems = listOf(
-            NavigationItem(R.id.nav_display, binding.navDisplay, binding.navIndicatorDisplay, binding.navIconDisplay, DisplayFragment()::class.java),
-            NavigationItem(R.id.nav_performance, binding.navPerformance, binding.navIndicatorPerformance, binding.navIconPerformance, PerformanceFragment()::class.java),
-            NavigationItem(R.id.nav_game_mode, binding.navGameMode, binding.navIndicatorGameMode, binding.navIconGameMode, GameModeFragment()::class.java),
-            NavigationItem(R.id.nav_charging, binding.navCharging, binding.navIndicatorCharging, binding.navIconCharging, ChargingFragment()::class.java),
-            NavigationItem(R.id.nav_about, binding.navAbout, binding.navIndicatorAbout, binding.navIconAbout, AboutFragment()::class.java)
+            NavigationItem(R.id.nav_display, binding.navDisplay, binding.navIndicatorDisplay, binding.navIconDisplay) { DisplayFragment() },
+            NavigationItem(R.id.nav_performance, binding.navPerformance, binding.navIndicatorPerformance, binding.navIconPerformance) { PerformanceFragment() },
+            NavigationItem(R.id.nav_game_mode, binding.navGameMode, binding.navIndicatorGameMode, binding.navIconGameMode) { GameModeFragment() },
+            NavigationItem(R.id.nav_charging, binding.navCharging, binding.navIndicatorCharging, binding.navIconCharging) { ChargingFragment() },
+            NavigationItem(R.id.nav_about, binding.navAbout, binding.navIndicatorAbout, binding.navIconAbout) { AboutFragment() }
         )
 
         navItems.forEach { item ->
@@ -126,8 +127,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 // Load fragment
-                val fragment = item.fragmentClass.getDeclaredConstructor().newInstance()
-                loadFragment(fragment, animate = true, forward = forward)
+                loadFragment(item.id, item.fragmentFactory, animate = true, forward = forward)
             }
         }
     }
@@ -137,10 +137,10 @@ class MainActivity : AppCompatActivity() {
         val button: android.view.View,
         val indicator: android.view.View,
         val icon: android.widget.ImageView,
-        val fragmentClass: Class<out Fragment>
+        val fragmentFactory: () -> Fragment
     )
 
-    private fun loadFragment(fragment: Fragment, animate: Boolean = true, forward: Boolean = true) {
+    private fun loadFragment(id: Int, factory: (() -> Fragment)? = null, animate: Boolean = true, forward: Boolean = true) {
         try {
             val transaction = supportFragmentManager.beginTransaction()
             if (animate) {
@@ -150,7 +150,19 @@ class MainActivity : AppCompatActivity() {
                     transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_right)
                 }
             }
-            transaction.replace(R.id.fragment_container, fragment)
+            
+            // Hide all current fragments
+            fragments.values.forEach { transaction.hide(it) }
+            
+            // Show or add the requested fragment
+            var fragment = fragments[id]
+            if (fragment == null && factory != null) {
+                fragment = factory()
+                fragments[id] = fragment
+                transaction.add(R.id.fragment_container, fragment, id.toString())
+            }
+            
+            fragment?.let { transaction.show(it) }
             transaction.commit()
         } catch (e: Exception) { Log.e(TAG, "Error loading fragment", e) }
     }

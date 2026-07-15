@@ -21,6 +21,8 @@ import android.widget.TextView
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import com.oof.control.adapters.GameAppAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.oof.control.R
@@ -56,7 +58,8 @@ class GameModeFragment : Fragment() {
     private lateinit var tvEdgeVal: TextView
     private lateinit var switchReportRate: MaterialSwitch
     private lateinit var layoutNoGames: LinearLayout
-    private lateinit var layoutGameApps: LinearLayout
+    private lateinit var layoutGameApps: RecyclerView
+    private lateinit var gameAppAdapter: GameAppAdapter
 
     private var isBusy = false
     private val SEEKBAR_CHANGE_DELAY = 80L
@@ -102,6 +105,12 @@ class GameModeFragment : Fragment() {
         switchReportRate = v.findViewById(R.id.switch_report_rate)
         layoutNoGames    = v.findViewById(R.id.layout_no_games)
         layoutGameApps   = v.findViewById(R.id.layout_game_apps)
+
+        gameAppAdapter = GameAppAdapter(mutableListOf<GameAppEntry>()) { pkg ->
+            prefs.removeGameApp(pkg)
+            loadGameApps()
+        }
+        layoutGameApps.adapter = gameAppAdapter
     }
 
     // ── Load/Save profile ──────────────────────────────────────────────────
@@ -209,29 +218,9 @@ class GameModeFragment : Fragment() {
     // ── Game Apps list ─────────────────────────────────────────────────────
 
     private fun loadGameApps() {
-        layoutGameApps.removeAllViews()
         val apps = prefs.getGameApps()
         layoutNoGames.visibility = if (apps.isEmpty()) View.VISIBLE else View.GONE
-
-        apps.forEach { entry ->
-            val itemView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.item_game_app, layoutGameApps, false)
-
-            itemView.findViewById<TextView>(R.id.tv_app_name).text = entry.label
-            itemView.findViewById<TextView>(R.id.tv_pkg_name).text = entry.packageName
-
-            try {
-                val icon = requireContext().packageManager.getApplicationIcon(entry.packageName)
-                itemView.findViewById<ImageView>(R.id.iv_app_icon).setImageDrawable(icon)
-            } catch (e: Exception) { /* no-op if app not installed */ }
-
-            itemView.findViewById<ImageButton>(R.id.btn_remove_app).setOnClickListener {
-                prefs.removeGameApp(entry.packageName)
-                loadGameApps()
-            }
-
-            layoutGameApps.addView(itemView)
-        }
+        gameAppAdapter.updateApps(apps)
     }
 
     private fun showAppPickerDialog() {

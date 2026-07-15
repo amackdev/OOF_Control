@@ -25,3 +25,6 @@ framework-res.apk
 # System files
 .DS_Store
 Thumbs.db
+
+# Temp dir for signature script
+temp_dump_dir/

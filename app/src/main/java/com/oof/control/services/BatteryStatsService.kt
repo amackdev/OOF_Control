@@ -250,6 +250,15 @@ class BatteryStatsService : Service() {
             lastLevelForDrain = level
         }
         
+        // Trigger UI/Notification update on battery change
+        serviceScope.launch {
+            try {
+                updateStats()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error updating stats on battery change", e)
+            }
+        }
+        
         // Reset stats when charging starts
         if (isCharging && sessionStartLevel != level) {
             resetStats(level)
@@ -257,13 +266,18 @@ class BatteryStatsService : Service() {
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "BatteryStatsService started")
         try {
-            startForeground(NOTIFICATION_ID, createNotification("Battery Stats", "Monitoring..."))
-            startStatsLoop()
+            startForeground(NOTIFICATION_ID, createNotification("Starting battery tracking...", ""))
+            // Initial update
+            serviceScope.launch {
+                try {
+                    updateStats()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in initial stats update", e)
+                }
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error in onStartCommand", e)
-            stopSelf()
         }
         return START_STICKY
     }
@@ -340,20 +354,7 @@ class BatteryStatsService : Service() {
         }
     }
     
-    private fun startStatsLoop() {
-        serviceJob = serviceScope.launch {
-            delay(2000)
-            
-            while (isActive) {
-                try {
-                    updateStats()
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error in stats loop", e)
-                }
-                delay(UPDATE_INTERVAL)
-            }
-        }
-    }
+    // Replaced startStatsLoop with broadcast-driven updates in onBatteryChanged
     
     private suspend fun updateStats() {
         val batteryLevel = BatteryController.getBatteryLevel()

@@ -18,13 +18,16 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import androidx.fragment.app.activityViewModels
+import com.oof.control.viewmodel.MainViewModel
 
 class ChargingFragment : Fragment() {
     
     private var _binding: FragmentChargingBinding? = null
     private val binding get() = _binding!!
     private lateinit var prefs: PrefsManager
-    private var updateJob: Job? = null  // Single combined update job
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private var updateJob: Job? = null
     
     private var isUpdatingUI = false
     
@@ -83,17 +86,22 @@ class ChargingFragment : Fragment() {
             binding.switchChargingService.isChecked = prefs.chargingServiceEnabled
             binding.switchBatteryStats.isChecked = prefs.batteryStatsEnabled
             
-            // Sport Mode - check support in coroutine
-            viewLifecycleOwner.lifecycleScope.launch {
-                val sportModeSupported = ChargingController.isSportModeSupported()
-                binding.switchSportMode.isEnabled = sportModeSupported
-                binding.cardSportMode.alpha = if (sportModeSupported) 1.0f else 0.5f
+            // Sport Mode - check support in coroutine (hide completely on marble)
+            if (DeviceConfig.deviceCodename == DeviceConfig.DEVICE_MARBLE) {
+                binding.cardSportMode.visibility = View.GONE
+            } else {
+                binding.cardSportMode.visibility = View.VISIBLE
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val sportModeSupported = ChargingController.isSportModeSupported()
+                    binding.switchSportMode.isEnabled = sportModeSupported
+                    binding.cardSportMode.alpha = if (sportModeSupported) 1.0f else 0.5f
 
-                if (sportModeSupported) {
-                    binding.switchSportMode.isChecked = prefs.sportMode
-                    updateSportModeStatus(prefs.sportMode)
-                } else {
-                    binding.tvSportModeStatus.text = "Not supported"
+                    if (sportModeSupported) {
+                        binding.switchSportMode.isChecked = prefs.sportMode
+                        updateSportModeStatus(prefs.sportMode)
+                    } else {
+                        binding.tvSportModeStatus.text = "Not supported"
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -246,16 +254,15 @@ class ChargingFragment : Fragment() {
         }
     }
     
-    /** Combined update loop for battery info and stats - reduces overhead */
+    /** Reactively update battery info when broadcast is received */
     private fun startUpdates() {
         updateJob = viewLifecycleOwner.lifecycleScope.launch {
-            while (isActive) {
+            mainViewModel.batteryUpdateTrigger.collect {
                 try {
                     updateBatteryInfo()
                 } catch (e: Exception) {
-                    if (isActive) Log.e(TAG, "Error in update loop", e)
+                    Log.e(TAG, "Error in update collection", e)
                 }
-                delay(UPDATE_INTERVAL)
             }
         }
     }

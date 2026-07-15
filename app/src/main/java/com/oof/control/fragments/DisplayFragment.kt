@@ -77,21 +77,34 @@ class DisplayFragment : Fragment() {
             // Load UI state from preferences (instant)
             updateRefreshRateButtons(prefs.refreshRate)
             
-            // Touch Rate - check support in coroutine
-            viewLifecycleOwner.lifecycleScope.launch {
-                val touchRateSupported = TouchController.isTouchRateSupported()
-                binding.switchTouchRate.isEnabled = touchRateSupported
-                binding.cardTouchRate.alpha = if (touchRateSupported) 1.0f else 0.5f
+            // Touch Rate - check support in coroutine (hide completely on marble)
+            if (com.oof.control.utils.DeviceConfig.deviceCodename == com.oof.control.utils.DeviceConfig.DEVICE_MARBLE) {
+                binding.tvHeaderInteraction.visibility = View.GONE
+                binding.cardTouchRate.visibility = View.GONE
                 
-                if (touchRateSupported) {
-                    binding.switchTouchRate.isChecked = prefs.touchRateEnabled
+                // Still run PIF and prop checks
+                viewLifecycleOwner.lifecycleScope.launch {
+                    checkPifImplementation()
+                    loadPropStates()
                 }
-                
-                // Check if PIF is implemented
-                checkPifImplementation()
-                
-                // Load prop states
-                loadPropStates()
+            } else {
+                binding.tvHeaderInteraction.visibility = View.VISIBLE
+                binding.cardTouchRate.visibility = View.VISIBLE
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val touchRateSupported = TouchController.isTouchRateSupported()
+                    binding.switchTouchRate.isEnabled = touchRateSupported
+                    binding.cardTouchRate.alpha = if (touchRateSupported) 1.0f else 0.5f
+                    
+                    if (touchRateSupported) {
+                        binding.switchTouchRate.isChecked = prefs.touchRateEnabled
+                    }
+                    
+                    // Check if PIF is implemented
+                    checkPifImplementation()
+                    
+                    // Load prop states
+                    loadPropStates()
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading saved states", e)
