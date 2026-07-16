@@ -4,9 +4,15 @@ build/
 app/build/
 .kotlin/
 
-# Local configuration
+# Local configuration — machine-specific, never commit
 local.properties
 inject_signature.py
+
+# Signing / keystore — never commit credentials
+*.jks
+*.keystore
+keystore.properties
+signing.properties
 
 # Android Studio / IntelliJ files
 .idea/
@@ -18,6 +24,7 @@ out/
 # Output files
 *.apk
 oof_control.apk
+app-release-signed.apk
 
 # ROM/Signature specific files
 framework-res.apk
