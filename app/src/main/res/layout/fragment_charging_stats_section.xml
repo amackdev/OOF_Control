@@ -29,7 +29,7 @@
             android:id="@+id/tvCurrentStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Now: 404 mA (1.7 W) • 35.1° • 2h 56m left"
+            android:text="Now: 404 mA (1.7 W) â€¢ 35.1Â° â€¢ 2h 56m left"
             android:textSize="14sp"
             android:textColor="?attr/colorOnSurface"
             android:background="?attr/colorSurfaceVariant"
@@ -76,7 +76,7 @@
             android:id="@+id/tvScreenOnStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Screen On: 1m 5s • 1.0% (14 mAh)"
+            android:text="Screen On: 1m 5s â€¢ 1.0% (14 mAh)"
             android:textSize="13sp"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="4dp" />
@@ -86,7 +86,7 @@
             android:id="@+id/tvScreenOffStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Screen Off: 0s • 0.0% (0 mAh)"
+            android:text="Screen Off: 0s â€¢ 0.0% (0 mAh)"
             android:textSize="13sp"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="4dp" />
@@ -103,7 +103,7 @@
             android:id="@+id/tvDeepSleepStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Deep sleep: 0s • 0.0%"
+            android:text="Deep sleep: 0s â€¢ 0.0%"
             android:textSize="13sp"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="4dp" />
@@ -113,7 +113,7 @@
             android:id="@+id/tvAwakeStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Awake: 0s • 0.0%"
+            android:text="Awake: 0s â€¢ 0.0%"
             android:textSize="13sp"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="8dp" />

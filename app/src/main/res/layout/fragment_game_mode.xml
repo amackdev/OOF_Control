@@ -15,326 +15,243 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
-        android:paddingTop="24dp">
+        android:paddingTop="32dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="OOF CONTROL"
+            android:text="GAMING OPTIMISATION"
             style="@style/TextAppearance.OOFControl.SectionHeader" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Game Mode"
+            android:text="Game Engine"
             style="@style/TextAppearance.OOFControl.PageTitle"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="40dp" />
 
         <!-- Master Switch Card -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="vertical"
             android:layout_marginBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
-                    
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_bg_yellow">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_gamepad"
-                            app:tint="@color/orange" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Game Engine"
-                            android:textColor="@color/text_primary"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif-medium" />
-                        <TextView
-                            android:id="@+id/tv_game_mode_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Optimized touch for gaming"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switch_game_mode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <!-- Active game badge -->
-                <LinearLayout
-                    android:id="@+id/layout_active_badge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/bg_card_glass"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="8dp"
-                    android:layout_marginTop="14dp"
-                    android:visibility="gone">
-                    <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:background="@drawable/dot_green"
-                        android:layout_marginEnd="8dp" />
-                    <TextView
-                        android:id="@+id/tv_active_game"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Game active"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Auto-detect card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="20dp">
+                android:gravity="center_vertical">
+                
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auto-detect"
+                        android:text="Game Engine"
                         android:textColor="@color/text_primary"
-                        android:textSize="15sp"
+                        android:textSize="16sp"
                         android:fontFamily="sans-serif-medium" />
                     <TextView
+                        android:id="@+id/tv_game_mode_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Activate for listed apps"
+                        android:text="Optimised touch for gaming"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
+
                 <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_auto_game"
+                    android:id="@+id/switch_game_mode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Section: Touch Parameters -->
+            <!-- Active game badge -->
+            <LinearLayout
+                android:id="@+id/layout_active_badge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_card_glass"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone">
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/dot_green"
+                    android:layout_marginEnd="8dp" />
+                <TextView
+                    android:id="@+id/tv_active_game"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Game active"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Auto-detect card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp">
+            
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto-detect"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Activate for listed apps"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_auto_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TOUCH PARAMETERS"
             style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="16dp" />
 
-        <!-- Active Mode -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Touch Parameters Grouped Card -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:layout_marginBottom="32dp">
+
+            <!-- Active Mode -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                    <LinearLayout
+    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Active Mode" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Touch scan rate boost" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
                     </LinearLayout>
                     <TextView android:id="@+id/tv_active_mode_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
                 </LinearLayout>
-                <SeekBar android:id="@+id/seek_active_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="3" android:progress="1" android:layout_marginTop="16dp" android:paddingStart="0dp" android:paddingEnd="0dp"/>
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
+                <SeekBar android:id="@+id/seek_active_mode" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="3" android:progress="1" android:layout_marginTop="16dp"/>
+                <LinearLayout
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Off" android:textColor="@color/text_tertiary" android:textSize="11sp"/>
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Low" android:textColor="@color/text_tertiary" android:textSize="11sp" android:gravity="center"/>
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Mid" android:textColor="@color/text_tertiary" android:textSize="11sp" android:gravity="center"/>
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="High" android:textColor="@color/text_tertiary" android:textSize="11sp" android:gravity="end"/>
                 </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Aim Sensitivity -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/glass_border" android:layout_marginVertical="20dp" />
+
+            <!-- Aim Sensitivity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                    <LinearLayout
+    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Aim Sensitivity" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fine crosshair precision" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
                     </LinearLayout>
-                    <TextView android:id="@+id/tv_aim_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
+                    <TextView android:id="@+id/tv_aim_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="20" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
                 </LinearLayout>
-                <SeekBar android:id="@+id/seek_aim" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="4" android:progress="2" android:layout_marginTop="16dp" android:paddingStart="0dp" android:paddingEnd="0dp"/>
+                <SeekBar android:id="@+id/seek_aim" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="40" android:progress="20" android:layout_marginTop="16dp"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/glass_border" android:layout_marginVertical="20dp" />
 
-        <!-- Tap Stability -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tap Stability" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Reduce accidental taps" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
+            <!-- Follow Sensitivity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                    <LinearLayout
+    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Follow Sensitivity" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fast swipe precision" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
                     </LinearLayout>
-                    <TextView android:id="@+id/tv_tap_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
+                    <TextView android:id="@+id/tv_follow_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="20" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
                 </LinearLayout>
-                <SeekBar android:id="@+id/seek_tap" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="4" android:progress="2" android:layout_marginTop="16dp" android:paddingStart="0dp" android:paddingEnd="0dp"/>
+                <SeekBar android:id="@+id/seek_follow" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="40" android:progress="20" android:layout_marginTop="16dp"/>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
-        <!-- Touch Tolerance -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Touch Tolerance" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Filter micro-jitters" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <TextView android:id="@+id/tv_tolerance_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
-                </LinearLayout>
-                <SeekBar android:id="@+id/seek_tolerance" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="40" android:progress="10" android:layout_marginTop="16dp" android:paddingStart="0dp" android:paddingEnd="0dp"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Edge Filter -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Edge Filter" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Screen edge rejection · grip zone" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
-                    </LinearLayout>
-                    <TextView android:id="@+id/tv_edge_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:textColor="@color/accent" android:textSize="15sp" android:fontFamily="sans-serif-medium" android:layout_marginEnd="4dp"/>
-                </LinearLayout>
-                <SeekBar android:id="@+id/seek_edge" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="3" android:progress="2" android:layout_marginTop="16dp" android:paddingStart="0dp" android:paddingEnd="0dp"/>
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="None" android:textColor="@color/text_tertiary" android:textSize="11sp"/>
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Low" android:textColor="@color/text_tertiary" android:textSize="11sp" android:gravity="center"/>
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Mid" android:textColor="@color/text_tertiary" android:textSize="11sp" android:gravity="center"/>
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Max" android:textColor="@color/text_tertiary" android:textSize="11sp" android:gravity="end"/>
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Report Rate toggle -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:padding="20dp">
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="High Report Rate" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Boost sampling rate (DATA_MODE_9)" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp"/>
-                </LinearLayout>
-                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_report_rate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Section: Game Apps -->
+        <!-- Managed Apps header with Add Button -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="16dp">
+            
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="GAME APPLIST"
+                android:text="MANAGED GAMES"
                 style="@style/TextAppearance.OOFControl.SectionHeader" />
-            <com.google.android.material.button.MaterialButton
+                
+            <ImageView
                 android:id="@+id/btn_add_game"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="Add"
-                android:textSize="12sp"
-                app:icon="@drawable/ic_add_app"
-                app:iconSize="14dp"
-                app:iconGravity="start"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:textColor="@color/accent" />
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_plus"
+                android:background="@drawable/nav_indicator_bg"
+                android:padding="6dp"
+                app:tint="@color/text_primary" />
         </LinearLayout>
 
-        <!-- Empty state -->
-        <LinearLayout
-            android:id="@+id/layout_no_games"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:paddingVertical="48dp"
-            android:background="@drawable/bg_card_glass"
-            android:visibility="visible">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No games tracked"
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Listed apps trigger custom touch profiles"
-                android:textColor="@color/text_tertiary"
-                android:textSize="12sp"
-                android:layout_marginTop="4dp" />
-        </LinearLayout>
-
-        <!-- Game app list container -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/layout_game_apps"
+            android:id="@+id/rv_games"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:clipToPadding="false"
+            android:paddingBottom="16dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
-

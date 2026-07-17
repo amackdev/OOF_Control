@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Section header: subtle, tracked out for modern look -->
+    <style name="TextAppearance.OOFControl.SectionHeader" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- Bold Dashboard Title -->
+    <style name="TextAppearance.OOFControl.PageTitle" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+    </style>
+    
+    <!-- MacroStats Titles -->
+    <style name="TextAppearance.OOFControl.MacroTitle" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <!-- MacroStats Values -->
+    <style name="TextAppearance.OOFControl.MacroValue" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+    </style>
+
+    <!-- Bottom nav indicator: refined pill -->
+    <style name="Widget.OOFControl.Nav.Indicator" parent="">
+        <item name="android:color">@color/nav_indicator</item>
+        <item name="android:width">48dp</item>
+        <item name="android:height">32dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.OOFControl.Pill</item>
+    </style>
+
+    <style name="ShapeAppearance.OOFControl.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Widget.OOFControl.NavDrawer.Indicator" parent="">
+        <item name="android:color">@color/segment_selected_bg</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.OOFControl.Pill</item>
+    </style>
+</resources>

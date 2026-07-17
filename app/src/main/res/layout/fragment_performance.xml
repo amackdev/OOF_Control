@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
+    android:animateLayoutChanges="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -15,12 +16,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
-        android:paddingTop="24dp">
+        android:paddingTop="32dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OOF CONTROL"
+            android:text="DEVICE TUNING"
             style="@style/TextAppearance.OOFControl.SectionHeader" />
 
         <TextView
@@ -29,167 +30,114 @@
             android:text="Performance"
             style="@style/TextAppearance.OOFControl.PageTitle"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="40dp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PERFORMANCE"
+            android:text="TURBO ENGINE"
             style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="16dp" />
 
         <!-- Performance Mode Card -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:id="@+id/card_performance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginBottom="24dp">
-
+            
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:layout_marginEnd="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_performance_status"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:text="Standard Mode"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="TURBO ENGINE"
-                            style="@style/TextAppearance.OOFControl.SectionHeader" />
-
-                        <TextView
-                            android:id="@+id/tv_performance_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Standard Mode"
-                            android:textColor="@color/text_primary"
-                            android:textSize="22sp"
-                            android:fontFamily="sans-serif-black"
-                            android:layout_marginTop="8dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Maximum optimization for high-workload scenarios."
-                            android:textColor="@color/text_secondary"
-                            android:textSize="13sp"
-                            android:layout_marginTop="8dp"
-                            android:maxWidth="220dp" />
-                    </LinearLayout>
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/switch_performance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maximum optimisation for high-workload scenarios."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_performance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="CPU CONTROLS"
             style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="16dp" />
 
-        <!-- Thermal Mode Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_thermal_mode"
+        <!-- CPU Tweaks Grouped Card -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="vertical">
 
+            <!-- Thermal Mode -->
             <LinearLayout
+                android:id="@+id/card_thermal_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="20dp">
-
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/icon_bg_blue">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_performance"
-                        app:tint="@color/blue" />
-                </FrameLayout>
-
+                android:gravity="center_vertical">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gaming Thermal" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Increased performance throttle limit" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                    android:layout_marginEnd="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gaming Thermal" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Increased performance throttle limit" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp" />
                 </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_thermal_mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_thermal_mode" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Touch Boost Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_touch_boost"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/glass_border" android:layout_marginVertical="16dp" />
 
+            <!-- Touch Boost -->
             <LinearLayout
+                android:id="@+id/card_touch_boost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="20dp">
-
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/icon_bg_yellow">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_performance"
-                        app:tint="@color/orange" />
-                </FrameLayout>
-
+                android:gravity="center_vertical">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Touch Boost" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Priority scheduling for touch inputs" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                    android:layout_marginEnd="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Touch Boost" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Priority scheduling for touch inputs" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp" />
                 </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_touch_boost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_touch_boost" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
-

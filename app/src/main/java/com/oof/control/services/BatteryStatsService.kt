@@ -24,10 +24,7 @@ import com.oof.control.utils.FileUtils
 import kotlinx.coroutines.*
 import java.io.File
 
-/**
- * Battery Statistics Service - AccuBattery-style stats in notification
- * Tracks screen on/off time, deep sleep, awake time, and drain rates
- */
+
 class BatteryStatsService : Service() {
     
     private var serviceJob: Job? = null
@@ -127,21 +124,13 @@ class BatteryStatsService : Service() {
         registerReceiver(commandReceiver, filter, RECEIVER_NOT_EXPORTED)
     }
     
-    /**
-     * Get system deep sleep time from /sys/power/suspend_stats or SystemClock
-     * This is the actual suspend time tracked by the kernel
-     */
+    // elapsedRealtime includes deep sleep, uptimeMillis does not
     private fun getSystemDeepSleepTime(): Long {
-        // Method 1: Calculate from SystemClock difference
-        // elapsedRealtime includes deep sleep, uptimeMillis does not
         val elapsedRealtime = SystemClock.elapsedRealtime()
         val uptimeMillis = SystemClock.uptimeMillis()
         return elapsedRealtime - uptimeMillis
     }
     
-    /**
-     * Read wakelock stats to determine if device is truly sleeping
-     */
     private fun hasActiveWakelocks(): Boolean {
         return try {
             val wakelockFile = File("/sys/power/wake_lock")

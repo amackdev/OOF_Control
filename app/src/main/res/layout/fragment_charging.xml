@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -10,439 +11,482 @@
     android:paddingBottom="96dp"
     android:overScrollMode="never">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:paddingHorizontal="24dp"
-        android:paddingTop="24dp">
+        android:paddingTop="32dp">
 
+        <!-- Top Header -->
         <TextView
+            android:id="@+id/tv_header_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OOF CONTROL"
-            style="@style/TextAppearance.OOFControl.SectionHeader" />
+            android:text="BATTERY &amp; POWER"
+            style="@style/TextAppearance.OOFControl.SectionHeader"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
+            android:id="@+id/tv_header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Charging"
+            android:text="Dashboard"
             style="@style/TextAppearance.OOFControl.PageTitle"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="32dp" />
+            app:layout_constraintTop_toBottomOf="@id/tv_header_subtitle"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Dashboard HERO: Battery Status -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_marginBottom="24dp">
-
-            <ProgressBar
-                android:id="@+id/progress_battery"
-                android:layout_width="220dp"
-                android:layout_height="220dp"
-                android:layout_gravity="center"
-                android:indeterminate="false"
-                android:max="100"
-                android:progress="0"
-                android:progressDrawable="@drawable/battery_gauge_arc"
-                style="?android:attr/progressBarStyleHorizontal" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_battery_level"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0%"
-                    android:textColor="@color/text_primary"
-                    android:textSize="56sp"
-                    android:fontFamily="sans-serif-black" />
-
-                <TextView
-                    android:id="@+id/tv_battery_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="DISCHARGING"
-                    android:textColor="@color/accent"
-                    android:textSize="12sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:letterSpacing="0.1" />
-
-                <TextView
-                    android:id="@+id/tv_estimated_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    android:layout_marginTop="4dp"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </FrameLayout>
-
-        <!-- Quick Stats Grid -->
-        <GridLayout
+        <!-- Section: Battery Focus -->
+        <TextView
+            android:id="@+id/tv_focus_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:columnCount="2"
-            android:alignmentMode="alignBounds">
+            android:text="BATTERY FOCUS"
+            style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_header_title"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Hero Arc Container -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_hero_arc"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_focus_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.oof.control.views.OpenArcProgressBar
+                android:id="@+id/progress_battery"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Center Text -->
+            <TextView
+                android:id="@+id/tv_battery_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textColor="@color/text_primary"
+                android:textSize="56sp"
+                android:fontFamily="sans-serif-black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/tv_battery_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DISCHARGING"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                app:layout_constraintTop_toBottomOf="@id/tv_battery_level"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Time & Health Layout -->
+        <LinearLayout
+            android:id="@+id/layout_time_health"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_hero_arc">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/tv_time_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-black"/>
+                <TextView
+                    android:id="@+id/tv_time_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remaining"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/tv_health_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100%"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:fontFamily="sans-serif-black"/>
+                <TextView
+                    android:id="@+id/tv_health_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Health"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Macro Stats (3 columns) -->
+        <LinearLayout
+            android:id="@+id/layout_macros"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_time_health">
+
+            <!-- Temperature -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingHorizontal="4dp">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temp"
+                    style="@style/TextAppearance.OOFControl.MacroTitle" />
+                    
+                <ProgressBar
+                    android:id="@+id/bar_temp"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginVertical="8dp"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/macro_bar_orange"
+                    android:max="600"
+                    android:progress="350" />
+                    
+                <TextView
+                    android:id="@+id/tv_temp_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--Â°C"
+                    style="@style/TextAppearance.OOFControl.MacroValue" />
+            </LinearLayout>
 
             <!-- Power -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/tv_charging_power"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0W"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-medium" />
+                android:gravity="center"
+                android:paddingHorizontal="4dp">
+                
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="POWER"
-                    style="@style/TextAppearance.OOFControl.SectionHeader"
-                    android:textSize="10sp" />
+                    android:text="Power"
+                    style="@style/TextAppearance.OOFControl.MacroTitle" />
+                    
+                <ProgressBar
+                    android:id="@+id/bar_power"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginVertical="8dp"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/macro_bar_yellow"
+                    android:max="100"
+                    android:progress="0" />
+                    
+                <TextView
+                    android:id="@+id/tv_power_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--W"
+                    style="@style/TextAppearance.OOFControl.MacroValue" />
             </LinearLayout>
 
             <!-- Current -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/tv_current_current"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0mA"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-medium" />
+                android:gravity="center"
+                android:paddingHorizontal="4dp">
+                
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CURRENT"
-                    style="@style/TextAppearance.OOFControl.SectionHeader"
-                    android:textSize="10sp" />
+                    android:text="Drain"
+                    style="@style/TextAppearance.OOFControl.MacroTitle" />
+                    
+                <ProgressBar
+                    android:id="@+id/bar_current"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginVertical="8dp"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/macro_bar_green"
+                    android:max="10000"
+                    android:progress="0" />
+                    
+                <TextView
+                    android:id="@+id/tv_current_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--mA"
+                    style="@style/TextAppearance.OOFControl.MacroValue" />
             </LinearLayout>
+        </LinearLayout>
 
-            <!-- Temp -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/tv_battery_temp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0°C"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-medium" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TEMP"
-                    style="@style/TextAppearance.OOFControl.SectionHeader"
-                    android:textSize="10sp" />
-            </LinearLayout>
-
-            <!-- Drain Rate -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:id="@+id/tv_drain_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0mA/h"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-medium" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="DRAIN"
-                    style="@style/TextAppearance.OOFControl.SectionHeader"
-                    android:textSize="10sp" />
-            </LinearLayout>
-        </GridLayout>
-
+        <!-- Insights & Settings Section -->
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_insights_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Charging Controls"
+            android:text="SETTINGS &amp; CONFIGURATION"
             style="@style/TextAppearance.OOFControl.SectionHeader"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_macros"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Smart Charging Service -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Settings Cards -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_insights_title">
 
+            <!-- 90W Sport Mode Card -->
             <LinearLayout
+                android:id="@+id/card_sport_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="20dp">
-
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/icon_bg_blue">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_charging"
-                        app:tint="@color/blue" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Smart Charging" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Automated current management" android:textColor="@color/text_secondary" android:textSize="13sp" />
-                </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_charging_service"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Sport Mode -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_sport_mode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:background="@drawable/card_bg_flat"
+                android:padding="20dp"
                 android:orientation="vertical"
-                android:padding="20dp">
-
+                android:layout_marginBottom="16dp">
+                
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:gravity="center_vertical">
                     
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_bg_yellow">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_performance"
-                            app:tint="@color/orange" />
-                    </FrameLayout>
-
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="90W Sport Mode" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
-                        <TextView android:id="@+id/tv_sport_mode_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Standard Mode" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="90W Sport Mode"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bypass thermal constraints"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
                     </LinearLayout>
-
+                    
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switch_sport_mode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_sport_stats"
-                    android:layout_width="match_parent"
+                
+                <TextView
+                    android:id="@+id/tv_sport_status"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:visibility="gone">
-                    <TextView 
-                        android:layout_width="match_parent" 
-                        android:layout_height="wrap_content" 
-                        android:background="@drawable/bg_card_glass"
-                        android:padding="12dp"
-                        android:text="Performance unlocked: 0-100% in ~35min"
-                        android:textColor="@color/orange"
-                        android:textSize="12sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center" />
-                </LinearLayout>
+                    android:text="Disabled"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="12sp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="sans-serif-medium" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Battery Health"
-            style="@style/TextAppearance.OOFControl.SectionHeader"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Charge Limit -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_charge_limit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-
+            <!-- Charge Limit Card -->
             <LinearLayout
+                android:id="@+id/card_charge_limit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/card_bg_flat"
+                android:padding="20dp"
                 android:orientation="vertical"
-                android:padding="20dp">
-
+                android:layout_marginBottom="16dp">
+                
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <FrameLayout
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/icon_bg_green">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_shield"
-                            app:tint="@color/green" />
-                    </FrameLayout>
-
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:orientation="vertical">
                         <TextView
-                            android:id="@+id/tv_charge_limit_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="80%"
+                            android:text="Charge Limit"
                             android:textColor="@color/text_primary"
-                            android:textSize="20sp"
-                            android:fontFamily="sans-serif-black" />
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="HEALTH OPTIMIZED"
-                            style="@style/TextAppearance.OOFControl.SectionHeader"
-                            android:textSize="10sp"
-                            android:textColor="@color/green" />
+                            android:text="Stop charging at target"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
                     </LinearLayout>
-
+                    
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switch_charge_limit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/slider_charge_limit"
+                <LinearLayout
+                    android:id="@+id/layout_charge_limit_slider"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:valueFrom="50"
-                    android:valueTo="100"
-                    android:value="80"
-                    android:stepSize="5"
-                    app:labelBehavior="gone" />
-
-                <TextView
-                    android:id="@+id/tv_health_indicator"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Optimized for longevity"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:gravity="end" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="16dp">
+                    <SeekBar
+                        android:id="@+id/seek_charge_limit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:progress="80"
+                        android:paddingEnd="16dp"/>
+                    <TextView
+                        android:id="@+id/tv_limit_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="80%"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <!-- Battery Stats -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-
+            <!-- Services Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="20dp">
-
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/icon_bg_purple">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_about"
-                        app:tint="@color/purple" />
-                </FrameLayout>
+                android:background="@drawable/card_bg_flat"
+                android:padding="20dp"
+                android:orientation="vertical">
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Smart Charging Service"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Background automation"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_smart_service"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/glass_border"
+                    android:layout_marginVertical="16dp" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Battery Monitor" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:id="@+id/tv_battery_health" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Health Good" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Battery Stats Service"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Record hardware stats"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_stats_service"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_battery_stats"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_reset_stats"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="RESET ANALYTICS"
-            android:textColor="@color/text_secondary"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:letterSpacing="0.1"
-            android:layout_marginTop="8dp" />
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
-

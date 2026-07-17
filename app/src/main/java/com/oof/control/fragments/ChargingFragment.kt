@@ -73,18 +73,16 @@ class ChargingFragment : Fragment() {
                 binding.cardChargeLimit.visibility = View.GONE
             } else {
                 binding.cardChargeLimit.visibility = View.VISIBLE
-                
-                // Load UI state from preferences (instant)
                 val chargeLimit = prefs.chargeLimit
-                binding.sliderChargeLimit.value = chargeLimit.toFloat()
-                binding.tvChargeLimitValue.text = "$chargeLimit%"
-                binding.switchChargeLimit.isChecked = prefs.chargeLimitEnabled
-                binding.cardChargeLimit.alpha = if (prefs.chargeLimitEnabled) 1.0f else 0.6f
-                updateHealthIndicator(chargeLimit)
+                binding.seekChargeLimit.progress = chargeLimit
+                binding.tvLimitVal.text = "$chargeLimit%"
+                val isEnabled = prefs.chargeLimitEnabled
+                binding.switchChargeLimit.isChecked = isEnabled
+                binding.layoutChargeLimitSlider.visibility = if (isEnabled) View.VISIBLE else View.GONE
             }
             
-            binding.switchChargingService.isChecked = prefs.chargingServiceEnabled
-            binding.switchBatteryStats.isChecked = prefs.batteryStatsEnabled
+            binding.switchSmartService.isChecked = prefs.chargingServiceEnabled
+            binding.switchStatsService.isChecked = prefs.batteryStatsEnabled
             
             // Sport Mode - check support in coroutine (hide completely on marble)
             if (DeviceConfig.deviceCodename == DeviceConfig.DEVICE_MARBLE) {
@@ -100,7 +98,7 @@ class ChargingFragment : Fragment() {
                         binding.switchSportMode.isChecked = prefs.sportMode
                         updateSportModeStatus(prefs.sportMode)
                     } else {
-                        binding.tvSportModeStatus.text = "Not supported"
+                        binding.tvSportStatus.text = "Not supported"
                     }
                 }
             }
@@ -123,24 +121,6 @@ class ChargingFragment : Fragment() {
             switchState != -1
         } catch (e: Exception) {
             false
-        }
-    }
-    
-    private fun updateHealthIndicator(limit: Int) {
-        if (_binding == null) return
-        when {
-            limit <= 80 -> {
-                binding.tvHealthIndicator.text = "Optimal"
-                binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.green, null))
-            }
-            limit <= 90 -> {
-                binding.tvHealthIndicator.text = "Good"
-                binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.blue, null))
-            }
-            else -> {
-                binding.tvHealthIndicator.text = "High"
-                binding.tvHealthIndicator.setTextColor(resources.getColor(com.oof.control.R.color.orange, null))
-            }
         }
     }
     
@@ -186,71 +166,54 @@ class ChargingFragment : Fragment() {
             if (isUpdatingUI) return@setOnCheckedChangeListener
             
             prefs.chargeLimitEnabled = isChecked
-            binding.cardChargeLimit.alpha = if (isChecked) 1.0f else 0.6f
+            binding.layoutChargeLimitSlider.visibility = if (isChecked) View.VISIBLE else View.GONE
             showToast("Charge limit ${if (isChecked) "enabled" else "disabled"}")
+            updateServiceState()
         }
         
-        // Charge Limit Slider (Material Slider)
-        binding.sliderChargeLimit.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) {
-                val limit = value.toInt()
-                binding.tvChargeLimitValue.text = "$limit%"
-                updateHealthIndicator(limit)
+        // Charge Limit SeekBar
+        binding.seekChargeLimit.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+                val limit = progress.coerceIn(50, 100)
+                if (fromUser) {
+                    binding.tvLimitVal.text = "$limit%"
+                }
             }
-        }
-        
-        binding.sliderChargeLimit.addOnSliderTouchListener(object : com.google.android.material.slider.Slider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: com.google.android.material.slider.Slider) {}
-            
-            override fun onStopTrackingTouch(slider: com.google.android.material.slider.Slider) {
-                val limit = slider.value.toInt()
+            override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
+                val limit = (seekBar?.progress ?: 80).coerceIn(50, 100)
                 prefs.chargeLimit = limit
                 showToast("Charge limit set to $limit%")
+                if (prefs.chargeLimitEnabled) {
+                    updateServiceState()
+                }
             }
         })
         
-        // Charging Service Switch
-        binding.switchChargingService.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchSmartService.setOnCheckedChangeListener { _, isChecked ->
             if (isUpdatingUI) return@setOnCheckedChangeListener
-            
             prefs.chargingServiceEnabled = isChecked
-            try {
-                if (isChecked) {
-                    ChargingControlService.startChargingOnly(requireContext())
-                    showToast("Smart charging service started")
-                } else {
-                    ChargingControlService.stopChargingOnly(requireContext())
-                    showToast("Smart charging service stopped")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error toggling charging service", e)
-                showToast("Service error: ${e.message}")
-            }
+            showToast("Smart charging service ${if (isChecked) "enabled" else "disabled"}")
+            updateServiceState()
         }
         
-        // Battery Stats Service Switch
-        binding.switchBatteryStats.setOnCheckedChangeListener { _, isChecked ->
+        binding.switchStatsService.setOnCheckedChangeListener { _, isChecked ->
             if (isUpdatingUI) return@setOnCheckedChangeListener
-            
             prefs.batteryStatsEnabled = isChecked
-            try {
-                if (isChecked) {
-                    ChargingControlService.startStatsOnly(requireContext())
-                    showToast("Battery stats service started")
-                } else {
-                    ChargingControlService.stopStatsOnly(requireContext())
-                    showToast("Battery stats service stopped")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error toggling stats service", e)
-                showToast("Service error: ${e.message}")
-            }
+            showToast("Battery statistics ${if (isChecked) "enabled" else "disabled"}")
+            updateServiceState()
         }
-        
-        // Reset Stats Button
-        binding.btnResetStats.setOnClickListener {
-            ChargingControlService.resetStats(requireContext())
-            showToast("Battery statistics reset")
+    }
+    
+    private fun updateServiceState() {
+        try {
+            if (prefs.chargingServiceEnabled) ChargingControlService.startChargingOnly(requireContext())
+            else ChargingControlService.stopChargingOnly(requireContext())
+            
+            if (prefs.batteryStatsEnabled) ChargingControlService.startStatsOnly(requireContext())
+            else ChargingControlService.stopStatsOnly(requireContext())
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating services", e)
         }
     }
     
@@ -288,64 +251,23 @@ class ChargingFragment : Fragment() {
             // Update battery level
             if (batteryLevel != lastBatteryLevel) {
                 binding.tvBatteryLevel.text = "$batteryLevel%"
-                binding.progressBattery.progress = batteryLevel
+                binding.progressBattery.setProgress(batteryLevel)
                 lastBatteryLevel = batteryLevel
             }
 
-            // Update battery health (below %)
-            if (healthPercent != lastBatteryHealthPercent) {
-                if (healthPercent > 0.0) {
-                    binding.tvBatteryHealth.text = "Health ${kotlin.math.round(healthPercent).toInt()}%"
-                    binding.tvBatteryHealth.visibility = View.VISIBLE
-                } else {
-                    binding.tvBatteryHealth.visibility = View.GONE
-                }
-                lastBatteryHealthPercent = healthPercent
+            // Update charging status text
+            val statusText = when {
+                isFastCharging && sportMode -> "TURBO CHARGING"
+                isFastCharging -> "FAST CHARGING"
+                isCharging -> "CHARGING"
+                else -> "DISCHARGING"
             }
+            binding.tvBatteryStatus.text = statusText
+            binding.tvBatteryStatus.setTextColor(
+                resources.getColor(if (isCharging) com.oof.control.R.color.blue else com.oof.control.R.color.text_secondary, null)
+            )
 
-            // Update temperature
-            if (batteryTemp != lastBatteryTemp) {
-                val tempCelsius = batteryTemp / 10.0
-                binding.tvBatteryTemp.text = "${String.format("%.1f", tempCelsius)}°C"
-                lastBatteryTemp = batteryTemp
-            }
-            
-            // Update charging status
-            if (isCharging != lastIsCharging) {
-                binding.tvBatteryStatus.text = when {
-                    isFastCharging && sportMode -> "TURBO CHARGING"
-                    isFastCharging -> "FAST CHARGING"
-                    isCharging -> "CHARGING"
-                    else -> "BATTERY"
-                }
-                lastIsCharging = isCharging
-            }
-            
-            // Update drain rate display
-            if (drainRate != lastDrainRate) {
-                if (drainRate > 0) {
-                    binding.tvDrainRate.text = "+${drainRate}mA/h"
-                    binding.tvDrainRate.setTextColor(resources.getColor(com.oof.control.R.color.green, null))
-                } else if (drainRate < 0) {
-                    binding.tvDrainRate.text = "${drainRate}mA/h"
-                    binding.tvDrainRate.setTextColor(resources.getColor(com.oof.control.R.color.accent, null))
-                } else {
-                    binding.tvDrainRate.text = "0mA/h"
-                    binding.tvDrainRate.setTextColor(resources.getColor(com.oof.control.R.color.text_primary, null))
-                }
-                binding.tvDrainRate.visibility = View.VISIBLE
-                lastDrainRate = drainRate
-            }
-            
-            // Charging power (only when charging)
-            if (isCharging && maxPower > 0) {
-                binding.tvChargingPower.text = "${maxPower}W"
-                binding.tvChargingPower.visibility = View.VISIBLE
-            } else {
-                binding.tvChargingPower.visibility = View.GONE
-            }
-            
-            // Estimated time (only when charging)
+            // Update Time
             val chargeLimit = prefs.chargeLimit
             if (isCharging && batteryLevel < chargeLimit && prefs.chargeLimitEnabled) {
                 val remaining = chargeLimit - batteryLevel
@@ -357,23 +279,46 @@ class ChargingFragment : Fragment() {
                     0
                 }
                 if (timeMin > 0) {
-                    binding.tvEstimatedTime.text = "~$timeMin min to $chargeLimit%"
-                    binding.tvEstimatedTime.visibility = View.VISIBLE
+                    binding.tvTimeVal.text = "~$timeMin m"
+                    binding.tvTimeLbl.text = "Target $chargeLimit%"
                 } else {
-                    binding.tvEstimatedTime.visibility = View.GONE
+                    binding.tvTimeVal.text = "--"
+                    binding.tvTimeLbl.text = "Target 100%"
                 }
             } else {
-                binding.tvEstimatedTime.visibility = View.GONE
+                binding.tvTimeVal.text = "--"
+                binding.tvTimeLbl.text = "Remaining"
             }
+
+            // Update Health
+            binding.tvHealthVal.text = "${kotlin.math.round(healthPercent).toInt()}%"
+
+            // Update Temp Macro Bar
+            val tempCelsius = batteryTemp / 10.0
+            binding.tvTempVal.text = "${String.format("%.1f", tempCelsius)}°C"
+            binding.barTemp.progress = (batteryTemp / 10).coerceIn(0, 100)
             
-            // Current charging current (only when fast charging)
-            if (isFastCharging) {
-                val current = DeviceConfig.getChargingCurrent(batteryTemp, batteryLevel, sportMode, maxPower)
-                val currentA = current / 1000000.0
-                binding.tvCurrentCurrent.text = "${String.format("%.2f", currentA)}A"
-                binding.tvCurrentCurrent.visibility = View.VISIBLE
+            // Update Power and Current Macro Bars
+            if (isCharging) {
+                binding.tvPowerVal.text = String.format("%.1fW", maxPower.toFloat())
+                binding.barPower.progress = maxPower.toInt().coerceIn(0, 100)
+                
+                val currentA = Math.abs(drainRate) / 1000.0
+                binding.tvCurrentVal.text = String.format("+%.2fA", currentA)
+                binding.barCurrent.progress = (currentA * 1000).toInt().coerceIn(0, 10000)
+                
+                binding.barPower.progressDrawable = resources.getDrawable(com.oof.control.R.drawable.macro_bar_green, null)
+                binding.barCurrent.progressDrawable = resources.getDrawable(com.oof.control.R.drawable.macro_bar_green, null)
             } else {
-                binding.tvCurrentCurrent.visibility = View.GONE
+                // Not plugged in — power is meaningless, show drain only
+                binding.tvPowerVal.text = "--"
+                binding.barPower.progress = 0
+                
+                binding.tvCurrentVal.text = "-${Math.abs(drainRate)}mA"
+                binding.barCurrent.progress = Math.abs(drainRate).coerceIn(0, 10000)
+                
+                binding.barPower.progressDrawable = resources.getDrawable(com.oof.control.R.drawable.macro_bar_yellow, null)
+                binding.barCurrent.progressDrawable = resources.getDrawable(com.oof.control.R.drawable.macro_bar_orange, null)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error in updateBatteryInfo", e)
@@ -382,9 +327,8 @@ class ChargingFragment : Fragment() {
     
     private fun updateSportModeStatus(enabled: Boolean) {
         if (_binding == null) return
-        binding.tvSportModeStatus.text = if (enabled) "Turbo Charging" else "Standard"
+        binding.tvSportStatus.text = if (enabled) "Turbo Charging" else "Standard"
         binding.cardSportMode.alpha = if (enabled) 1.0f else 0.8f
-        binding.layoutSportStats.visibility = if (enabled) View.VISIBLE else View.GONE
     }
     
     private fun showToast(message: String) {

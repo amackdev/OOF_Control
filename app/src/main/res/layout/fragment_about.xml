@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
+    android:animateLayoutChanges="true"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -50,14 +51,7 @@
             android:fontFamily="sans-serif-black"
             android:letterSpacing="0.05" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Version 2.0 Premium"
-            android:textColor="@color/accent"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif-medium" />
+
 
         <TextView
             android:id="@+id/tv_support_status"
@@ -81,78 +75,61 @@
             android:text="SYSTEM INFORMATION"
             style="@style/TextAppearance.OOFControl.SectionHeader" />
 
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:layout_marginBottom="32dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Codename" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_device_codename" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UNKNOWN" android:textColor="@color/text_primary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Brand" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="@color/text_primary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
-
-                <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/glass_border" android:layout_marginBottom="16dp" />
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Touch 480Hz" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_touch_rate_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textColor="@color/blue" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Sport Mode" android:textColor="@color/text_secondary" android:textSize="14sp" />
-                    <TextView android:id="@+id/tv_sport_mode_support" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textColor="@color/blue" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
-                </LinearLayout>
+    android:animateLayoutChanges="true"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Codename" android:textColor="@color/text_secondary" android:textSize="14sp" />
+                <TextView android:id="@+id/tv_device_codename" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="UNKNOWN" android:textColor="@color/text_primary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+    android:animateLayoutChanges="true"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Brand" android:textColor="@color/text_secondary" android:textSize="14sp" />
+                <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="@color/text_primary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
+            </LinearLayout>
+
+
+        </LinearLayout>
 
         <!-- Preferences Group -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:layout_marginBottom="16dp"
             android:text="PREFERENCES"
             style="@style/TextAppearance.OOFControl.SectionHeader" />
 
         <!-- Apply on Boot Card -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-
+            android:background="@drawable/card_bg_flat"
+            android:padding="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+            
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="20dp">
-
-                <FrameLayout android:layout_width="48dp" android:layout_height="48dp" android:background="@drawable/icon_bg_purple">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:layout_gravity="center" android:src="@drawable/ic_about" app:tint="@color/purple" />
-                </FrameLayout>
-
-                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply on Boot" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Persistent settings" android:textColor="@color/text_secondary" android:textSize="13sp" />
-                </LinearLayout>
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_apply_on_boot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+    android:animateLayoutChanges="true"
+    android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginEnd="16dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apply on Boot" android:textColor="@color/text_primary" android:textSize="16sp" android:fontFamily="sans-serif-medium" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Persistent settings" android:textColor="@color/text_secondary" android:textSize="13sp" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_apply_on_boot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
-

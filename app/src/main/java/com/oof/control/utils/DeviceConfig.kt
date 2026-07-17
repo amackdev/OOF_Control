@@ -2,10 +2,7 @@ package com.oof.control.utils
 
 import android.util.Log
 
-/**
- * Device-specific configuration and system paths
- * System app version - no libsu dependency
- */
+
 object DeviceConfig {
     
     private const val TAG = "DeviceConfig"
@@ -214,9 +211,6 @@ object DeviceConfig {
         return ShellExecutor.pathExists(path)
     }
     
-    /**
-     * Clear cached values - useful if device state changes
-     */
     fun clearCache() {
         _deviceCodename = null
         _deviceBrand = null

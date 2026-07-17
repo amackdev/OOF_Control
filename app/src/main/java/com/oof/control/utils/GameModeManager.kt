@@ -2,12 +2,7 @@ package com.oof.control.utils
 
 import android.util.Log
 
-/**
- * Applies and restores game mode touch parameters.
- *
- * Modified to construct the desired configuration block and write it to a daemon-watched
- * text file rather than calling direct JNI ioctls.
- */
+/** Applies and restores game mode touch parameters via daemon config file. */
 object GameModeManager {
 
     private const val TAG = "GameModeManager"
@@ -16,10 +11,6 @@ object GameModeManager {
     @Volatile private var savedParams: IntArray? = null
     @Volatile private var gameModeActive = false
 
-    /**
-     * Enable game mode for the given profile.
-     * We batch all settings into a single write request for the daemon.
-     */
     fun enable(profile: GameModeProfile): Boolean {
         if (gameModeActive) return true
         Log.i(TAG, "Enabling game mode: $profile")
@@ -32,11 +23,7 @@ object GameModeManager {
         return true
     }
 
-    /**
-     * Apply updated parameters while game mode is already active.
-     * Unlike enable(), this always writes the config file — used for live
-     * seekbar/slider changes in the UI without toggling game mode off/on.
-     */
+    /** Apply parameter updates while game mode is already active (live seekbar changes). */
     fun applyProfile(profile: GameModeProfile) {
         if (!gameModeActive) return   // only relevant when game mode is ON
         Log.i(TAG, "Applying live profile update")
@@ -65,14 +52,11 @@ object GameModeManager {
         // Atomically write config via DaemonConfigWriter
         DaemonConfigWriter.writeConfig(currentState, grip)
 
-        // Signal game mode state to rest of system
+        // Signal game mode state
         ShellExecutor.setPropertySync("persist.oofcontrol_gamemode", "1")
     }
 
-    /**
-     * Disable game mode and restore pre-game-mode params.
-     * Sends reset mapping (e.g. MODE_GAME_MODE 0) to daemon.
-     */
+    /** Disable game mode and reset daemon config. */
     fun disable(): Boolean {
         if (!gameModeActive) return true
         Log.i(TAG, "Disabling game mode")
@@ -88,7 +72,6 @@ object GameModeManager {
         if (ok) {
             gameModeActive = false
             savedParams = null
-            // Signal game mode disabled
             ShellExecutor.setPropertySync("persist.oofcontrol_gamemode", "0")
             Log.i(TAG, "Game mode DISABLED")
         } else {

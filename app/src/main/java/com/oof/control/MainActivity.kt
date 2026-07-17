@@ -17,6 +17,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -41,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 
     private val navOrder = listOf(R.id.nav_display, R.id.nav_performance, R.id.nav_game_mode, R.id.nav_charging, R.id.nav_about)
     private var currentNavId = R.id.nav_display
-    private val fragments = mutableMapOf<Int, Fragment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             setContentView(binding.root)
 
             // Fragment container: top padding = status bar height
-            ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainer) { view, insets ->
+            ViewCompat.setOnApplyWindowInsetsListener(binding.viewPager) { view, insets ->
                 val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
                 view.setPadding(0, statusBar, 0, 0)
                 insets
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavCard) { view, insets ->
                 val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
                 val layoutParams = view.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
+                // 24dp base margin + system navigation bar height
                 val baseMargin = (24 * view.resources.displayMetrics.density).toInt()
                 layoutParams.bottomMargin = baseMargin + navBar
                 view.layoutParams = layoutParams
@@ -73,11 +75,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             checkPermissions()
+            setupViewPager()
             setupBottomNav()
-
-            if (savedInstanceState == null) {
-                loadFragment(R.id.nav_display, { DisplayFragment() }, animate = false, forward = true)
-            }
 
             checkDeviceSupport()
 
@@ -100,72 +99,75 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupViewPager() {
+        binding.viewPager.offscreenPageLimit = 5 // Keep all fragments in memory
+        binding.viewPager.adapter = object : FragmentStateAdapter(this) {
+            override fun getItemCount(): Int = 5
+            override fun createFragment(position: Int): Fragment {
+                return when (position) {
+                    0 -> DisplayFragment()
+                    1 -> PerformanceFragment()
+                    2 -> GameModeFragment()
+                    3 -> ChargingFragment()
+                    4 -> AboutFragment()
+                    else -> DisplayFragment()
+                }
+            }
+        }
+        
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                updateBottomNavSelection(navOrder[position])
+            }
+        })
+    }
+
     private fun setupBottomNav() {
         val navItems = listOf(
-            NavigationItem(R.id.nav_display, binding.navDisplay, binding.navIndicatorDisplay, binding.navIconDisplay) { DisplayFragment() },
-            NavigationItem(R.id.nav_performance, binding.navPerformance, binding.navIndicatorPerformance, binding.navIconPerformance) { PerformanceFragment() },
-            NavigationItem(R.id.nav_game_mode, binding.navGameMode, binding.navIndicatorGameMode, binding.navIconGameMode) { GameModeFragment() },
-            NavigationItem(R.id.nav_charging, binding.navCharging, binding.navIndicatorCharging, binding.navIconCharging) { ChargingFragment() },
-            NavigationItem(R.id.nav_about, binding.navAbout, binding.navIndicatorAbout, binding.navIconAbout) { AboutFragment() }
+            NavigationItem(R.id.nav_display, binding.navDisplay),
+            NavigationItem(R.id.nav_performance, binding.navPerformance),
+            NavigationItem(R.id.nav_game_mode, binding.navGameMode),
+            NavigationItem(R.id.nav_charging, binding.navCharging),
+            NavigationItem(R.id.nav_about, binding.navAbout)
         )
 
         navItems.forEach { item ->
             item.button.setOnClickListener {
-                if (item.id == currentNavId) return@setOnClickListener
-                
-                val forward = navOrder.indexOf(item.id) > navOrder.indexOf(currentNavId)
-                currentNavId = item.id
-                
-                // Update UI selection states
-                navItems.forEach { other ->
-                    val isActive = other.id == item.id
-                    other.indicator.visibility = if (isActive) android.view.View.VISIBLE else android.view.View.INVISIBLE
-                    other.icon.imageTintList = ContextCompat.getColorStateList(
-                        this,
-                        if (isActive) R.color.text_primary else R.color.text_secondary
-                    )
-                }
-
-                // Load fragment
-                loadFragment(item.id, item.fragmentFactory, animate = true, forward = forward)
+                val position = navOrder.indexOf(item.id)
+                binding.viewPager.currentItem = position
             }
         }
     }
 
-    private data class NavigationItem(
-        val id: Int,
-        val button: android.view.View,
-        val indicator: android.view.View,
-        val icon: android.widget.ImageView,
-        val fragmentFactory: () -> Fragment
-    )
+    private fun updateBottomNavSelection(selectedId: Int) {
+        if (selectedId == currentNavId) return
+        currentNavId = selectedId
+        
+        val navItems = listOf(
+            NavigationItemData(R.id.nav_display, binding.navIndicatorDisplay, binding.navIconDisplay),
+            NavigationItemData(R.id.nav_performance, binding.navIndicatorPerformance, binding.navIconPerformance),
+            NavigationItemData(R.id.nav_game_mode, binding.navIndicatorGameMode, binding.navIconGameMode),
+            NavigationItemData(R.id.nav_charging, binding.navIndicatorCharging, binding.navIconCharging),
+            NavigationItemData(R.id.nav_about, binding.navIndicatorAbout, binding.navIconAbout)
+        )
 
-    private fun loadFragment(id: Int, factory: (() -> Fragment)? = null, animate: Boolean = true, forward: Boolean = true) {
-        try {
-            val transaction = supportFragmentManager.beginTransaction()
-            if (animate) {
-                if (forward) {
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_right, R.anim.fragment_slide_out_left)
-                } else {
-                    transaction.setCustomAnimations(R.anim.fragment_slide_in_left, R.anim.fragment_slide_out_right)
-                }
-            }
-            
-            // Hide all current fragments
-            fragments.values.forEach { transaction.hide(it) }
-            
-            // Show or add the requested fragment
-            var fragment = fragments[id]
-            if (fragment == null && factory != null) {
-                fragment = factory()
-                fragments[id] = fragment
-                transaction.add(R.id.fragment_container, fragment, id.toString())
-            }
-            
-            fragment?.let { transaction.show(it) }
-            transaction.commit()
-        } catch (e: Exception) { Log.e(TAG, "Error loading fragment", e) }
+        navItems.forEach { other ->
+            val isActive = other.id == selectedId
+            other.indicator.visibility = if (isActive) android.view.View.VISIBLE else android.view.View.INVISIBLE
+            other.icon.imageTintList = ContextCompat.getColorStateList(
+                this,
+                if (isActive) R.color.text_primary else R.color.text_secondary
+            )
+        }
     }
+
+    private data class NavigationItem(val id: Int, val button: android.view.View)
+    private data class NavigationItemData(
+        val id: Int,
+        val indicator: android.view.View,
+        val icon: android.widget.ImageView
+    )
 
     private fun checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

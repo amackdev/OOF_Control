@@ -2,8 +2,6 @@ package com.oof.control.fragments
 
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import java.io.BufferedWriter
@@ -15,10 +13,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.oof.control.R
 import com.oof.control.databinding.FragmentDisplayBinding
 import com.oof.control.utils.PrefsManager
 import com.oof.control.utils.ShellExecutor
 import com.oof.control.utils.TouchController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -47,7 +47,6 @@ class DisplayFragment : Fragment() {
         const val PROP_UPDATE_KEYBOX_PATH = "ro.custom_keybox.updatepath"
     }
 
-    private val handler = Handler(Looper.getMainLooper())
 
     private val keyboxFilePicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { handleKeyboxFileSelected(it) }
@@ -156,7 +155,6 @@ class DisplayFragment : Fragment() {
             binding.switchKeybox.isChecked = getPropBool(PROP_KEYBOX)
             binding.switchUnlimphotos.isChecked = getPropBool(PROP_UNLIM_PHOTOS)
             binding.switchSpoofProvider.isChecked = getPropBool(PROP_SPOOF_PROVIDER)
-            binding.switchFlagSecure.isChecked = getPropBool(PROP_DISABLE_FLAG_SECURE)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading prop states", e)
         } finally {
@@ -202,10 +200,18 @@ class DisplayFragment : Fragment() {
             }
         }
         
-        // Refresh Rate Buttons
-        binding.btn60hz.setOnClickListener { setRefreshRate(60) }
-        binding.btn90hz.setOnClickListener { setRefreshRate(90) }
-        binding.btn120hz.setOnClickListener { setRefreshRate(120) }
+        binding.toggleRefreshRate.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked && !isUpdatingUI) {
+                val rate = when (checkedId) {
+                    R.id.btn_60hz -> 60
+                    R.id.btn_90hz -> 90
+                    R.id.btn_120hz -> 120
+                    else -> 60
+                }
+                binding.tvRefreshVal.text = "${rate}Hz"
+                setRefreshRate(rate)
+            }
+        }
         
         // ============ SPOOFING PROPS ============
         
@@ -237,12 +243,6 @@ class DisplayFragment : Fragment() {
         binding.switchSpoofProvider.setOnCheckedChangeListener { _, isChecked ->
             if (isUpdatingUI) return@setOnCheckedChangeListener
             setProp(PROP_SPOOF_PROVIDER, isChecked, "Spoof Provider")
-        }
-
-        // Disable FLAG_SECURE (prop-gated hook)
-        binding.switchFlagSecure.setOnCheckedChangeListener { _, isChecked ->
-            if (isUpdatingUI) return@setOnCheckedChangeListener
-            setProp(PROP_DISABLE_FLAG_SECURE, isChecked, "FLAG_SECURE")
         }
 
         // ============ PIF UPDATER ============
@@ -278,10 +278,16 @@ class DisplayFragment : Fragment() {
     
     private fun updateRefreshRateButtons(selectedRate: Int) {
         if (_binding == null) return
-        binding.btn60hz.isSelected = selectedRate == 60
-        binding.btn90hz.isSelected = selectedRate == 90
-        binding.btn120hz.isSelected = selectedRate == 120
-        binding.tvCurrentRr.text = "${selectedRate}Hz"
+        val buttonId = when(selectedRate) {
+            60 -> R.id.btn_60hz
+            90 -> R.id.btn_90hz
+            120 -> R.id.btn_120hz
+            else -> R.id.btn_60hz
+        }
+        isUpdatingUI = true
+        binding.toggleRefreshRate.check(buttonId)
+        isUpdatingUI = false
+        binding.tvRefreshVal.text = "${selectedRate}Hz"
     }
     
     private fun setProp(propName: String, value: Boolean, displayName: String) {
@@ -315,7 +321,6 @@ class DisplayFragment : Fragment() {
             PROP_KEYBOX -> binding.switchKeybox.isChecked = value
             PROP_UNLIM_PHOTOS -> binding.switchUnlimphotos.isChecked = value
             PROP_SPOOF_PROVIDER -> binding.switchSpoofProvider.isChecked = value
-            PROP_DISABLE_FLAG_SECURE -> binding.switchFlagSecure.isChecked = value
         }
     }
     
@@ -330,11 +335,10 @@ class DisplayFragment : Fragment() {
                 val success = TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "true")
                 if (success) {
                     showToast("Fingerprint update triggered")
-                    handler.postDelayed({
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "false")
-                        }
-                    }, 10000)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(10_000)
+                        TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "false")
+                    }
                 } else {
                     showToast("Failed to trigger fingerprint update")
                 }
@@ -372,11 +376,10 @@ class DisplayFragment : Fragment() {
 
                 try {
                     TouchController.setSystemProp("persist.custom_keybox.state", "true")
-                    handler.postDelayed({
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            TouchController.setSystemProp("persist.custom_keybox.state", "false")
-                        }
-                    }, 10000)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(10_000)
+                        TouchController.setSystemProp("persist.custom_keybox.state", "false")
+                    }
                 } catch (e: Exception) {
                     Log.w(TAG, "Failed to toggle keybox state", e)
                 }

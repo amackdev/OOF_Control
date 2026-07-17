@@ -30,11 +30,8 @@ import com.oof.control.services.GameModeService
 import com.oof.control.utils.GameAppEntry
 import com.oof.control.utils.GameModeManager
 import com.oof.control.utils.GameModeProfile
-import com.oof.control.utils.MiuiTouchFeature
 import com.oof.control.utils.PrefsManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class GameModeFragment : Fragment() {
 
@@ -50,19 +47,15 @@ class GameModeFragment : Fragment() {
     private lateinit var tvActiveModeVal: TextView
     private lateinit var seekAim: SeekBar
     private lateinit var tvAimVal: TextView
-    private lateinit var seekTap: SeekBar
-    private lateinit var tvTapVal: TextView
-    private lateinit var seekTolerance: SeekBar
-    private lateinit var tvToleranceVal: TextView
-    private lateinit var seekEdge: SeekBar
-    private lateinit var tvEdgeVal: TextView
-    private lateinit var switchReportRate: MaterialSwitch
-    private lateinit var layoutNoGames: LinearLayout
+    private lateinit var seekFollow: SeekBar
+    private lateinit var tvFollowVal: TextView
     private lateinit var layoutGameApps: RecyclerView
+    private lateinit var btnAddGame: View
     private lateinit var gameAppAdapter: GameAppAdapter
 
+    private var currentProfile: GameModeProfile = GameModeProfile.DEFAULT
     private var isBusy = false
-    private val SEEKBAR_CHANGE_DELAY = 80L
+    private var activePkgJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_game_mode, container, false)
@@ -82,9 +75,13 @@ class GameModeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         updateActiveBadge()
+        startActivePkgMonitor()
     }
 
-    // ── Bind views ─────────────────────────────────────────────────────────
+    override fun onPause() {
+        stopActivePkgMonitor()
+        super.onPause()
+    }
 
     private fun bindViews(v: View) {
         switchGameMode   = v.findViewById(R.id.switch_game_mode)
@@ -96,59 +93,43 @@ class GameModeFragment : Fragment() {
         tvActiveModeVal  = v.findViewById(R.id.tv_active_mode_val)
         seekAim          = v.findViewById(R.id.seek_aim)
         tvAimVal         = v.findViewById(R.id.tv_aim_val)
-        seekTap          = v.findViewById(R.id.seek_tap)
-        tvTapVal         = v.findViewById(R.id.tv_tap_val)
-        seekTolerance    = v.findViewById(R.id.seek_tolerance)
-        tvToleranceVal   = v.findViewById(R.id.tv_tolerance_val)
-        seekEdge         = v.findViewById(R.id.seek_edge)
-        tvEdgeVal        = v.findViewById(R.id.tv_edge_val)
-        switchReportRate = v.findViewById(R.id.switch_report_rate)
-        layoutNoGames    = v.findViewById(R.id.layout_no_games)
-        layoutGameApps   = v.findViewById(R.id.layout_game_apps)
+        seekFollow       = v.findViewById(R.id.seek_follow)
+        tvFollowVal      = v.findViewById(R.id.tv_follow_val)
+        layoutGameApps   = v.findViewById(R.id.rv_games)
+        btnAddGame       = v.findViewById(R.id.btn_add_game)
 
-        gameAppAdapter = GameAppAdapter(mutableListOf<GameAppEntry>()) { pkg ->
+        gameAppAdapter = GameAppAdapter(mutableListOf()) { pkg ->
             prefs.removeGameApp(pkg)
             loadGameApps()
         }
+        layoutGameApps.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
         layoutGameApps.adapter = gameAppAdapter
     }
 
-    // ── Load/Save profile ──────────────────────────────────────────────────
-
     private fun loadProfile() {
-        val profile = GameModeProfile.fromJson(prefs.gameModeProfileJson) ?: GameModeProfile.DEFAULT
+        currentProfile = GameModeProfile.fromJson(prefs.gameModeProfileJson) ?: GameModeProfile.DEFAULT
         switchGameMode.isChecked  = prefs.gameModeEnabled
         switchAutoGame.isChecked  = prefs.gameServiceEnabled
-        seekActiveMode.progress   = profile.activeMode
-        tvActiveModeVal.text      = profile.activeMode.toString()
-        seekAim.progress          = profile.aimSensitivity
-        tvAimVal.text             = profile.aimSensitivity.toString()
-        seekTap.progress          = profile.tapStability
-        tvTapVal.text             = profile.tapStability.toString()
-        seekTolerance.progress    = profile.tolerance
-        tvToleranceVal.text       = profile.tolerance.toString()
-        seekEdge.progress         = profile.edgeFilter
-        tvEdgeVal.text            = profile.edgeFilter.toString()
-        switchReportRate.isChecked = profile.reportRate == 1
+        seekActiveMode.progress   = currentProfile.activeMode
+        tvActiveModeVal.text      = currentProfile.activeMode.toString()
+        seekAim.progress          = currentProfile.aimSensitivity
+        tvAimVal.text             = currentProfile.aimSensitivity.toString()
+        seekFollow.progress       = currentProfile.tapStability
+        tvFollowVal.text          = currentProfile.tapStability.toString()
 
         updateStatusText(prefs.gameModeEnabled)
     }
 
-    private fun buildProfileFromUI(): GameModeProfile = GameModeProfile(
+    private fun buildProfileFromUI(): GameModeProfile = currentProfile.copy(
         activeMode     = seekActiveMode.progress,
-        upThreshold    = 0,
-        tolerance      = seekTolerance.progress,
         aimSensitivity = seekAim.progress,
-        tapStability   = seekTap.progress,
-        edgeFilter     = seekEdge.progress,
-        reportRate     = if (switchReportRate.isChecked) 1 else 0
+        tapStability   = seekFollow.progress
     )
 
     private fun saveProfile() {
-        prefs.gameModeProfileJson = buildProfileFromUI().toJson()
+        currentProfile = buildProfileFromUI()
+        prefs.gameModeProfileJson = currentProfile.toJson()
     }
-
-    // ── Game Mode on/off ───────────────────────────────────────────────────
 
     private fun applyGameMode(enable: Boolean) {
         if (isBusy) return
@@ -175,8 +156,10 @@ class GameModeFragment : Fragment() {
     private fun applyParamChange() {
         val profile = buildProfileFromUI()
         saveProfile()
-        if (!prefs.gameModeEnabled || isBusy) return
-        // Re-apply live if game mode is currently active — writes gamemode.txt immediately
+        // If either manual Game Mode is on, OR auto game service is running and a game is active:
+        val shouldApplyLive = prefs.gameModeEnabled || (prefs.gameServiceEnabled && GameModeService.activeGamePackage != null)
+        if (!shouldApplyLive || isBusy) return
+
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 GameModeManager.applyProfile(profile)
@@ -184,11 +167,8 @@ class GameModeFragment : Fragment() {
         }
     }
 
-    // ── Auto-game service ──────────────────────────────────────────────────
-
     private fun setAutoGameService(enable: Boolean) {
         if (enable && !hasUsageStatsPermission()) {
-            // Uncheck the switch and prompt the user
             switchAutoGame.isChecked = false
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Permission Required")
@@ -215,11 +195,8 @@ class GameModeFragment : Fragment() {
         }
     }
 
-    // ── Game Apps list ─────────────────────────────────────────────────────
-
     private fun loadGameApps() {
         val apps = prefs.getGameApps()
-        layoutNoGames.visibility = if (apps.isEmpty()) View.VISIBLE else View.GONE
         gameAppAdapter.updateApps(apps)
     }
 
@@ -227,58 +204,61 @@ class GameModeFragment : Fragment() {
         lifecycleScope.launch {
             val apps = withContext(Dispatchers.IO) { getLauncherApps() }
             val alreadyAdded = prefs.getGameApps().map { it.packageName }.toSet()
-            val available = apps.filter { it.applicationInfo.packageName !in alreadyAdded }
+            val available = apps.filter { it.packageName !in alreadyAdded }
 
             if (available.isEmpty()) {
                 showError("All installed apps are already added")
                 return@launch
             }
 
-            val labels = available.map { it.label.toString() }.toTypedArray()
-            val checkedItems = BooleanArray(available.size) { false }
+            val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_game, null)
+            val rvPicker = dialogView.findViewById<RecyclerView>(R.id.rv_game_picker)
+            val btnAdd = dialogView.findViewById<View>(R.id.btn_add)
+            val btnCancel = dialogView.findViewById<View>(R.id.btn_cancel)
 
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Select Game Apps")
-                .setMultiChoiceItems(labels, checkedItems) { _, which, checked ->
-                    checkedItems[which] = checked
-                }
-                .setPositiveButton("Add") { _, _ ->
-                    available.forEachIndexed { i, info ->
-                        if (checkedItems[i]) {
-                            prefs.addGameApp(GameAppEntry(
-                                packageName = info.applicationInfo.packageName,
-                                label = labels[i],
-                                profileJson = buildProfileFromUI().toJson()
-                            ))
-                        }
+            rvPicker.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+            val adapter = com.oof.control.adapters.GamePickerAdapter(available, requireContext().packageManager)
+            rvPicker.adapter = adapter
+
+            val dialog = MaterialAlertDialogBuilder(requireContext())
+                .setView(dialogView)
+                .create()
+            
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+            btnCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            btnAdd.setOnClickListener {
+                val profileJson = buildProfileFromUI().toJson()
+                val pm = requireContext().packageManager
+                available.forEachIndexed { i, info ->
+                    if (adapter.checkedItems[i]) {
+                        prefs.addGameApp(GameAppEntry(
+                            packageName = info.packageName,
+                            label = info.loadLabel(pm).toString(),
+                            profileJson = profileJson
+                        ))
                     }
-                    loadGameApps()
                 }
-                .setNegativeButton("Cancel", null)
-                .show()
+                loadGameApps()
+                dialog.dismiss()
+            }
+
+            dialog.show()
         }
     }
 
-    /**
-     * Uses LauncherApps API — same method used by launcher & thermal apps (e.g. MIUI Game Turbo).
-     * This correctly lists ALL user-installed launchable apps across all profiles,
-     * bypassing the MIUI/HyperOS app-hiding bug in getInstalledApplications().
-     */
-    private fun getLauncherApps(): List<LauncherActivityInfo> {
-        val launcherApps = requireContext().getSystemService(Context.LAUNCHER_APPS_SERVICE) as LauncherApps
-        val userManager = requireContext().getSystemService(Context.USER_SERVICE) as UserManager
-
-        return userManager.userProfiles
-            .flatMap { profile -> launcherApps.getActivityList(null, profile) }
-            .filter { info ->
-                // Exclude system apps — keep only user-installed launchable apps
-                info.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0
-            }
-            .distinctBy { it.applicationInfo.packageName }
-            .sortedBy { it.label.toString().lowercase() }
+    private fun getLauncherApps(): List<ApplicationInfo> {
+        val pm = requireContext().packageManager
+        val intent = Intent(Intent.ACTION_MAIN).apply { addCategory(Intent.CATEGORY_LAUNCHER) }
+        val resolveInfos = pm.queryIntentActivities(intent, 0)
+        return resolveInfos.map { it.activityInfo.applicationInfo }
+            .filter { (it.flags and ApplicationInfo.FLAG_SYSTEM) == 0 }
+            .distinctBy { it.packageName }
+            .sortedBy { it.loadLabel(pm).toString().lowercase() }
     }
-
-    // ── Listeners ──────────────────────────────────────────────────────────
 
     private fun setupListeners() {
         switchGameMode.setOnCheckedChangeListener { _, checked ->
@@ -289,7 +269,7 @@ class GameModeFragment : Fragment() {
             setAutoGameService(checked)
         }
 
-        view?.findViewById<View>(R.id.btn_add_game)?.setOnClickListener {
+        btnAddGame.setOnClickListener {
             showAppPickerDialog()
         }
 
@@ -303,14 +283,8 @@ class GameModeFragment : Fragment() {
 
         seekActiveMode.setOnSeekBarChangeListener(seekListener(tvActiveModeVal) {})
         seekAim.setOnSeekBarChangeListener(seekListener(tvAimVal) {})
-        seekTap.setOnSeekBarChangeListener(seekListener(tvTapVal) {})
-        seekTolerance.setOnSeekBarChangeListener(seekListener(tvToleranceVal) {})
-        seekEdge.setOnSeekBarChangeListener(seekListener(tvEdgeVal) {})
-
-        switchReportRate.setOnCheckedChangeListener { _, _ -> applyParamChange() }
+        seekFollow.setOnSeekBarChangeListener(seekListener(tvFollowVal) {})
     }
-
-    // ── UI helpers ─────────────────────────────────────────────────────────
 
     private fun updateStatusText(enabled: Boolean) {
         tvStatus.text = if (enabled) "Active — touch optimised for gaming" else "Optimise touch for gaming"
@@ -331,6 +305,25 @@ class GameModeFragment : Fragment() {
         }
     }
 
+    private fun startActivePkgMonitor() {
+        activePkgJob = lifecycleScope.launch {
+            var lastActive: String? = null
+            while (isActive) {
+                val currentActive = GameModeService.activeGamePackage
+                if (currentActive != lastActive) {
+                    lastActive = currentActive
+                    updateActiveBadge()
+                }
+                delay(1000)
+            }
+        }
+    }
+
+    private fun stopActivePkgMonitor() {
+        activePkgJob?.cancel()
+        activePkgJob = null
+    }
+
     private fun showError(msg: String) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Error")
@@ -339,11 +332,6 @@ class GameModeFragment : Fragment() {
             .show()
     }
 
-    /**
-     * Check if PACKAGE_USAGE_STATS (Usage Access) has been granted.
-     * Mirrors the check pattern from XiaomiParts Thermal.
-     * Uses AppOpsManager.checkOpNoThrow — the proper way to query this protected permission.
-     */
     private fun hasUsageStatsPermission(): Boolean {
         val appOps = requireContext().getSystemService(android.app.AppOpsManager::class.java)
         val mode = appOps.checkOpNoThrow(

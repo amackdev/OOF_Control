@@ -53,9 +53,7 @@ class AboutFragment : Fragment() {
                 binding.tvSupportStatus.setTextColor(resources.getColor(com.oof.control.R.color.orange, null))
             }
             
-            // Feature support
-            binding.tvTouchRateSupport.text = if (TouchController.isTouchRateSupported()) "Activated" else "Disabled"
-            binding.tvSportModeSupport.text = if (ChargingController.isSportModeSupported()) "Available" else "Locked"
+
         }
     }
     

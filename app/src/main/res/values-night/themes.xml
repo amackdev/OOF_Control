@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Professional Clean Dashboard Theme (DayNight Base) -->
+    <!-- Professional Clean Dashboard Theme (Night Override) -->
     <style name="Theme.OOFControl" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/accent</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -22,36 +22,10 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/background</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowLightNavigationBar">true</item>
-        
-        <!-- App-wide animations -->
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/fade</item>
-        <item name="android:windowExitTransition">@android:transition/fade</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
         
         <item name="materialSwitchStyle">@style/Widget.OOFControl.MaterialSwitch</item>
         <item name="materialCardViewStyle">@style/Widget.OOFControl.Card</item>
     </style>
-
-    <style name="Theme.OOFControl.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/background</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <item name="postSplashScreenTheme">@style/Theme.OOFControl</item>
-    </style>
-
-    <style name="Widget.OOFControl.MaterialSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
-        <item name="thumbTint">@color/switch_thumb_color</item>
-        <item name="trackTint">@color/switch_track_color</item>
-        <item name="trackDecorationTint">@android:color/transparent</item>
-    </style>
-
-    <style name="Widget.OOFControl.Card" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">24dp</item>
-        <item name="cardElevation">0dp</item>
-        <!-- No stroke for clean flat look -->
-        <item name="strokeWidth">0dp</item>
-        <item name="cardBackgroundColor">@color/card_background</item>
-    </style>
-
 </resources>

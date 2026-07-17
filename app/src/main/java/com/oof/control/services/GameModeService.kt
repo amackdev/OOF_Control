@@ -6,8 +6,10 @@ import android.app.NotificationManager
 import android.app.Service
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -15,26 +17,10 @@ import android.util.Log
 import com.oof.control.R
 import com.oof.control.utils.GameAppEntry
 import com.oof.control.utils.GameModeManager
+import com.oof.control.utils.GameModeProfile
 import com.oof.control.utils.PrefsManager
 
-/**
- * Foreground service that detects the active foreground app using
- * UsageStatsManager.queryEvents() — the exact same technique used by
- * XiaomiParts Thermal (packages_apps_XiaomiParts, branch 16.2).
- *
- * How it works (mirrors XiaomiParts ThermalService):
- *   1. A dedicated HandlerThread ("GameModeMonitor") owns all polling work.
- *   2. A Handler posts a Runnable every POLL_MS milliseconds.
- *   3. Each poll calls UsageStatsManager.queryEvents(now - POLL_MS, now)
- *      and iterates events looking for ACTIVITY_RESUMED.
- *   4. The last ACTIVITY_RESUMED package in that window is the foreground app.
- *   5. On change → enable / disable game mode via GameModeManager.
- *
- * Permission required: android.permission.PACKAGE_USAGE_STATS
- *   This is a "privileged" permission — grantable via adb or auto-granted on
- *   custom ROMs where the app is installed as a system app (priv-app).
- *   It does NOT require root.
- */
+/** Detects foreground app via UsageStatsManager.queryEvents() and auto-enables game mode. */
 class GameModeService : Service() {
 
     companion object {
@@ -42,7 +28,6 @@ class GameModeService : Service() {
         private const val NOTIF_CHANNEL = "game_mode_service"
         private const val NOTIF_ID      = 2001
 
-        /** Poll interval in ms. XiaomiParts Thermal uses 1000 ms. */
         private const val POLL_MS = 1000L
 
         const val ACTION_START = "com.oof.control.GAME_MODE_START"
@@ -52,35 +37,32 @@ class GameModeService : Service() {
         @Volatile var activeGamePackage: String? = null
     }
 
-    // ── Fields ────────────────────────────────────────────────────────────────
-
     private lateinit var prefs: PrefsManager
     private lateinit var usageStatsManager: UsageStatsManager
 
-    /** Dedicated background thread — mirrors HandlerThread use in XiaomiParts Thermal. */
     private lateinit var monitorThread: HandlerThread
     private lateinit var monitorHandler: Handler
 
-    /** Track last seen foreground to avoid redundant enable/disable calls. */
     private var lastForegroundPkg: String = ""
 
-    /** Cached game apps map for O(1) lookup instead of O(n) list search. */
-    private var gameAppsCache: Map<String, GameAppEntry>? = null
+    // Stops polling while the screen is off — resumes on screen-on
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                Intent.ACTION_SCREEN_OFF -> {
+                    monitorHandler.removeCallbacks(pollRunnable)
+                    Log.d(TAG, "Screen off — polling paused")
+                }
+                Intent.ACTION_SCREEN_ON -> {
+                    if (isRunning) monitorHandler.post(pollRunnable)
+                    Log.d(TAG, "Screen on — polling resumed")
+                }
+            }
+        }
+    }
 
-    // ── Core polling Runnable ─────────────────────────────────────────────────
+    // ─── Core polling ───────────────────────────────────────────────────────
 
-    /**
-     * Mirrors the Runnable/Handler loop in XiaomiParts ThermalService.
-     *
-     * queryEvents(beginTime, endTime) returns a UsageEvents cursor over all
-     * app-lifecycle events in that window. We iterate every event; when the
-     * event type is ACTIVITY_RESUMED we record its package. The last such
-     * package after draining the cursor is the current foreground app.
-     *
-     * Why ACTIVITY_RESUMED and not queryUsageStats()?
-     *   queryUsageStats() aggregates per-interval and has up to ~1 s staleness.
-     *   queryEvents() delivers individual lifecycle events in near real-time.
-     */
     private val pollRunnable = object : Runnable {
         override fun run() {
             try {
@@ -92,7 +74,6 @@ class GameModeService : Service() {
             } catch (e: Exception) {
                 Log.w(TAG, "Poll error: ${e.message}")
             } finally {
-                // Always reschedule — same postDelayed loop as XiaomiParts Thermal
                 if (isRunning) monitorHandler.postDelayed(this, POLL_MS)
             }
         }
@@ -108,7 +89,6 @@ class GameModeService : Service() {
         val event  = UsageEvents.Event()
 
         var foreground = ""
-        // Drain cursor — last ACTIVITY_RESUMED event wins (= current foreground)
         while (events.hasNextEvent()) {
             events.getNextEvent(event)
             if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
@@ -121,15 +101,14 @@ class GameModeService : Service() {
     // ── App change handler ────────────────────────────────────────────────────
 
     private fun handleForegroundChanged(pkg: String) {
-        // Use cached map for O(1) lookup
-        val cache = gameAppsCache ?: prefs.getGameApps().associateBy { it.packageName }.also { gameAppsCache = it }
-        val entry = cache[pkg]
+        val entry = prefs.getGameApps().firstOrNull { it.packageName == pkg }
 
         if (entry != null) {
             // A game app is now foreground
             if (!GameModeManager.isGameModeActive()) {
                 Log.i(TAG, "Game detected: ${entry.label} — enabling game mode")
-                val ok = GameModeManager.enable(entry.profile)
+                val globalProfile = GameModeProfile.fromJson(prefs.gameModeProfileJson) ?: GameModeProfile.DEFAULT
+                val ok = GameModeManager.enable(globalProfile)
                 if (ok) activeGamePackage = pkg
                 else Log.e(TAG, "Failed to enable game mode for $pkg")
             }
@@ -143,18 +122,21 @@ class GameModeService : Service() {
         }
     }
 
-    // ── Service lifecycle ─────────────────────────────────────────────────────
-
     override fun onCreate() {
         super.onCreate()
         prefs             = PrefsManager(this)
         usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         createNotificationChannel()
 
-        // Dedicated HandlerThread — same pattern as XiaomiParts Thermal
         monitorThread = HandlerThread("GameModeMonitor")
         monitorThread.start()
         monitorHandler = Handler(monitorThread.looper)
+
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_ON)
+            addAction(Intent.ACTION_SCREEN_OFF)
+        }
+        registerReceiver(screenReceiver, filter)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -170,8 +152,6 @@ class GameModeService : Service() {
                 return START_NOT_STICKY
             }
             isRunning = true
-            // Android requires startForeground() be called within 5 s of startForegroundService().
-            // We immediately demote to background so no notification is shown to the user.
             startForeground(NOTIF_ID, buildSilentNotification())
             @Suppress("DEPRECATION")
             stopForeground(true)   // remove the notification immediately
@@ -185,6 +165,7 @@ class GameModeService : Service() {
         isRunning = false
         monitorHandler.removeCallbacks(pollRunnable)
         monitorThread.quitSafely()
+        unregisterReceiver(screenReceiver)
         if (GameModeManager.isGameModeActive()) GameModeManager.disable()
         activeGamePackage = null
         Log.i(TAG, "GameModeService stopped")
@@ -193,14 +174,6 @@ class GameModeService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    // ── Permission check ──────────────────────────────────────────────────────
-
-    /**
-     * Verify PACKAGE_USAGE_STATS is granted.
-     * On custom ROMs with the app pre-installed as priv-app this is auto-granted.
-     * Users can grant it manually: Settings > Apps > Special app access > Usage access.
-     * Grant via adb: adb shell appops set com.oof.control GET_USAGE_STATS allow
-     */
     private fun hasUsageStatsPermission(): Boolean {
         return try {
             val now = System.currentTimeMillis()
@@ -210,8 +183,6 @@ class GameModeService : Service() {
             false
         }
     }
-
-    // ── Notification (minimal, immediately removed) ────────────────────────────
 
     private fun createNotificationChannel() {
         val ch = NotificationChannel(
@@ -223,7 +194,6 @@ class GameModeService : Service() {
         getSystemService(NotificationManager::class.java).createNotificationChannel(ch)
     }
 
-    /** Minimal silent notification used only to satisfy startForeground() requirement. */
     private fun buildSilentNotification(): Notification =
         Notification.Builder(this, NOTIF_CHANNEL)
             .setContentTitle("")

@@ -7,9 +7,7 @@ import androidx.core.content.edit
 import com.oof.control.utils.GameAppEntry
 import org.json.JSONArray
 
-/**
- * Manages app preferences/settings
- */
+
 class PrefsManager(context: Context) {
     
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -107,29 +105,18 @@ class PrefsManager(context: Context) {
         get() = prefs.getString(KEY_GAME_MODE_PROFILE, "") ?: ""
         set(value) = prefs.edit { putString(KEY_GAME_MODE_PROFILE, value) }
 
-    // Cached game apps list to avoid JSON parsing on every call
-    @Volatile private var gameAppsCache: List<GameAppEntry>? = null
-    @Volatile private var gameAppsCacheVersion = 0
-
     fun getGameApps(): List<GameAppEntry> {
-        gameAppsCache?.let { return it }
-
         val json = prefs.getString(KEY_GAME_APPS, "[]") ?: "[]"
-        val apps = try {
+        return try {
             val arr = JSONArray(json)
             (0 until arr.length()).mapNotNull { GameAppEntry.fromJson(arr.getString(it)) }
         } catch (e: Exception) { emptyList() }
-
-        gameAppsCache = apps
-        return apps
     }
 
     fun setGameApps(apps: List<GameAppEntry>) {
         val arr = JSONArray()
         apps.forEach { arr.put(it.toJson()) }
         prefs.edit { putString(KEY_GAME_APPS, arr.toString()) }
-        gameAppsCache = apps
-        gameAppsCacheVersion++
     }
 
     fun addGameApp(app: GameAppEntry) {
@@ -145,10 +132,8 @@ class PrefsManager(context: Context) {
         setGameApps(updated)
     }
 
-    /** Invalidate game apps cache - call when external changes may have occurred */
     fun invalidateGameAppsCache() {
-        gameAppsCache = null
-        gameAppsCacheVersion++
+        // No-op
     }
 
     fun applyTheme() {

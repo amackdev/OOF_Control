@@ -6,22 +6,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/**
- * Controller for touch-related operations including:
- * - Touch Rate (240Hz/480Hz)
- * - Touch Boost
- * - Performance Mode
- * - Refresh Rate
- */
+
 object TouchController {
 
     private const val TAG = "TouchController"
 
-    // ============ TOUCH RATE (480Hz) ============
-
-    /**
-     * Set touch rate to high (480Hz) or normal (240Hz).
-     */
     suspend fun setTouchRate(highRate: Boolean): Boolean = withContext(Dispatchers.IO) {
         try {
             val path = DeviceConfig.touchRatePath
@@ -51,10 +40,7 @@ object TouchController {
         }
     }
 
-    /**
-     * Get current touch rate state.
-     * @return true if high rate (480Hz), false otherwise
-     */
+    /** @return true if high rate (480Hz) */
     suspend fun getTouchRate(): Boolean = withContext(Dispatchers.IO) {
         try {
             val path = DeviceConfig.touchRatePath ?: return@withContext false
@@ -67,21 +53,11 @@ object TouchController {
         }
     }
 
-    /**
-     * Check if touch rate control is supported on this device.
-     */
     suspend fun isTouchRateSupported(): Boolean = withContext(Dispatchers.IO) {
         val path = DeviceConfig.touchRatePath
         path != null && File(path).exists()
     }
 
-    // ============ REFRESH RATE ============
-
-    /**
-     * Set display refresh rate.
-     * @param context Android context
-     * @param rate Target refresh rate (60, 90, or 120)
-     */
     suspend fun setRefreshRate(context: Context, rate: Int): Boolean = withContext(Dispatchers.IO) {
         try {
             // Method 1: Direct Settings.System (requires WRITE_SETTINGS)
@@ -119,9 +95,6 @@ object TouchController {
         }
     }
 
-    /**
-     * Get current refresh rate setting.
-     */
     suspend fun getRefreshRate(): Int = withContext(Dispatchers.IO) {
         try {
             val result = ShellExecutor.settings("system", "get", "min_refresh_rate")
@@ -133,43 +106,22 @@ object TouchController {
         }
     }
 
-    // ============ PERFORMANCE MODE ============
-
-    /**
-     * Enable or disable Xiaomi performance mode.
-     */
     suspend fun setPerformanceMode(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
         ShellExecutor.setProperty("persist.xiaomi.performance", if (enabled) "enable" else "disable")
     }
 
-    /**
-     * Get current performance mode state.
-     */
     suspend fun getPerformanceMode(): Boolean = withContext(Dispatchers.IO) {
         ShellExecutor.getProperty("persist.xiaomi.performance") == "enable"
     }
 
-    // ============ TOUCH BOOST ============
-
-    /**
-     * Enable or disable touch boost.
-     */
     suspend fun setTouchBoost(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
         ShellExecutor.setProperty("persist.oof_touchboost.enable", if (enabled) "true" else "false")
     }
 
-    /**
-     * Get current touch boost state.
-     */
     suspend fun getTouchBoost(): Boolean = withContext(Dispatchers.IO) {
         ShellExecutor.getProperty("persist.oof_touchboost.enable") == "true"
     }
 
-    // ============ SYSTEM PROPERTIES (Display-related) ============
-
-    /**
-     * Get a system property value.
-     */
     suspend fun getSystemProp(propName: String): String = withContext(Dispatchers.IO) {
         try {
             ShellExecutor.getProperty(propName) ?: ""
@@ -179,9 +131,6 @@ object TouchController {
         }
     }
 
-    /**
-     * Set a system property value.
-     */
     suspend fun setSystemProp(propName: String, value: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val success = ShellExecutor.setProperty(propName, value)

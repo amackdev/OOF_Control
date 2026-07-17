@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="?attr/colorSurfaceVariant"
-    app:cardCornerRadius="20dp"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="24dp"
     app:cardElevation="0dp"
     app:strokeWidth="0dp">
 
@@ -53,8 +53,8 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_delete"
-            android:tint="?attr/colorOnSurfaceVariant"
+            android:src="@drawable/ic_delete"
+            app:tint="?attr/colorOnSurfaceVariant"
             android:contentDescription="Remove" />
 
     </LinearLayout>

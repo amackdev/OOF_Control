@@ -2,21 +2,13 @@ package com.oof.control.utils
 
 import android.util.Log
 
-/**
- * DaemonConfigWriter handles asynchronous writing of Xiaomi Touch game mode params
- * to a standardized file location that an external daemon watches.
- *
- * Current format is a simplified space-separated KV matching the IOCTL modes:
- * <mode_id> <value>
- */
+/** Writes game mode touch params to /data/oofcontrol/gamemode.txt for the daemon. Format: "<mode_id> <value>" */
 object DaemonConfigWriter {
     private const val TAG = "DaemonConfigWriter"
     private const val CONFIG_PATH = "/data/oofcontrol/gamemode.txt"
 
-    /**
-     * Batch writes the current gamemode state and values to the configuration file.
-     * We use Coroutines / ShellExecutor.executeShellSync to echo the config atomically.
-     */
+    private var dirCreated = false
+
     fun writeConfig(state: Map<Int, Int>, gripArray: IntArray?) {
         val sb = StringBuilder()
 
@@ -34,17 +26,34 @@ object DaemonConfigWriter {
         val configContent = sb.toString()
         Log.i(TAG, "Writing touch config to daemon:\n$configContent")
 
-        // Ensure the directory exists
-        ShellExecutor.executeShellSync("mkdir -p /data/oofcontrol && chmod 777 /data/oofcontrol")
+        try {
+            val dir = java.io.File("/data/oofcontrol")
+            if (!dir.exists()) {
+                dir.mkdirs()
+                dir.setExecutable(true, false)
+                dir.setReadable(true, false)
+                dir.setWritable(true, false)
+            }
 
-        // Write the file atomically using ShellExecutor's safe write path
-        val written = ShellExecutor.writeFileSync(CONFIG_PATH, configContent)
-        if (written) {
-            // Make it world-readable so the daemon can pick it up
-            ShellExecutor.executeShellSync("chmod 666 $CONFIG_PATH")
-            Log.i(TAG, "Successfully wrote daemon config")
-        } else {
-            Log.e(TAG, "Failed to write daemon config to $CONFIG_PATH")
+            val file = java.io.File(CONFIG_PATH)
+            file.writeText(configContent)
+            file.setReadable(true, false)
+            file.setWritable(true, false)
+            Log.i(TAG, "Successfully wrote daemon config natively")
+        } catch (e: Exception) {
+            Log.e(TAG, "Native write failed, falling back to shell", e)
+            if (!dirCreated) {
+                ShellExecutor.executeShellSync("mkdir -p /data/oofcontrol && chmod 777 /data/oofcontrol")
+                dirCreated = true
+            }
+
+            val written = ShellExecutor.writeFileSync(CONFIG_PATH, configContent)
+            if (written) {
+                ShellExecutor.executeShellSync("chmod 666 $CONFIG_PATH")
+                Log.i(TAG, "Successfully wrote daemon config via shell")
+            } else {
+                Log.e(TAG, "Failed to write daemon config to $CONFIG_PATH")
+            }
         }
     }
 }

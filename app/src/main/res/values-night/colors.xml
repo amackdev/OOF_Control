@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MacroFactor-style Base (Dark Mode) -->
+    <color name="background">#000000</color>
+    <color name="surface">#0A0A0A</color>
+    <color name="card_background">#161616</color>
+    <color name="surface_dim">#121212</color>
+
+    <!-- Refined Text Hierarchy -->
+    <color name="text_primary">#FAFAFA</color>
+    <color name="text_secondary">#A0A0A5</color>
+    <color name="text_tertiary">#606065</color>
+
+    <!-- Base colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Vibrant Macro Accents -->
+    <color name="accent">#4285F4</color> <!-- Blue -->
+    <color name="accent_vibrant">#8AB4F8</color>
+    <color name="blue">#4285F4</color>
+    <color name="purple">#C58AF9</color>
+    <color name="pink">#F28B82</color>
+    <color name="orange">#FDB813</color>
+    <color name="yellow">#FDD663</color>
+    <color name="green">#81C995</color>
+
+    <!-- Semantic Status Colors -->
+    <color name="state_charging">#4285F4</color>
+    <color name="state_healthy">#81C995</color>
+    <color name="state_idle">#A0A0A5</color>
+    
+    <!-- Stats Bars -->
+    <color name="bar_protein">#FDB813</color> <!-- Orange/Red -->
+    <color name="bar_fat">#FDD663</color> <!-- Yellow -->
+    <color name="bar_carbs">#81C995</color> <!-- Green -->
+    <color name="bar_track">#2C2C2C</color> <!-- Dark gray track -->
+
+    <!-- Glassmorphism / Overlays -->
+    <color name="glass_white">#1AFFFFFF</color>
+    <color name="glass_border">#20FFFFFF</color>
+
+    <!-- Arc gauge -->
+    <color name="arc_track">#1A4285F4</color>
+
+    <!-- Nav & UI Elements -->
+    <color name="bottom_nav_color">#A0A0A5</color>
+    <color name="nav_indicator">#1A8AB4F8</color>
+
+    <!-- Custom Icon backgrounds -->
+    <color name="icon_bg_blue">#1A4285F4</color>
+    <color name="icon_bg_green">#1A81C995</color>
+    <color name="icon_bg_purple">#1AC58AF9</color>
+    <color name="icon_bg_yellow">#1AFDD663</color>
+
+    <!-- Switch states -->
+    <color name="switch_thumb_on">#000000</color>
+    <color name="switch_thumb_off">#808080</color>
+    <color name="switch_track_on">@color/accent</color>
+    <color name="switch_track_off">#333333</color>
+
+    <!-- Segmented Control -->
+    <color name="segment_selected_bg">#FFFFFF</color>
+    <color name="segment_selected_text">#000000</color>
+    <color name="segment_default_bg">@android:color/transparent</color>
+</resources>

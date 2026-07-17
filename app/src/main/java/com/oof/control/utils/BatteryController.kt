@@ -5,13 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/**
- * Controller for battery-related read operations including:
- * - Battery level, temperature, voltage
- * - Battery health percentage
- * - Battery drain rate
- * - Battery status
- */
+
 object BatteryController {
 
     private const val TAG = "BatteryController"
@@ -20,57 +14,30 @@ object BatteryController {
     private var lastCurrentNow = 0
     private var lastUpdateTime = 0L
 
-    // ============ BATTERY LEVEL ============
-
-    /**
-     * Get current battery level as percentage (0-100).
-     */
     suspend fun getBatteryLevel(): Int = withContext(Dispatchers.IO) {
         ShellExecutor.readFile(DeviceConfig.BATTERY_CAPACITY)?.toIntOrNull() ?: 0
     }
 
-    // ============ BATTERY TEMPERATURE ============
-
-    /**
-     * Get battery temperature in tenths of degrees Celsius.
-     * Divide by 10 to get actual temperature.
-     */
+    /** Returns tenths of °C (divide by 10 for actual temp). */
     suspend fun getBatteryTemp(): Int = withContext(Dispatchers.IO) {
         ShellExecutor.readFile(DeviceConfig.BATTERY_TEMP)?.toIntOrNull() ?: 0
     }
 
-    /**
-     * Get battery temperature in degrees Celsius.
-     */
     suspend fun getBatteryTempCelsius(): Float = withContext(Dispatchers.IO) {
         val temp = ShellExecutor.readFile(DeviceConfig.BATTERY_TEMP)?.toIntOrNull() ?: 0
         temp / 10f
     }
 
-    // ============ BATTERY VOLTAGE ============
-
-    /**
-     * Get battery voltage in microvolts.
-     */
     suspend fun getBatteryVoltage(): Int = withContext(Dispatchers.IO) {
         ShellExecutor.readFile("/sys/class/power_supply/battery/voltage_now")?.toIntOrNull() ?: 4000000
     }
 
-    /**
-     * Get battery voltage in volts.
-     */
     suspend fun getBatteryVoltageVolts(): Float = withContext(Dispatchers.IO) {
         val microvolts = ShellExecutor.readFile("/sys/class/power_supply/battery/voltage_now")?.toIntOrNull() ?: 4000000
         microvolts / 1_000_000f
     }
 
-    // ============ BATTERY HEALTH ============
-
-    /**
-     * Get battery health as percentage of design capacity.
-     * Uses charge_full / charge_full_design (commonly in microampere-hours).
-     * @return Health percentage (0.0 to ~120.0), or 0.0 if unavailable
-     */
+    /** charge_full / charge_full_design × 100. Returns 0.0 if unavailable, clamped to 120.0. */
     suspend fun getBatteryHealthPercent(): Double = withContext(Dispatchers.IO) {
         val full = ShellExecutor.readFile(DeviceConfig.BATTERY_FULL)?.toDoubleOrNull() ?: 0.0
         val design = ShellExecutor.readFile(DeviceConfig.BATTERY_FULL_DESIGN)?.toDoubleOrNull() ?: 0.0
@@ -82,29 +49,16 @@ object BatteryController {
         pct.coerceIn(0.0, 120.0)
     }
 
-    // ============ BATTERY STATUS ============
-
-    /**
-     * Get battery status string (e.g., "Charging", "Discharging", "Full", "Not charging").
-     */
     suspend fun getBatteryStatus(): String? = withContext(Dispatchers.IO) {
         ShellExecutor.readFile(DeviceConfig.STATUS)
     }
 
-    /**
-     * Check if battery is currently charging.
-     */
     suspend fun isCharging(): Boolean = withContext(Dispatchers.IO) {
         val status = ShellExecutor.readFile(DeviceConfig.BATTERY_STATUS)
         status == "Charging" || status == "Full"
     }
 
-    // ============ BATTERY DRAIN RATE ============
-
-    /**
-     * Get battery drain rate in mA.
-     * Positive = charging, Negative = discharging
-     */
+    /** Returns drain in mA. Positive = charging, negative = discharging. */
     suspend fun getBatteryDrainRate(): Int = withContext(Dispatchers.IO) {
         try {
             // Try current_now first (microamps)
@@ -137,42 +91,23 @@ object BatteryController {
         }
     }
 
-    /**
-     * Get current now in microamps (raw value).
-     */
     suspend fun getCurrentNow(): Int = withContext(Dispatchers.IO) {
         ShellExecutor.readFile("/sys/class/power_supply/battery/current_now")?.toIntOrNull() ?: 0
     }
 
-    /**
-     * Get current average in microamps (raw value).
-     */
     suspend fun getCurrentAvg(): Int = withContext(Dispatchers.IO) {
         ShellExecutor.readFile("/sys/class/power_supply/battery/current_avg")?.toIntOrNull() ?: 0
     }
 
-    // ============ POWER INFO ============
-
-    /**
-     * Get maximum power in microwatts.
-     */
     suspend fun getMaxPower(): Int = withContext(Dispatchers.IO) {
         ShellExecutor.readFile(DeviceConfig.POWER_MAX)?.toIntOrNull() ?: 0
     }
 
-    /**
-     * Get maximum power in watts.
-     */
     suspend fun getMaxPowerWatts(): Float = withContext(Dispatchers.IO) {
         val microwatts = ShellExecutor.readFile(DeviceConfig.POWER_MAX)?.toIntOrNull() ?: 0
         microwatts / 1_000_000f
     }
 
-    // ============ UTILITY ============
-
-    /**
-     * Check if battery information is accessible.
-     */
     suspend fun isAvailable(): Boolean = withContext(Dispatchers.IO) {
         try {
             val file = File(DeviceConfig.BATTERY_CAPACITY)
@@ -182,9 +117,6 @@ object BatteryController {
         }
     }
 
-    /**
-     * Get all battery info as a data class.
-     */
     suspend fun getBatteryInfo(): BatteryInfo = withContext(Dispatchers.IO) {
         BatteryInfo(
             level = getBatteryLevel(),
@@ -197,9 +129,7 @@ object BatteryController {
         )
     }
 
-    /**
-     * Data class containing all battery information.
-     */
+
     data class BatteryInfo(
         val level: Int,
         val temperature: Int,

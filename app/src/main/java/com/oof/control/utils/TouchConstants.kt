@@ -1,9 +1,6 @@
 package com.oof.control.utils
 
-/**
- * Constants mirrored from xiaomi_touch_type_common.h / xiaomi_touch.h
- * Driver version: 2024.08.30-01
- */
+/** Constants from xiaomi_touch_type_common.h / xiaomi_touch.h (driver 2024.08.30-01) */
 object TouchConstants {
 
     // Device paths
