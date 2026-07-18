@@ -56,6 +56,11 @@ class ChargingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = PrefsManager(requireContext())
         
+        binding.switchSportMode.isSaveEnabled = false
+        binding.switchChargeLimit.isSaveEnabled = false
+        binding.switchSmartService.isSaveEnabled = false
+        binding.switchStatsService.isSaveEnabled = false
+        
         setupListeners()
         loadSavedStates()
         startUpdates()
@@ -257,6 +262,7 @@ class ChargingFragment : Fragment() {
 
             // Update charging status text
             val statusText = when {
+                isCharging && batteryLevel >= 100 && Math.abs(drainRate) < 50 -> "FULLY CHARGED"
                 isFastCharging && sportMode -> "TURBO CHARGING"
                 isFastCharging -> "FAST CHARGING"
                 isCharging -> "CHARGING"
@@ -268,26 +274,46 @@ class ChargingFragment : Fragment() {
             )
 
             // Update Time
-            val chargeLimit = prefs.chargeLimit
-            if (isCharging && batteryLevel < chargeLimit && prefs.chargeLimitEnabled) {
-                val remaining = chargeLimit - batteryLevel
-                val timeMin = if (sportMode && drainRate > 0) {
-                    (remaining * 60) / (drainRate / 100)
-                } else if (drainRate > 0) {
-                    (remaining * 60) / (drainRate / 100)
-                } else {
-                    0
-                }
-                if (timeMin > 0) {
+            val targetLevel = if (prefs.chargeLimitEnabled) prefs.chargeLimit else 100
+            
+            if (isCharging) {
+                if (batteryLevel < targetLevel) {
+                    val remainingPct = targetLevel - batteryLevel
+                    val currentMa = Math.abs(drainRate)
+                    
+                    // Avoid division by zero, assume at least 100mA charging for a baseline estimate
+                    val safeCurrentMa = if (currentMa < 100) 100 else currentMa
+                    
+                    // Rough heuristic: assuming ~5000mAh battery -> 50mAh per 1%
+                    // Minutes = (mAh needed / currentmA) * 60
+                    val timeMin = (remainingPct * 50 * 60) / safeCurrentMa
+                    
                     binding.tvTimeVal.text = "~$timeMin m"
-                    binding.tvTimeLbl.text = "Target $chargeLimit%"
+                    binding.tvTimeLbl.text = "Target $targetLevel%"
                 } else {
                     binding.tvTimeVal.text = "--"
-                    binding.tvTimeLbl.text = "Target 100%"
+                    binding.tvTimeLbl.text = "Target Reached"
                 }
             } else {
-                binding.tvTimeVal.text = "--"
-                binding.tvTimeLbl.text = "Remaining"
+                val currentMa = Math.abs(drainRate)
+                if (currentMa >= 50) {
+                    val remainingMah = (com.oof.control.utils.DeviceConfig.batteryCapacityMah * batteryLevel) / 100.0
+                    val hoursLeft = remainingMah / currentMa
+                    
+                    if (hoursLeft > 0 && hoursLeft <= 100) {
+                        val totalMins = (hoursLeft * 60).toInt()
+                        val h = totalMins / 60
+                        val m = totalMins % 60
+                        binding.tvTimeVal.text = if (h > 0) "${h}h ${m}m" else "${m}m"
+                        binding.tvTimeLbl.text = "Remaining"
+                    } else {
+                        binding.tvTimeVal.text = "--"
+                        binding.tvTimeLbl.text = "Remaining"
+                    }
+                } else {
+                    binding.tvTimeVal.text = "--"
+                    binding.tvTimeLbl.text = "Remaining"
+                }
             }
 
             // Update Health

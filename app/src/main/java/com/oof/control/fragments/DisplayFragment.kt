@@ -65,6 +65,14 @@ class DisplayFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = PrefsManager(requireContext())
         
+        // Prevent Android from restoring switch states and firing listeners on theme change
+        binding.switchTouchRate.isSaveEnabled = false
+        binding.switchPif.isSaveEnabled = false
+        binding.switchBlspoof.isSaveEnabled = false
+        binding.switchKeybox.isSaveEnabled = false
+        binding.switchUnlimphotos.isSaveEnabled = false
+        binding.switchSpoofProvider.isSaveEnabled = false
+        
         setupListeners()
         loadSavedStates()
     }

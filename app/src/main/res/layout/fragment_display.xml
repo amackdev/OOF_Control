@@ -284,12 +284,11 @@
 
         <!-- PIF UPDATER SECTION -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PIF Updater"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:fontFamily="sans-serif-medium"
+            android:text="PIF UPDATER"
+            style="@style/TextAppearance.OOFControl.SectionHeader"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="16dp" />
 
         <LinearLayout

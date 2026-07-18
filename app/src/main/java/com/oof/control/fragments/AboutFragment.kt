@@ -46,10 +46,10 @@ class AboutFragment : Fragment() {
             
             // Supported status
             if (DeviceConfig.isSupported) {
-                binding.tvSupportStatus.text = "PRO CERTIFIED"
+                binding.tvSupportStatus.text = "Device Supported"
                 binding.tvSupportStatus.setTextColor(resources.getColor(com.oof.control.R.color.green, null))
             } else {
-                binding.tvSupportStatus.text = "UNOFFICIAL DEVICE"
+                binding.tvSupportStatus.text = "Unofficial Device"
                 binding.tvSupportStatus.setTextColor(resources.getColor(com.oof.control.R.color.orange, null))
             }
             
@@ -59,6 +59,7 @@ class AboutFragment : Fragment() {
     
     private fun setupSettings() {
         // Apply on boot switch
+        binding.switchApplyOnBoot.isSaveEnabled = false
         binding.switchApplyOnBoot.isChecked = prefs.applyOnBoot
         binding.switchApplyOnBoot.setOnCheckedChangeListener { _, isChecked ->
             prefs.applyOnBoot = isChecked

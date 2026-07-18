@@ -92,7 +92,7 @@
 
             <LinearLayout
     android:animateLayoutChanges="true"
-    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+    android:layout_width="match_parent" android:layout_height="wrap_content">
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Brand" android:textColor="@color/text_secondary" android:textSize="14sp" />
                 <TextView android:id="@+id/tv_device_brand" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown" android:textColor="@color/text_primary" android:textSize="14sp" android:fontFamily="sans-serif-medium" />
             </LinearLayout>

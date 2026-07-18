@@ -64,7 +64,6 @@ object ShellExecutor {
 
     // Tries direct read first, falls back to root cat
     fun readFileSync(path: String): String? {
-        if (!File(path).exists()) return null
         return try {
             FileUtils.readOneLine(path) ?: run {
                 val result = executeSync("cat", path)
@@ -194,7 +193,10 @@ object ShellExecutor {
 
     fun pathExists(path: String): Boolean {
         return try {
-            File(path).exists()
+            if (File(path).exists()) return true
+            // Fallback: check with ls in root shell for sysfs nodes with strict SELinux rules
+            val result = executeSync("ls", path)
+            result.isSuccess
         } catch (e: Exception) {
             false
         }

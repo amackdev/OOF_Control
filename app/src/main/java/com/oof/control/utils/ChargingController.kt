@@ -40,7 +40,7 @@ object ChargingController {
 
     suspend fun isCharging(): Boolean = withContext(Dispatchers.IO) {
         val status = ShellExecutor.readFile(DeviceConfig.BATTERY_STATUS)
-        isChargerConnected() && (status == "Charging" || status == "Full")
+        status == "Charging" || status == "Full"
     }
 
     suspend fun isFastCharging(): Boolean = withContext(Dispatchers.IO) {
@@ -53,7 +53,11 @@ object ChargingController {
     }
 
     suspend fun isChargerConnected(): Boolean = withContext(Dispatchers.IO) {
-        getUsbType() != "Unknown"
+        val type = getUsbType()
+        if (type != "Unknown" && type.isNotBlank()) return@withContext true
+        // Fallback: if battery is actively charging or full, it must be plugged in
+        val status = ShellExecutor.readFile(DeviceConfig.BATTERY_STATUS)
+        status == "Charging" || status == "Full"
     }
 
     suspend fun isSportModeSupported(): Boolean = withContext(Dispatchers.IO) {

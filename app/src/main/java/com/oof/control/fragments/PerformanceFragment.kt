@@ -31,6 +31,9 @@ class PerformanceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         prefs = PrefsManager(requireContext())
         
+        binding.switchPerformance.isSaveEnabled = false
+        binding.switchTouchBoost.isSaveEnabled = false
+        
         loadCurrentStates()
         setupListeners()
     }

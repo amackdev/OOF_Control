@@ -66,6 +66,10 @@ class GameModeFragment : Fragment() {
         prefs = PrefsManager(requireContext())
 
         bindViews(view)
+        
+        switchGameMode.isSaveEnabled = false
+        switchAutoGame.isSaveEnabled = false
+        
         loadProfile()
         loadGameApps()
         updateActiveBadge()
