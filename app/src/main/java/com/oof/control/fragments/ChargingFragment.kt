@@ -326,8 +326,9 @@ class ChargingFragment : Fragment() {
             
             // Update Power and Current Macro Bars
             if (isCharging) {
-                binding.tvPowerVal.text = String.format("%.1fW", maxPower.toFloat())
-                binding.barPower.progress = maxPower.toInt().coerceIn(0, 100)
+                val maxPowerWatts = maxPower.toFloat() / 1_000_000f
+                binding.tvPowerVal.text = String.format("%.1fW", maxPowerWatts)
+                binding.barPower.progress = maxPowerWatts.toInt().coerceIn(0, 100)
                 
                 val currentA = Math.abs(drainRate) / 1000.0
                 binding.tvCurrentVal.text = String.format("+%.2fA", currentA)

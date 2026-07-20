@@ -42,14 +42,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val navOrder = listOf(R.id.nav_display, R.id.nav_performance, R.id.nav_game_mode, R.id.nav_charging, R.id.nav_about)
-    private var currentNavId = R.id.nav_display
+    private var currentNavId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         prefs = PrefsManager(this)
+        super.onCreate(savedInstanceState)
         prefs.applyTheme()
         DynamicColors.applyToActivityIfAvailable(this)
-        super.onCreate(savedInstanceState)
 
         try {
             WindowCompat.setDecorFitsSystemWindows(window, false)

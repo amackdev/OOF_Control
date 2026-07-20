@@ -343,7 +343,7 @@ class DisplayFragment : Fragment() {
                 val success = TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "true")
                 if (success) {
                     showToast("Fingerprint update triggered")
-                    viewLifecycleOwner.lifecycleScope.launch {
+                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
                         delay(10_000)
                         TouchController.setSystemProp(PROP_UPDATE_FINGERPRINT, "false")
                     }
@@ -384,7 +384,7 @@ class DisplayFragment : Fragment() {
 
                 try {
                     TouchController.setSystemProp("persist.custom_keybox.state", "true")
-                    viewLifecycleOwner.lifecycleScope.launch {
+                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
                         delay(10_000)
                         TouchController.setSystemProp("persist.custom_keybox.state", "false")
                     }

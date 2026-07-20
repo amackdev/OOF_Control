@@ -85,6 +85,7 @@ class SmartChargingService : Service() {
     }
     
     private fun startChargingControlLoop() {
+        serviceJob?.cancel()
         serviceJob = serviceScope.launch {
             while (isActive) {
                 val interval = try {
