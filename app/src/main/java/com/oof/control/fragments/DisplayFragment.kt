@@ -72,6 +72,7 @@ class DisplayFragment : Fragment() {
         binding.switchKeybox.isSaveEnabled = false
         binding.switchUnlimphotos.isSaveEnabled = false
         binding.switchSpoofProvider.isSaveEnabled = false
+        binding.switchDisableFlagSecure.isSaveEnabled = false
         
         setupListeners()
         loadSavedStates()
@@ -131,6 +132,7 @@ class DisplayFragment : Fragment() {
             binding.cardBlspoof.visibility = visibility
             binding.cardKeybox.visibility = visibility
             binding.cardSpoofProvider.visibility = visibility
+            binding.cardDisableFlagSecure.visibility = visibility
             binding.cardUnlimphotos.visibility = visibility
             binding.cardSpoofInfo.visibility = visibility
             binding.tvSpoofingSection.visibility = visibility
@@ -150,6 +152,7 @@ class DisplayFragment : Fragment() {
         binding.cardBlspoof.visibility = View.GONE
         binding.cardKeybox.visibility = View.GONE
         binding.cardSpoofProvider.visibility = View.GONE
+        binding.cardDisableFlagSecure.visibility = View.GONE
         binding.cardUnlimphotos.visibility = View.GONE
         binding.cardSpoofInfo.visibility = View.GONE
         binding.tvSpoofingSection.visibility = View.GONE
@@ -163,6 +166,7 @@ class DisplayFragment : Fragment() {
             binding.switchKeybox.isChecked = getPropBool(PROP_KEYBOX)
             binding.switchUnlimphotos.isChecked = getPropBool(PROP_UNLIM_PHOTOS)
             binding.switchSpoofProvider.isChecked = getPropBool(PROP_SPOOF_PROVIDER)
+            binding.switchDisableFlagSecure.isChecked = getPropBool(PROP_DISABLE_FLAG_SECURE)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading prop states", e)
         } finally {
@@ -252,6 +256,12 @@ class DisplayFragment : Fragment() {
             if (isUpdatingUI) return@setOnCheckedChangeListener
             setProp(PROP_SPOOF_PROVIDER, isChecked, "Spoof Provider")
         }
+        
+        // Disable Secure Flag
+        binding.switchDisableFlagSecure.setOnCheckedChangeListener { _, isChecked ->
+            if (isUpdatingUI) return@setOnCheckedChangeListener
+            setFlagSecureProp(isChecked)
+        }
 
         // ============ PIF UPDATER ============
 
@@ -322,6 +332,29 @@ class DisplayFragment : Fragment() {
         }
     }
     
+    private fun setFlagSecureProp(enabled: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val value = if (enabled) "1" else "0"
+                val success = TouchController.setSystemProp(PROP_DISABLE_FLAG_SECURE, value)
+                if (success) {
+                    showToast("Screenshot Protection Disable ${if (enabled) "enabled" else "disabled"}")
+                } else {
+                    showToast("Failed to set Screenshot Protection Disable")
+                    isUpdatingUI = true
+                    binding.switchDisableFlagSecure.isChecked = !enabled
+                    isUpdatingUI = false
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error setting prop $PROP_DISABLE_FLAG_SECURE", e)
+                showToast("Error: ${e.message}")
+                isUpdatingUI = true
+                binding.switchDisableFlagSecure.isChecked = !enabled
+                isUpdatingUI = false
+            }
+        }
+    }
+
     private fun revertSwitch(propName: String, value: Boolean) {
         when (propName) {
             PROP_PIF -> binding.switchPif.isChecked = value
