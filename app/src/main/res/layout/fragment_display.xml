@@ -259,6 +259,27 @@
                 <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_spoof_provider" android:layout_width="wrap_content" android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <View android:id="@+id/div_spoof_signature" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/glass_border" android:layout_marginVertical="16dp" />
+
+            <!-- Spoof Signature -->
+            <LinearLayout
+                android:id="@+id/card_spoof_signature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Spoof Signature" android:textColor="@color/text_primary" android:textSize="15sp" android:fontFamily="sans-serif-medium" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Spoof the android package signature" android:textColor="@color/text_secondary" android:textSize="12sp" android:layout_marginTop="2dp" />
+                </LinearLayout>
+                <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switch_spoof_signature" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+            </LinearLayout>
+
             <View android:id="@+id/div4" android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/glass_border" android:layout_marginVertical="16dp" />
 
             <!-- Disable Secure Flag -->
