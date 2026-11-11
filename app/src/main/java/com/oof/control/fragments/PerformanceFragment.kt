@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.databinding.FragmentPerformanceBinding
+import com.oof.control.utils.DeviceConfig
 import com.oof.control.utils.PrefsManager
+import com.oof.control.utils.ShellExecutor
 import com.oof.control.utils.TouchController
 import kotlinx.coroutines.launch
 
@@ -87,6 +89,16 @@ class PerformanceFragment : Fragment() {
     private fun updatePerformanceStatus(enabled: Boolean) {
         binding.tvPerformanceStatus.text = if (enabled) "Active" else "Disabled"
         binding.cardPerformance.alpha = if (enabled) 1.0f else 0.8f
+        if (!enabled) return
+
+        // Confirm the thermal daemon really switched profile (init writes sconfig from the property)
+        viewLifecycleOwner.lifecycleScope.launch {
+            kotlinx.coroutines.delay(800)
+            val mode = ShellExecutor.readFile(DeviceConfig.THERMAL_SCONFIG)?.trim()?.toIntOrNull()
+            if (_binding != null && mode != null && mode != DeviceConfig.THERMAL_MODE_PERFORMANCE) {
+                binding.tvPerformanceStatus.text = "Pending (thermal mode $mode)"
+            }
+        }
     }
     
     private fun showToast(message: String) {

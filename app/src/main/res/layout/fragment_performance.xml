@@ -70,7 +70,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Maximum optimisation for high-workload scenarios."
+                    android:text="Lets the CPU and GPU run about 3°C hotter before throttling. Safety limits stay active."
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:layout_marginTop="2dp" />

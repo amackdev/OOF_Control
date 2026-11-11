@@ -71,6 +71,10 @@ object DeviceConfig {
             return _chargingPath!!
         }
     
+    /** mi_thermald profile switch node; 900 is the performance thermal profile. */
+    const val THERMAL_SCONFIG = "/sys/class/thermal/thermal_message/sconfig"
+    const val THERMAL_MODE_PERFORMANCE = 900
+
     const val BATTERY_CAPACITY = "/sys/class/power_supply/battery/capacity"
     const val BATTERY_TEMP = "/sys/class/power_supply/battery/temp"
     const val BATTERY_FULL_DESIGN = "/sys/class/power_supply/battery/charge_full_design"
