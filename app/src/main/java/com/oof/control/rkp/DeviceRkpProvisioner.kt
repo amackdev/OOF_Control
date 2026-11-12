@@ -39,6 +39,8 @@ class DeviceRkpProvisioner(
         private const val ALG_ES256 = -7L
         private const val TA_CSR_COMMAND = 0x3122
         private const val TA_BINARY = "ta_csr"
+        private const val REQ_FILE = "/data/oofcontrol/rkp_request"
+        private const val RSP_FILE = "/data/oofcontrol/rkp_response"
     }
 
     fun provision(): KeyboxResult {
@@ -111,30 +113,57 @@ class DeviceRkpProvisioner(
     }
 
     private fun callTa(request: ByteArray): ByteArray {
-        val binary = extractTaBinary()
         val requestHex = request.joinToString("") { "%02x".format(it) }
+
+        // Try init service first (rootless — oof_rkp runs as root via init)
+        val reqFile = File(REQ_FILE)
+        val rspFile = File(RSP_FILE)
+        reqFile.parentFile?.mkdirs()
+        rspFile.delete()
+
+        try {
+            reqFile.writeText(requestHex)
+        } catch (e: Exception) {
+            Log.w(TAG, "Cannot write request file, falling back to su")
+            return callTaWithSu(requestHex)
+        }
+
+        setSystemProp("oof.rkp.status", "")
+        setSystemProp("oof.rkp.run", "1")
+
+        val deadline = System.currentTimeMillis() + 15_000
+        while (System.currentTimeMillis() < deadline) {
+            val status = getSystemProp("oof.rkp.status")
+            if (status == "done" || status == "error") break
+            Thread.sleep(200)
+        }
+
+        val status = getSystemProp("oof.rkp.status")
+        if (status == "done" && rspFile.exists()) {
+            val hex = rspFile.readText().trim()
+            if (hex.isNotEmpty()) {
+                Log.i(TAG, "TA response received via init service (rootless)")
+                return hexToBytes(hex)
+            }
+        }
+
+        Log.i(TAG, "Init service failed (status=$status), falling back to su...")
+        return callTaWithSu(requestHex)
+    }
+
+    private fun callTaWithSu(requestHex: String): ByteArray {
+        val binary = extractTaBinary()
         val ldPath = "LD_LIBRARY_PATH=/system/lib64:/vendor/lib64:/odm/lib64:/vendor/lib64/hw:/odm/lib64/hw"
         val cmd = "${binary.absolutePath} $requestHex"
 
-        // Try direct execution first (works when SELinux is permissive)
-        var process = Runtime.getRuntime().exec(arrayOf(
-            "/system/bin/sh", "-c", "$ldPath $cmd"
-        ))
-        var stdout = process.inputStream.bufferedReader().readText().trim()
-        var stderr = process.errorStream.bufferedReader().readText().trim()
-        var exitCode = process.waitFor()
+        val suPaths = listOf("/system/bin/su", "/sbin/su", "/su/bin/su")
+        val suBin = suPaths.firstOrNull { File(it).exists() }
+            ?: throw RkpException("No root access and init service unavailable")
 
-        if (exitCode != 0 || stdout.isEmpty()) {
-            Log.i(TAG, "Direct execution failed (exit=$exitCode), trying with su...")
-            val suPaths = listOf("/system/bin/su", "/sbin/su", "/su/bin/su")
-            val suBin = suPaths.firstOrNull { File(it).exists() }
-            if (suBin != null) {
-                process = Runtime.getRuntime().exec(arrayOf(suBin, "-c", "$ldPath $cmd"))
-                stdout = process.inputStream.bufferedReader().readText().trim()
-                stderr = process.errorStream.bufferedReader().readText().trim()
-                exitCode = process.waitFor()
-            }
-        }
+        val process = Runtime.getRuntime().exec(arrayOf(suBin, "-c", "$ldPath $cmd"))
+        val stdout = process.inputStream.bufferedReader().readText().trim()
+        val stderr = process.errorStream.bufferedReader().readText().trim()
+        val exitCode = process.waitFor()
 
         if (exitCode != 0 || stdout.isEmpty()) {
             val errMsg = stderr.ifEmpty { "TA helper exited with code $exitCode" }
@@ -158,6 +187,22 @@ class DeviceRkpProvisioner(
             binary.setExecutable(true)
         }
         return binary
+    }
+
+    private fun setSystemProp(key: String, value: String) {
+        try {
+            Class.forName("android.os.SystemProperties")
+                .getMethod("set", String::class.java, String::class.java)
+                .invoke(null, key, value)
+        } catch (_: Exception) {}
+    }
+
+    private fun getSystemProp(key: String): String {
+        return try {
+            Class.forName("android.os.SystemProperties")
+                .getMethod("get", String::class.java)
+                .invoke(null, key) as? String ?: ""
+        } catch (_: Exception) { "" }
     }
 
     private fun unwrapCsr(payload: ByteArray): ByteArray {
