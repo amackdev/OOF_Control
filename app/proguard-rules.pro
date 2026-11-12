@@ -7,3 +7,6 @@
 # Keep data classes used with JSON serialization
 -keep class com.oof.control.utils.GameModeProfile { *; }
 -keep class com.oof.control.utils.GameAppEntry { *; }
+
+# RKP provisioner uses reflection-heavy crypto APIs
+-keep class com.oof.control.rkp.** { *; }

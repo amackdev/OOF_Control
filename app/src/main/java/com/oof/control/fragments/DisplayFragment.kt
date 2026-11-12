@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.oof.control.R
 import com.oof.control.databinding.FragmentDisplayBinding
+import com.oof.control.rkp.RkpFragment
 import com.oof.control.utils.PrefsManager
 import com.oof.control.utils.ShellExecutor
 import com.oof.control.utils.TouchController
@@ -281,6 +282,11 @@ class DisplayFragment : Fragment() {
         // Update Keybox
         binding.cardUpdateKeybox.setOnClickListener {
             keyboxFilePicker.launch(arrayOf("application/xml", "text/xml"))
+        }
+
+        // Provision Keybox via RKP
+        binding.cardProvisionRkp.setOnClickListener {
+            RkpFragment().show(parentFragmentManager, "rkp")
         }
     }
     
